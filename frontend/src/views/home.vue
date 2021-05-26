@@ -54,6 +54,16 @@
             <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>
           </router-link>
         </li>
+		<li>
+          <router-link to="/chat">
+            <a href="javascript:void(0);" :class="[saveTitle == '/chat' ? 'title' : '']">聊天</a>
+          </router-link>
+        </li>
+		<li>
+          <router-link to="/questions">
+            <a href="javascript:void(0);" :class="[saveTitle == '/questions' ? 'title' : '']">问卷</a>
+          </router-link>
+        </li>
 
 <!--        <li>-->
 <!--          <router-link to="/subject">-->
@@ -499,13 +509,13 @@
     <router-view/>
   </div>
 
-  <footer>
+  <!-- <footer>
     <p>
       <a href="http://localhost:9527/" target="_blank">&nbsp;&nbsp;</a>
       <a href="javasrcipt:void(0);" @click="goIndex()">Copyright 2019-2020&nbsp;{{ info.name }}&nbsp;</a>
       <a href="http://www.beian.miit.gov.cn">{{ info.recordNum }}</a>
     </p>
-  </footer>
+  </footer> -->
 
   <div>
     <a
@@ -1253,7 +1263,7 @@ export default {
 }
 
 .emoji-size-small {
-/ / 表情大小 zoom: 0.3;
+ zoom: 0.3;
 }
 </style>
 

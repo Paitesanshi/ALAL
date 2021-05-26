@@ -15,8 +15,8 @@ import store from './store'
 import '@/assets/iconfont/iconfont.css'
 import '../static/css/ckeditor.css'
 import '../static/css/index.css'
-// import CKEditor from 'ckeditor4-vue'
-import CKEditor from '@ckeditor/ckeditor5-vue';
+import CKEditor from 'ckeditor4-vue'
+// import CKEditor from '@ckeditor/ckeditor5-vue';
 Vue.use(CKEditor);
 import xss from 'xss'
 import vueMiniPlayer from 'vue-mini-player'
@@ -40,7 +40,7 @@ Vue.directive('highlight', function (el) {
 
 
 /* eslint-disable no-new */
-new Vue({
+var vm = new Vue({
 	el: '#app',
 	router,
 	// 需要将store和vue实例进行关联，这里将其传递进去
@@ -48,3 +48,4 @@ new Vue({
 	components: { App },
 	template: '<App/>'
 })
+global.vm = vm;
