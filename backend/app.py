@@ -12,9 +12,9 @@ app = Flask(__name__,
 CORS(app, supports_credentials=True)
 db = pymysql.connect(host='121.196.111.9',
                      port=3306,
-                     user='test',
-                     passwd='123456',
-                     db='blogs'
+                     user='root',
+                     passwd='zxc110',
+                     db='alal'
                      )
 db.autocommit(True)
 # 使用 cursor() 方法创建一个游标对象 cursor
