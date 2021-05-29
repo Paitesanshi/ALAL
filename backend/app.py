@@ -1070,6 +1070,7 @@ def localRegister():
     email = data_json.get("email")
     nickname = data_json.get("nickName")
 
+
     sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
     try:
         # 执行SQL语句
