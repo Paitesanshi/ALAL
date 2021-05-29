@@ -85,7 +85,6 @@
 <!--        <FollowUs></FollowUs>-->
       </div>
     </div>
-  </div>
 </template>
 
 <script>

@@ -41,8 +41,8 @@
 <script>
 export default {
   name: "PhotoWall",
-  data() {},
-  computed() {},
+//   data() {},
+//   computed() {},
   created() {
     Vue.component("photo-card", {
       template: `<a class="card"

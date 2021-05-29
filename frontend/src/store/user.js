@@ -5,8 +5,8 @@ const app = {
   state: {
     // 用户信息
     userInfo: {},
-	isLogin: false,
-	isSingle:false,
+	isLogin: true,
+	isSingle:true,
   },
   // getters是对数据的包装，例如对数据进行拼接，或者过滤
   getters: {

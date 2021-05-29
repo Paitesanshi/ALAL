@@ -505,7 +505,7 @@ export default {
 
 .emoji-size-large {
   zoom: 0.5;
-/ / emojipanel表情大小 margin: 5 px;
+  margin: 5 px;
 }
 
 .iconfont {

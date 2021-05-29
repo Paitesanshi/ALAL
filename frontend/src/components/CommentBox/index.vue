@@ -12,7 +12,7 @@
       <el-button class="submit p2" type="primary"  @click="handleSubmit">发送评论</el-button>
       <el-button class="cancel p2" type="info" @click="handleCancle">取消评论</el-button>
       <div class="emoji-panel-btn p2" @click="showEmojiPanel">
-        <img src="../../assets/img/face_logo.png" />
+        <img src="assets/img/face_logo.png" />
       </div>
       <span class="allow p2">还能输入{{count}}个字符</span>
 

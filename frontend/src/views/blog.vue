@@ -133,7 +133,24 @@
           <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/>
         </el-form-item>
 
-        <el-form-item style="float: right; margin-right: 20px;">
+     
+			<el-form-item label="上传图片" prop="picture" style="width: 800px;">
+               <el-upload
+			     action=""
+                 list-type="picture-card"
+                 :on-preview="handlePictureCardPreview"
+                 :on-remove="handleRemove"
+                 :http-request="uploadAvatar"
+                 :before-upload="beforeAvatarUpload"
+                 :file-list="fileList"
+               >
+                 <i class="el-icon-plus"></i>
+               </el-upload>
+               <el-dialog :visible.sync="dialogVisible">
+                 <img width="100%" :src="dialogImageUrl" alt="">
+               </el-dialog>
+            </el-form-item>
+		<el-form-item style="float: right; margin-right: 20px;">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
           <el-button type="primary" @click="submitForm">确 定</el-button>
         </el-form-item>
@@ -143,10 +160,11 @@
 </template>
 
 <script>
-import { addBlog, editBlog } from '@/api/blog'
+import { addBlog, editBlog,upload } from '@/api/blog'
 // import { getSystemConfig } from '@/api/systemConfig'
 import { getTagList } from '@/api/tag'
 import { getBlogSortList } from '@/api/blogSort'
+
 // import { formatData } from '@/utils/webUtils'
 // import { getToken } from '@/utils/auth'
 // import { getToken } from '@/utils/auth'
@@ -170,6 +188,10 @@ export default {
   },
   data () {
     return {
+		          dialogImageUrl: '',
+          dialogVisible: false,
+          picList: [],
+    	fileList: [],
       uploadLoading: null, // 文件上传loading
       CKEditorData: null,
       tableData: [], // 博客数据
@@ -337,6 +359,57 @@ export default {
     // this.blogList()
   },
   methods: {
+	  uploadAvatar(item) {
+          const formData = new FormData()
+          formData.append('file', item.file)
+          const uid = item.file.uid
+          createStorage(formData).then(res => {
+            this.picList.push({ key: uid, value: res.data.data.url })
+            this.emptyUpload()
+          }).catch(() => {
+            this.$message.error('上传失败，请重新上传')
+            this.emptyUpload()
+          })
+        },
+        beforeAvatarUpload(file) {
+          const isJPG = file.type === 'image/jpeg'
+          const isPng = file.type === 'image/png'
+          const isLt2M = file.size / 1024 / 1024 < 2
+ 
+          if (!isJPG && !isPng) {
+            this.$message.error('上传图片只能是 JPG或png 格式!')
+          }
+          if (!isLt2M) {
+            this.$message.error('上传图片大小不能超过 2MB!')
+          }
+          return (isJPG || isPng) && isLt2M
+        },
+        handleRemove(file, fileList) {
+          for (const i in this.picList) {
+            if (this.picList[i].key === file.uid) {
+              this.picList.splice(i, 1)
+            }
+          }
+        },
+        handlePictureCardPreview(file) {
+          this.dialogImageUrl = file.url
+          this.dialogVisible = true
+        },
+        /**
+         * 清空上传组件
+         */
+        emptyUpload() {
+          const mainImg = this.$refs.upload
+          if (mainImg) {
+            if (mainImg.length) {
+              mainImg.forEach(item => {
+                item.clearFiles()
+              })
+            } else {
+              this.$refs.upload.clearFiles()
+            }
+          }
+        },
     openLoading () {
       this.uploadLoading = Loading.service({
         lock: true,
@@ -475,6 +548,7 @@ export default {
               }
             })
           } else {
+		
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
