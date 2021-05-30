@@ -64,6 +64,11 @@
             <a href="javascript:void(0);" :class="[saveTitle == '/questions' ? 'title' : '']">问卷</a>
           </router-link>
         </li>
+		<li v-if="this.$store.state.user.isSingle == true">
+          <router-link to="/circle">
+            <a href="javascript:void(0);" :class="[saveTitle == '/circle' ? 'title' : '']">记录爱</a>
+          </router-link>
+        </li>
 
 <!--        <li>-->
 <!--          <router-link to="/subject">-->

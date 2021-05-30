@@ -52,12 +52,12 @@
             target="_blank"
           >{{ item }}</a>
         </div>
-        <div v-if="blogData.need_credit !=0||this.$store.state.user.userInfo.reputation<=1">
+        <!-- <div v-if="blogData.need_credit !=0||this.$store.state.user.userInfo.reputation<=1">
           <img class="center" :src="lockImageUrl" alt="lock">
           <div class="center fit-content">
             <el-button type="primary" align="center" @click="payCredit">需要花费 {{blogData.need_credit}} 积分</el-button>
           </div>
-        </div>
+        </div> -->
           <div
             v-if="blogData.need_credit ==0"
             class="news_con ck-content"
@@ -66,6 +66,17 @@
             @click="imageChange"
           >{{ blogContent }}
           </div>
+		   <div>
+		<ImageList  style="margin:10px auto;" :imgs="this.urlData"></ImageList>	
+		<!-- <img
+		v-for="(item, index) in urlData"
+		:key="index"
+		:src="item"
+		style="width:30%"
+		@click="showImg(index)"
+		/> -->
+  </div>
+
       </div>
 
       <!--点赞和收藏和举报-->
@@ -100,7 +111,7 @@
 
 <script>
 import {getWebConfig} from '../api/index'
-import {getBlogByUid, payCreditByUid} from '../api/blogContent'
+import {getBlogByUid, payCreditByUid,getBlogPicByUid} from '../api/blogContent'
 import CommentList from '../components/CommentList'
 import CommentBox from '../components/CommentBox'
 // vuex中有mapState方法，相当于我们能够使用它的getset方法
@@ -116,11 +127,12 @@ import {Loading} from 'element-ui'
 import Sticky from '@/components/Sticky'
 import SideCatalog from '@/components/VueSideCatalog'
 import LikeAndCollect from '../components/LikeAndCollect/index'
-
+import ImageList from '../components/ImageList'
 export default {
   name: 'info',
   data () {
     return {
+		urlData: [],
       // 目录列表数
       lockImageUrl: '../static/images/lock.png',
       catalogSum: 0,
@@ -194,7 +206,8 @@ export default {
     CommentBox,
     SideCatalog,
     Link,
-    Sticky
+    Sticky,
+	ImageList
   },
   mounted () {
     var that = this
@@ -235,7 +248,52 @@ export default {
       this.getCommentDataList()
       that.loadingInstance.close()
     })
-
+	params = new URLSearchParams()
+    // if (this.blogUid) {
+    //   params.append('uid', this.blogUid)
+    // }
+    // if (this.blogOid) {
+    //   params.append('oid', this.blogOid)
+    // }
+    params.append('blog_id', this.blogUid)
+    getBlogPicByUid(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.imgs = response.data
+        console.log(this.blogData)
+        // this.blogUid = response.data.uid
+        // this.blogOid = response.data.oid\
+        this.getCommentDataList()
+      } else {
+		that.urlData=[
+         {"src":"http://121.196.111.9:5678/display/img/test.png"},
+                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
+                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
+      ]
+      }
+      setTimeout(() => {
+        that.blogContent = response.data.content
+        that.loadingInstance.close()
+      }, 20)
+    }).catch(error => {
+      console.log(error)
+      this.blogData.labels = ['技术', '大数据']
+      this.blogData.blogSort = '技术'
+      this.blogContent = 'This is a test'
+      this.blogData.title = 'test'
+      this.blogData.author = 'ptss'
+      this.blogData.summary = '概括'
+      this.blogData.clickCount = 100
+      this.blogData.likeCount = 200
+      this.blogData.time = '2020-12-2'
+      this.blogData.need = 1
+      this.getCommentDataList()
+	  that.urlData=[
+        {"src":"http://121.196.111.9:5678/display/img/test.png"},
+                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
+                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
+      ]
+      that.loadingInstance.close()
+    })
     var after = 0
     var offset = 110
     // eslint-disable-next-line no-undef
@@ -347,6 +405,13 @@ export default {
   methods: {
     // 拿到vuex中的写的两个方法
     ...mapMutations(['setCommentList', 'setWebConfigData']),
+	//  showImg(index) {
+    //   this.$hevueImgPreview({
+    //     multiple: true,
+    //     nowImgIndex: index,
+    //     imgList: this.urlData
+    //   })
+    // },
     handleCurrentChange: function (val) {
       this.currentPage = val
       this.getCommentDataList()

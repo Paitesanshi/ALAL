@@ -15,7 +15,7 @@
         </template>
       </div>
     </div>
-    <el-button @click="handleSubmit" class="surveyBtn">点击提交</el-button>
+    <el-button @click="handleSubmit" class="surveyBtn">提交问卷</el-button>
   </div>
 </template>
 
@@ -31,136 +31,36 @@
     data () {
       return {
         questionData: [
-          {
+			{
             id: 1,
-            title: '单选题：今年是哪一年？',
-            type: 'radio',
-            data: [
-              {
-                type: 1,
-                label: '2017年',
-                value: 'a',
-                status: false
-              },
-              {
-                type: 1,
-                label: '2018年',
-                value: 'b',
-                status: false
-              },
-              {
-                type: 1,
-                label: '2019年',
-                value: 'c',
-                status: false
-              },
-              {
-                type: 1,
-                label: '2020年',
-                value: 'd',
-                status: false
-              },
-              {
-                type: 2,
-                label: '其他',
-                value: '',
-                status: false
-              }
-            ]
+            title: '填空题：请填写您的问题',
+            type: 'textarea',
+            data: ''
           },
-          {
+		  {
             id: 2,
-            title: '单选题：广东省的冬天会下雪吗？',
-            type: 'radio',
-            data: [
-              {
-                type: 1,
-                label: '会',
-                value: 'a',
-                status: false
-              },
-              {
-                type: 1,
-                label: '不会',
-                value: 'b',
-                status: false
-              }
-            ]
+            title: '填空题：请填写您的问题',
+            type: 'textarea',
+            data: ''
           },
-          {
+		  {
             id: 3,
-            title: '多选题：你喜欢的季节有？',
-            type: 'checkbox',
-            data: [
-              {
-                type: 1,
-                label: '春天',
-                value: 'a',
-                status: false
-              },
-              {
-                type: 1,
-                label: '夏天',
-                value: 'b',
-                status: false
-              },
-              {
-                type: 1,
-                label: '秋天',
-                value: 'c',
-                status: false
-              },
-              {
-                type: 1,
-                label: '冬天',
-                value: 'd',
-                status: false
-              }
-            ]
+            title: '填空题：请填写您的问题',
+            type: 'textarea',
+            data: ''
           },
           {
             id: 4,
-            title: '填空题：请问还有什么疑问吗？',
+            title: '填空题：请填写您的问题',
             type: 'textarea',
             data: ''
           },
           {
             id: 5,
-            title: '多选题：你喜欢的水果有？',
-            type: 'checkbox',
-            data: [
-              {
-                type: 1,
-                label: '苹果',
-                value: 'a',
-                status: false
-              },
-              {
-                type: 1,
-                label: '香蕉',
-                value: 'b',
-                status: false
-              },
-              {
-                type: 1,
-                label: '桃子',
-                value: 'c',
-                status: false
-              },
-              {
-                type: 1,
-                label: '李子',
-                value: 'd',
-                status: false
-              },
-              {
-                type: 2,
-                label: '其他',
-                value: '',
-                status: false
-              }
-            ]
-          }
+            title: '填空题：请填写您的问题',
+            type: 'textarea',
+            data: ''
+          },
         ]
       }
     },
