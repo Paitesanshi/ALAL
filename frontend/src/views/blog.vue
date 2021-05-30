@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { addBlog, editBlog,upload } from '@/api/blog'
+import { addBlog, editBlog,uploadPhoto } from '@/api/blog'
 // import { getSystemConfig } from '@/api/systemConfig'
 import { getTagList } from '@/api/tag'
 import { getBlogSortList } from '@/api/blogSort'
@@ -363,7 +363,8 @@ export default {
           const formData = new FormData()
           formData.append('file', item.file)
           const uid = item.file.uid
-          createStorage(formData).then(res => {
+          uploadPhoto(formData).then(res => {
+			  console.log(res)
             this.picList.push({ key: uid, value: res.data.data.url })
             this.emptyUpload()
           }).catch(() => {

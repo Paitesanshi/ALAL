@@ -15,7 +15,13 @@ export function getBlogByUid (params) {
     params
   })
 }
-
+export function getBlogPicByUid (params) {
+	return request({
+	  url: process.env.WEB_API + '/api/getBlogPicByUid',
+	  method: 'get',
+	  params
+	})
+  }
 export function addCollectBlog (params) {
   return request({
     url: process.env.WEB_API + '/api/addCollectBlog',

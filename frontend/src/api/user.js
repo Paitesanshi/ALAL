@@ -9,7 +9,7 @@ export function getFeedbackList(params) {
   return request({
     url: process.env.WEB_API + '/oauth/getFeedbackList',
     method: 'get',
-    params
+    data:params
   })
 }
 /**
