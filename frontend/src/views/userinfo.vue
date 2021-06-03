@@ -92,7 +92,7 @@ html * {
 
 <script>/* eslint-disable indent */
 ``
-import Info from '../components/userInfo/userInfo'
+import Info from '../components/userInfo/userinfo'
 import Resume from '../components/userInfo/resume'
 import Delivery from '../components/userInfo/delivery'
 import Setting from '../components/userInfo/setting'
