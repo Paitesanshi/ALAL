@@ -23,6 +23,7 @@ export const constantRouterMap = [
 			{ path: '/blog', component: () => import('@/views/blog') },
 			{ path: '/chat', component: () => import('@/views/chat') },
 			{ path: '/admin', component: () => import('@/views/admin') },
+      { path: '/userinfo', component: () => import('@/views/userinfo') },
 			{ path: '/questions', component: () => import('@/views/questions') }
 		]
 	},
