@@ -255,19 +255,19 @@ export default {
     // if (this.blogOid) {
     //   params.append('oid', this.blogOid)
     // }
-    params.append('blog_id', this.blogUid)
+    params.append('moment_id', this.blogUid)
     getBlogPicByUid(params).then(response => {
       if (response.data.code === this.$ECode.SUCCESS) {
-        this.imgs = response.data
-        console.log(this.blogData)
+        this.urlData = response.data.urls
+        console.log(this.urlData)
         // this.blogUid = response.data.uid
         // this.blogOid = response.data.oid\
         this.getCommentDataList()
       } else {
 		that.urlData=[
-         {"src":"http://121.196.111.9:5678/display/img/test.png"},
-                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
-                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
+        	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
       ]
       }
       setTimeout(() => {
@@ -288,9 +288,9 @@ export default {
       this.blogData.need = 1
       this.getCommentDataList()
 	  that.urlData=[
-        {"src":"http://121.196.111.9:5678/display/img/test.png"},
-                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
-                    {"src":"http://121.196.111.9:5678/display/img/test.png"},
+       	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
       ]
       that.loadingInstance.close()
     })
