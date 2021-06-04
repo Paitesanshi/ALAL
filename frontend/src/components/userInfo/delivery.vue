@@ -7,7 +7,7 @@
       <el-card shadow="hover" class="deliverycard">
         <div class="resumeBox">
           <p>{{item.title}}</p>
-          <p>投递时间{{item.time}}</p>
+          <p>{{item.content}}</p>
         </div>
       </el-card>
     </div>
@@ -46,8 +46,13 @@
 export default {
   data() {
     return {
-      list: [],
-      show: false
+      list: [
+        {
+          title: '有人向你发出好友申请',
+          content: 'hihihi，一起交个朋友吧！'
+        }
+      ],
+      show: true
     }
   },
   mounted() {

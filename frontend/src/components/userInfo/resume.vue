@@ -14,60 +14,73 @@
 
           <tr>
             <td>姓名：</td>
-            <td>{{this.tableList.name}}</td>
+            <td>{{this.$store.state.user.userInfo.name}}</td>
           </tr>
-          <tr>
-            <td>年龄：</td>
-            <td>{{this.tableList.age}}</td>
-          </tr>
+<!--          <tr>-->
+<!--            <td>年龄：</td>-->
+<!--            <td>{{this.$store.state.user.userInfo.age}}</td>-->
+<!--          </tr>-->
           <tr>
             <td>性别：</td>
-            <td v-if="this.tableList.sex === 1">男</td>
+            <td v-if="this.$store.state.user.userInfo.sex === 1">男</td>
             <td v-else>女</td>
           </tr>
           <tr>
-            <td>电话：</td>
-            <td>{{this.tableList.phone}}</td>
+            <td>手机号：</td>
+            <td>{{this.$store.state.user.userInfo.phone}}</td>
           </tr>
           <tr>
             <td>邮箱：</td>
-            <td>{{this.tableList.email}}</td>
+            <td>{{this.$store.state.user.userInfo.email}}</td>
           </tr>
           <tr>
-            <td>地址：</td>
-            <td>{{this.tableList.address}}</td>
+            <td>城市：</td>
+            <td>{{this.$store.state.user.userInfo.city}}</td>
           </tr>
           <tr>
-            <td>学校：</td>
-            <td>{{this.tableList.school}}</td>
+            <td>职业：</td>
+            <td>{{this.$store.state.user.userInfo.career}}</td>
+          </tr>
+<!--          <tr>-->
+<!--            <td>学校：</td>-->
+<!--            <td>{{this.$store.state.user.userInfo.school}}</td>-->
+<!--          </tr>-->
+          <tr>
+            <td>出生日期：</td>
+            <td>{{this.$store.state.user.userInfo.birthDate}}</td>
           </tr>
           <tr>
-            <td>毕业时间：</td>
-            <td>{{this.tableList.endTime}}</td>
+            <td>情感状况：</td>
+            <td v-if="this.$store.state.user.userInfo.sex === 1">单身</td>
+            <td v-else>非单身</td>
           </tr>
           <tr>
-            <td>技术栈：</td>
-            <td>
-          <tr v-for="(item, key) in this.tableList.skills" :key="key">
-            <td class="progress">{{item.name}}</td>
-            <td class="progress">熟悉程度：
-              <el-progress :text-inside="true" :stroke-width="15" :percentage="item.level*25"></el-progress>
-            </td>
+            <td>理想型：</td>
+            <td>{{this.$store.state.user.userInfo.idealType}}</td>
           </tr>
-          </td>
-          </tr>
-          <tr>
-            <td>实习（工作）经历：</td>
-            <td>{{this.tableList.experience}}</td>
-          </tr>
-          <tr>
-            <td>自我介绍：</td>
-            <td>{{this.tableList.introduce}}</td>
-          </tr>
-          <tr>
-            <td>获奖经历：</td>
-            <td>{{this.tableList.awards}}</td>
-          </tr>
+<!--          <tr>-->
+<!--            <td>技术栈：</td>-->
+<!--            <td>-->
+<!--          <tr v-for="(item, key) in this.$store.state.user.userInfo.skills" :key="key">-->
+<!--            <td class="progress">{{item.name}}</td>-->
+<!--            <td class="progress">熟悉程度：-->
+<!--              <el-progress :text-inside="true" :stroke-width="15" :percentage="item.level*25"></el-progress>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          </td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>实习（工作）经历：</td>-->
+<!--            <td>{{this.$store.state.user.userInfo.experience}}</td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>自我介绍：</td>-->
+<!--            <td>{{this.$store.state.user.userInfo.introduce}}</td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>获奖经历：</td>-->
+<!--            <td>{{this.$store.state.user.userInfo.awards}}</td>-->
+<!--          </tr>-->
         </table>
         <el-button class="modBtn" @click="()=>{isChange = !isChange}">修改简历</el-button>
       </div>
@@ -83,54 +96,58 @@
             <el-option label="女" :value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="年龄" prop="age">
-          <el-input v-model="resumeList.age"></el-input>
+        <!--        <el-form-item label="年龄" prop="age">-->
+        <!--          <el-input v-model="resumeList.age"></el-input>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="城市" prop="city">
+          <el-input v-model="resumeList.city"></el-input>
         </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="resumeList.address"></el-input>
+        <el-form-item label="职业" prop="career">
+          <el-input v-model="resumeList.career"></el-input>
         </el-form-item>
-        <el-form-item label="我的简介" prop="introduce">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.introduce"></el-input>
+        <el-form-item label="出生日期" prop="birthDate">
+          <!--          <el-select v-model="resumeList.birthDate" style="width: 100%">-->
+          <!--            <el-option-->
+          <!--              v-for="item in options"-->
+          <!--              :key="item.value"-->
+          <!--              :label="item.label"-->
+          <!--              :value="item.value">-->
+          <!--            </el-option>-->
+          <!--          </el-select>-->
+          <el-input v-model="resumeList.birthDate"></el-input>
         </el-form-item>
-        <el-form-item label="毕业年份" prop="endTime">
-          <el-select v-model="resumeList.endTime" style="width: 100%">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="学校" prop="school">
-          <el-input v-model="resumeList.school"></el-input>
-        </el-form-item>
+        <!--        <el-form-item label="学校" prop="school">-->
+        <!--          <el-input v-model="resumeList.school"></el-input>-->
+        <!--        </el-form-item>-->
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="resumeList.phone"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="resumeList.email"></el-input>
         </el-form-item>
-        <el-form-item label="技术栈" prop="skills">
-          <el-button @click="addSkill()" class="addbtn">添加</el-button>
-          <div class="skillContain">
-            <div v-for="(item, key) in resumeList.skills" :key="key">
-              <input placeholder="技术" class="input" v-model="item.name"/>
-              <select class="select" v-model="item.level">
-                <option label="了解" value=1></option>
-                <option label="熟悉" value=2></option>
-                <option label="掌握" value=3></option>
-                <option label="精通" value=4></option>
-              </select>
-              <i class="el-icon-error deleteIt" @click="deleteItem(key)"></i>
-            </div>
-          </div>
+        <!--        <el-form-item label="技术栈" prop="skills">-->
+        <!--          <el-button @click="addSkill()" class="addbtn">添加</el-button>-->
+        <!--          <div class="skillContain">-->
+        <!--            <div v-for="(item, key) in resumeList.skills" :key="key">-->
+        <!--              <input placeholder="技术" class="input" v-model="item.name"/>-->
+        <!--              <select class="select" v-model="item.level">-->
+        <!--                <option label="了解" value=1></option>-->
+        <!--                <option label="熟悉" value=2></option>-->
+        <!--                <option label="掌握" value=3></option>-->
+        <!--                <option label="精通" value=4></option>-->
+        <!--              </select>-->
+        <!--              <i class="el-icon-error deleteIt" @click="deleteItem(key)"></i>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="情感状况" prop="sex">
+          <el-select v-model="resumeList.emotion" placeholder="请选择是否单身" style="width: 100%">
+            <el-option label="单身" :value="1"></el-option>
+            <el-option label="非单身" :value="2"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="工作(实习)经历" prop="experience">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.experience "></el-input>
-        </el-form-item>
-        <el-form-item label="获奖经历" prop="awards">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.awards"></el-input>
+        <el-form-item label="理想型" prop="idealType">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.idealType "></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="cancelChange">取消</el-button>
@@ -150,55 +167,62 @@
             <el-option label="女" :value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="年龄" prop="age">
-          <el-input v-model="resumeList.age"></el-input>
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
+<!--        <el-form-item label="年龄" prop="age">-->
+<!--          <el-input v-model="resumeList.age"></el-input>-->
+<!--        </el-form-item>-->
+        <el-form-item label="城市" prop="address">
           <el-input v-model="resumeList.address"></el-input>
         </el-form-item>
-        <el-form-item label="我的简介" prop="introduce">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.introduce"></el-input>
+        <el-form-item label="职业" prop="career">
+          <el-input v-model="resumeList.career"></el-input>
         </el-form-item>
-        <el-form-item label="毕业年份" prop="endTime">
-          <el-select v-model="resumeList.endTime" style="width: 100%">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+        <el-form-item label="出生日期" prop="birthDate">
+<!--          <el-select v-model="resumeList.birthDate" style="width: 100%">-->
+<!--            <el-option-->
+<!--              v-for="item in options"-->
+<!--              :key="item.value"-->
+<!--              :label="item.label"-->
+<!--              :value="item.value">-->
+<!--            </el-option>-->
+<!--          </el-select>-->
+          <el-input v-model="resumeList.birthDate"></el-input>
         </el-form-item>
-        <el-form-item label="学校" prop="school">
-          <el-input v-model="resumeList.school"></el-input>
-        </el-form-item>
+<!--        <el-form-item label="学校" prop="school">-->
+<!--          <el-input v-model="resumeList.school"></el-input>-->
+<!--        </el-form-item>-->
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="resumeList.phone"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="resumeList.email"></el-input>
         </el-form-item>
-        <el-form-item label="技术栈" prop="skills">
-          <el-button @click="addSkill()" class="addbtn">添加</el-button>
-          <div class="skillContain">
-            <div v-for="(item, key) in resumeList.skills" :key="key">
-              <input placeholder="技术" class="input" v-model="item.name"/>
-              <select class="select" v-model="item.level">
-                <option label="了解" value=1></option>
-                <option label="熟悉" value=2></option>
-                <option label="掌握" value=3></option>
-                <option label="精通" value=4></option>
-              </select>
-              <i class="el-icon-error deleteIt" @click="deleteItem(key)"></i>
-            </div>
-          </div>
+        <el-form-item label="情感状况" prop="sex">
+          <el-select v-model="resumeList.emotion" placeholder="请选择是否单身" style="width: 100%">
+            <el-option label="单身" :value="1"></el-option>
+            <el-option label="非单身" :value="2"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="工作(实习)经历" prop="experience">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.experience "></el-input>
+<!--        <el-form-item label="技术栈" prop="skills">-->
+<!--          <el-button @click="addSkill()" class="addbtn">添加</el-button>-->
+<!--          <div class="skillContain">-->
+<!--            <div v-for="(item, key) in resumeList.skills" :key="key">-->
+<!--              <input placeholder="技术" class="input" v-model="item.name"/>-->
+<!--              <select class="select" v-model="item.level">-->
+<!--                <option label="了解" value=1></option>-->
+<!--                <option label="熟悉" value=2></option>-->
+<!--                <option label="掌握" value=3></option>-->
+<!--                <option label="精通" value=4></option>-->
+<!--              </select>-->
+<!--              <i class="el-icon-error deleteIt" @click="deleteItem(key)"></i>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </el-form-item>-->
+        <el-form-item label="理想型" prop="idealType">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.idealType "></el-input>
         </el-form-item>
-        <el-form-item label="获奖经历" prop="awards">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.awards"></el-input>
-        </el-form-item>
+<!--        <el-form-item label="获奖经历" prop="awards">-->
+<!--          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.awards"></el-input>-->
+<!--        </el-form-item>-->
         <el-form-item>
           <el-button @click="cancelSubmit">取消</el-button>
           <el-button type="primary" @click="changeResume('resumeInfo')">确定</el-button>
@@ -281,12 +305,12 @@
 </style>
 
 <script>/* eslint-disable indent */
-
+import { getResume} from "@/api/question";
 export default {
   data () {
     var checkname = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('昵称不能为空'))
+        return callback(new Error('姓名不能为空'))
       } else {
         callback()
       }
@@ -298,48 +322,48 @@ export default {
         callback()
       }
     }
-    var checkintroduce = (rule, value, callback) => {
+    var checkideal = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('简介不能为空'))
+        return callback(new Error('理想型不能为空'))
       } else {
         callback()
       }
     }
-    var checkendTime = (rule, value, callback) => {
+    var checkbirthDate = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('毕业年份不能为空'))
+        return callback(new Error('出生日期不能为空'))
       } else {
         callback()
       }
     }
-    var checkschool = (rule, value, callback) => {
+    var checkcareer = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('学校不能为空'))
+        return callback(new Error('职业不能为空'))
       } else {
         callback()
       }
     }
-    var checkexperience = (rule, value, callback) => {
+    // var checkexperience = (rule, value, callback) => {
+    //   if (!value) {
+    //     return callback(new Error('经历不能为空'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
+    var checkcity = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('经历不能为空'))
+        return callback(new Error('城市不能为空'))
       } else {
         callback()
       }
     }
-    var checkaddress = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('地址不能为空'))
-      } else {
-        callback()
-      }
-    }
-    var checkage = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('年龄不能为空'))
-      } else {
-        callback()
-      }
-    }
+    // var checkage = (rule, value, callback) => {
+    //   if (!value) {
+    //     return callback(new Error('年龄不能为空'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     var checkphone = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('手机号不能为空'))
@@ -354,13 +378,13 @@ export default {
         callback()
       }
     }
-    var checkaward = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('获奖不能为空'))
-      } else {
-        callback()
-      }
-    }
+    // var checkaward = (rule, value, callback) => {
+    //   if (!value) {
+    //     return callback(new Error('获奖不能为空'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       len: 0,
       tip: 0,
@@ -368,64 +392,66 @@ export default {
       dialogFormVisible: false,
       resumeFormVisible: false,
       resumeList: {
-        id:'',
-        userId: sessionStorage.getItem('userId'),
-        address: '',
+        // id:'',
+        // userId: sessionStorage.getItem('userId'),
+        city: '',
         name: '',
         sex: '',
-        introduce: '',
-        age: '',
-        avatar: '',
-        awards: '',
+        emotion: '',
+        career: '',
+        // age: '',
+        // avatar: '',
+        // awards: '',
         email: '',
-        endTime: '',
-        experience: '',
+        birthDate: '',
+        idealType: '',
         phone: '',
-        school: '',
-        skills: [
-          {
-            level: 0,
-            name: ''
-          }
-        ]
+        // school: '',
+        // skills: [
+        //   {
+        //     level: 0,
+        //     name: ''
+        //   }
+        // ]
       },
       tableList: [],
-      haveResume: false,
+      haveResume: true,
       value: '',
-      options: [
-        {
-          value: '2018',
-          label: '2018'
-        },
-        {
-          value: '2019',
-          label: '2019'
-        },
-        {
-          value: '2020',
-          label: '2020'
-        },
-        {
-          value: '2021',
-          label: '2021'
-        },
-        {
-          value: '2022',
-          label: '2022'
-        }
-      ],
+      // options: [
+      //   {
+      //     value: '2018',
+      //     label: '2018'
+      //   },
+      //   {
+      //     value: '2019',
+      //     label: '2019'
+      //   },
+      //   {
+      //     value: '2020',
+      //     label: '2020'
+      //   },
+      //   {
+      //     value: '2021',
+      //     label: '2021'
+      //   },
+      //   {
+      //     value: '2022',
+      //     label: '2022'
+      //   }
+      // ],
       resumerules: {
         name: [{validator: checkname, trigger: 'blur'}],
         sex: [{validator: checksex, trigger: 'blur'}],
-        address: [{validator: checkaddress, trigger: 'blur'}],
-        introduce: [{validator: checkintroduce, trigger: 'blur'}],
-        endTime: [{validator: checkendTime, trigger: 'blur'}],
+        career: [{validator: checkcareer, trigger: 'blur'}],
+        city: [{validator: checkcity, trigger: 'blur'}],
+        // introduce: [{validator: checkintroduce, trigger: 'blur'}],
+        birthDate: [{validator: checkbirthDate, trigger: 'blur'}],
         phone: [{validator: checkphone, trigger: 'blur'}],
-        school: [{validator: checkschool, trigger: 'blur'}],
-        age: [{validator: checkage, trigger: 'blur'}],
+        // school: [{validator: checkschool, trigger: 'blur'}],
+        // age: [{validator: checkage, trigger: 'blur'}],
         email: [{validator: checkemail, trigger: 'blur'}],
-        experience: [{validator: checkexperience, trigger: 'blur'}],
-        awards: [{validator: checkaward, trigger: 'blur'}]
+        idealType: [{validator: checkideal, trigger: 'blur'}],
+        // awards: [{validator: checkaward, trigger: 'blur'}]
       }
     }
   },
@@ -458,7 +484,20 @@ export default {
         resumeId: 0
       }
       this.resumeList.skills.push(newskills)
-    }
+    },
+	getResume(){
+		let params = new URLSearchParams()
+    	params.append('id',  this.$store.state.user.userInfo.id)
+		getResumeByID(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+          this.blogSortData = response.data.records
+        }
+      }).catch(error => {
+        console.log(error)
+        this.blogSortData = [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}]
+      })
+
+	}
   }
 }
 </script>

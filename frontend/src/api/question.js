@@ -8,4 +8,10 @@ export function editQuestion(params) {
 	})
 }
 
-
+export function getResumeByID(params) {
+	return request({
+		url: process.env.ADMIN_API + '/question/getResumeByID',
+		method: 'get',
+		params
+	})
+}

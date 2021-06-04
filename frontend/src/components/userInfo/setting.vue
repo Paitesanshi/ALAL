@@ -16,6 +16,9 @@
           <el-form-item label="手机号" prop="phone" class="settinginput">
             <el-input v-model="phoneForm.phone" auto-complete="off"></el-input>
           </el-form-item>
+          <br>
+          <br>
+          <br>
           <el-form-item>
             <el-button class="btn" @click="changePhone('phoneForm')">确定</el-button>
           </el-form-item>
@@ -39,6 +42,9 @@
           <el-form-item label="确认密码" prop="checkpass" class="settinginput">
             <el-input type="password" v-model="passForm.checkpass" auto-complete="off"></el-input>
           </el-form-item>
+          <br>
+          <br>
+          <br>
           <el-form-item>
             <el-button class="btn" @click="changePass('passForm')">确定</el-button>
           </el-form-item>
@@ -56,6 +62,9 @@
           <el-form-item label="邮箱" prop="email" class="settinginput">
             <el-input v-model="emailForm.email" auto-complete="off"></el-input>
           </el-form-item>
+          <br>
+          <br>
+          <br>
           <el-form-item>
             <el-button class="btn" @click="changeEmail('emailForm')">确定</el-button>
           </el-form-item>
@@ -64,7 +73,7 @@
     </el-collapse>
   </div>
 </template>
-<style>
+<style scoped>
 .demo-ruleForm {
   margin-top: 20px;
 }

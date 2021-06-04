@@ -69,6 +69,11 @@
             <a href="javascript:void(0);" :class="[saveTitle == '/circle' ? 'title' : '']">记录爱</a>
           </router-link>
         </li>
+        <li>
+          <router-link to="/userinfo">
+            <a href="javascript:void(0);" :class="[saveTitle == '/userinfo' ? 'title' : '']">用戶中心</a>
+          </router-link>
+        </li>
 
 <!--        <li>-->
 <!--          <router-link to="/subject">-->

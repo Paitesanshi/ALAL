@@ -112,15 +112,15 @@ export default {
       // console.log(data[0]);
       console.log(params);
 	  var that = this
-      var params = new URLSearchParams()
+    let	params2 = new URLSearchParams()
     // if (this.blogUid) {
     //   params.append('uid', this.blogUid)
     // }
     // if (this.blogOid) {
     //   params.append('oid', this.blogOid)
     // }
-    params.append('id', this.$store.state.user.userInfo.uid)
-    editQuestion(params).then(response => {
+    params2.append('id', this.$store.state.user.userInfo.uid)
+    editQuestion(params2).then(response => {
       if (response.data.code === this.$ECode.SUCCESS) {
         this.blogData = response.data
         console.log(this.blogData)

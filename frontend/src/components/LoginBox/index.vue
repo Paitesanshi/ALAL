@@ -167,11 +167,10 @@ export default {
           localLogin(params).then(response => {
             if (response.data.code === this.$ECode.SUCCESS) {
               // 跳转到首页
-              console.log("loginnnnnnnnnnnnnn")
-              // this.isLogin = true
-              // let userInfo = response.data.records
-              // this.setUserInfo(userInfo)
-              // this.setLoginState(this.isLogin)
+              this.isLogin = true
+              let userInfo = response.data.userInfo
+              this.setUserInfo(userInfo)
+              this.setLoginState(this.isLogin)
               // console.log(response.data.id)
               window.location.replace(this.vueMoguWebUrl + '/#/?token=' + response.data.id)
               window.location.reload()

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="wrapper">
-      <el-card class="box-card">
+      <el-card class="box-card" style="margin-top: 60px">
         <div>
           <el-upload
             class="avatar-uploader"
@@ -17,12 +17,12 @@
         </div>
       </el-card>
       <el-tabs type="border-card" tabPosition="left" style="width:1000px;height: 100vh;margin: 14px auto auto auto;position: sticky">
+<!--        <el-tab-pane>-->
+<!--          <span slot="label">个人信息</span>-->
+<!--          <user :list="list" :photoUrl="list.photoUrl" class="user"></user>-->
+<!--        </el-tab-pane>-->
         <el-tab-pane>
-          <span slot="label">个人信息</span>
-          <user :list="list" :photoUrl="list.photoUrl" class="user"></user>
-        </el-tab-pane>
-        <el-tab-pane>
-          <span slot="label">我的圈子</span>
+          <span slot="label">我的简历</span>
           <my-resume></my-resume>
         </el-tab-pane>
         <el-tab-pane>
@@ -92,7 +92,7 @@ html * {
 
 <script>/* eslint-disable indent */
 ``
-import Info from '../components/userInfo/userInfo'
+import Info from '../components/userInfo/userinfo'
 import Resume from '../components/userInfo/resume'
 import Delivery from '../components/userInfo/delivery'
 import Setting from '../components/userInfo/setting'
