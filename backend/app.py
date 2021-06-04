@@ -74,7 +74,10 @@ def updateUserInfo():
         json.dump(user_info, file_object)
         file_object.close()
 
-# 这里没改
+
+# 1.index
+
+
 @app.route('/index/getNewBlog', methods=['GET'])  # 指定接口访问的路径，支持什么请求方式get，post
 def getNewBlog():
     currentPage = int(request.values.get("currentPage"))
@@ -359,7 +362,7 @@ def search():
     str = request.values.get("keywords")
     data = {}
     sql = 'SELECT COUNT(*) FROM Blog WHERE state=0 AND title LIKE %s '
-    params = ['%'+str+'%']
+    params = ['%' + str + '%']
     print(sql)
     cursor.execute(sql, params)
     total = cursor.fetchone()[0]
@@ -492,7 +495,7 @@ def praiseBlogByUid():
     except:
         flag = False
     if flag == True:
-        return {"code": 'success', "number": number[0][0]+1}
+        return {"code": 'success', "number": number[0][0] + 1}
 
     return {"code": 'error', "number": number[0][0], "message": "您已经点过赞了！"}
 
@@ -675,9 +678,9 @@ def addBlog():
     label_num = form.get("tagUid")
     activityid = str(form.get("blogSortUid"))
     sql = "INSERT INTO Blog VALUES (" + str(blog_id) + ",\"" + user_info['user_id'] + \
-          "\",\""+time+"\",\"" + form.get("title") + "\",\"" + form.get("summary") + "\",\"" + \
+          "\",\"" + time + "\",\"" + form.get("title") + "\",\"" + form.get("summary") + "\",\"" + \
           form.get("content") + "\",0,0," + form.get("need_credit") + \
-        ",\"" + label_num + "\",0," + activityid + ")"
+          ",\"" + label_num + "\",0," + activityid + ")"
     cursor.execute(sql)
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     sql = 'INSERT INTO History VALUES ("%s",%d,"%s")' % (
@@ -704,7 +707,7 @@ def getFollowedByUid():
     print(user_info)
     print(uid)
     sql = "SELECT * FROM Follow WHERE user_id=\"" + \
-        user_info['user_id'] + "\" AND follower_id='" + uid + "'"
+          user_info['user_id'] + "\" AND follower_id='" + uid + "'"
     cursor.execute(sql)
     row = cursor.fetchone()
     data = {}
@@ -727,18 +730,18 @@ def followByUid():
         return data
 
     sql = "SELECT * FROM Follow WHERE user_id= '" + \
-        user_info['user_id'] + "' AND follower_id= '" + uid + "'"
+          user_info['user_id'] + "' AND follower_id= '" + uid + "'"
     cursor.execute(sql)
     row = cursor.fetchone()
     if row == None:
         print(user_info['user_id'])
         time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         sql = "INSERT INTO Follow VALUES ('" + \
-            user_info['user_id'] + "','" + uid + "','"+time+"')"
+              user_info['user_id'] + "','" + uid + "','" + time + "')"
         cursor.execute(sql)
     else:
         sql = "DELETE FROM Follow WHERE user_id= '" + \
-            user_info['user_id'] + "' AND follower_id='" + uid + "'"
+              user_info['user_id'] + "' AND follower_id='" + uid + "'"
         cursor.execute(sql)
     data = {}
     data['code'] = 'success'
@@ -781,7 +784,7 @@ def getArticleBySort():
     sql = "SELECT Blog.user_id,publish_time,title,label,activity,name ,blog_id" \
           " FROM Blog,Activity " \
           " WHERE Blog.activity=Activity.activity_id AND activity=" + \
-        str(id) + " ORDER BY publish_time DESC"
+          str(id) + " ORDER BY publish_time DESC"
     cursor.execute(sql)
     row = cursor.fetchone()
     i = 0
@@ -958,7 +961,7 @@ def addBlogSort():
     user_id = user_info['user_id']
     sql = "select count(*) from Activity"
     cursor.execute(sql)
-    num = cursor.fetchone()[0]+1
+    num = cursor.fetchone()[0] + 1
     sql = 'INSERT INTO Activity (activity_id,user_id,name,start_time,end_time,credit,description) VALUES (%d,"%s","%s","%s","%s",%d,"%s")' % (
         num, user_info['user_id'], activityName, startTime, endTime, credit, description)
     print(sql)
@@ -1137,6 +1140,7 @@ def upload():
         f = request.files['file']
         base_path = os.path.abspath(os.path.dirname(__file__))
         print(base_path)
+
         upload_path = os.path.join(base_path, 'static/uploads/')+"test.jpg"
         sql = " "
         cursor.execute(sql)
@@ -1171,9 +1175,60 @@ def index():
 @app.route('/')
 def welcome():
     return render_template("index.html")
+
+
 # @app.route('/')
 # def welcome():
 #     return render_template("Welcome.html")
+
+
+
+@app.route('/api/getBlogPicByUid/<moment_id>', methods=['GET'])
+def getBlogPicByUid(moment_id):
+    data = {}
+    data['code'] = 200
+    sql = 'SELECT picture FROM moment WHERE moment_id="%s"' % moment_id
+    cursor.execute(sql)
+    row=cursor.fetchone()
+    data['urls']=[]
+    if row != None:
+        picture=row[0]
+        data['urls']=picture.split(str=",")
+    return data
+
+@app.route('/index/getAvatarsByUserID/<id>', methods=['GET'])
+def getAvatarsByUserID(id):
+    data = {}
+    data['code'] = 200
+    data['urls']=[]
+    sql='SELECT sex FROM user WHERE user_id=""'%id
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    sex=row[0]
+    if sex=='f':
+        sql = 'SELECT head_portrait FROM user WHERE sex="m" and emotional_state=0'
+    else:
+        sql = 'SELECT head_portrait FROM user WHERE sex="f" and emotional_state=0'
+    cursor.execute(sql)
+    row=cursor.fetchone()
+    i=0
+    while row:
+        data['urls'].append(row[0])
+        i+=1
+        if i==9:
+            break
+        row=cursor.fetchone()
+
+    return data
+
+@app.route('/question/editQuestion/<params>', methods=['POST'])
+def editQuestion(params):
+    user_id=params['id']
+    sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (params,user_id)
+    cursor.execute(sql)
+    data = {}
+    data['code'] = 200
+    return data
 
 
 if __name__ == '__main__':
