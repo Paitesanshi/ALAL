@@ -1,6 +1,8 @@
 <template>
   <div class="grid" id="grid">
-    <photo-card
+	<photo-card v-for="pic in imgs" :key="pic" :img="pic.src" >
+	</photo-card>
+    <!-- <photo-card
       img="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
       link="#"
     ></photo-card>
@@ -35,12 +37,13 @@
     <photo-card
       img="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
       link="#"
-    ></photo-card>
+    ></photo-card> -->
   </div>
 </template>
 <script>
 export default {
   name: "PhotoWall",
+  props:["imgs"],
 //   data() {},
 //   computed() {},
   created() {

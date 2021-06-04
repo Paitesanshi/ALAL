@@ -24,6 +24,8 @@ import 'vue-mini-player/lib/vue-mini-player.css'
 // 引入全局工具类
 import prototype from './utils/prototype'
 Vue.use(vueMiniPlayer)
+import hevueImgPreview from 'hevue-img-preview'
+Vue.use(hevueImgPreview)
 Vue.config.productionTip = false
 // 定义全局XSS解决方法
 Object.defineProperty(Vue.prototype, '$xss', {

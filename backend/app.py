@@ -2,9 +2,10 @@ import datetime
 import json
 
 import requests
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, make_response
 import pymysql
 from flask_cors import CORS
+import os
 
 app = Flask(__name__,
             static_folder="./dist/static",
@@ -1163,6 +1164,35 @@ def GetCommentList():
     data['code'] = 'success'
     data['records'] = records
     return data
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        f = request.files['file']
+        base_path = os.path.abspath(os.path.dirname(__file__))
+        print(base_path)
+        upload_path = os.path.join(base_path, 'static/uploads/')+"test.jpg"
+        print(upload_path)
+        f.save(upload_path)
+        return "文件上传成功!!"
+
+
+# show photo
+@app.route('/display/img/<string:filename>', methods=['GET'])
+def display_img(filename):
+    base_path = os.path.abspath(os.path.dirname(__file__))
+    if request.method == 'GET':
+        if filename is None:
+            pass
+        else:
+            image_data = open(
+                base_path + '/static/uploads/' + filename, "rb").read()
+            response = make_response(image_data)
+            response.headers['Content-Type'] = 'image/jpg'
+            return response
+    else:
+        pass
 
 
 @app.route('/index')

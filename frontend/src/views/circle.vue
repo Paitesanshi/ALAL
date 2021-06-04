@@ -1,31 +1,6 @@
 <template>
   <article>
-    <!--banner begin-->
-    <!--    <div class="picsbox">-->
-    <!--&lt;!&ndash;      <FirstRecommend></FirstRecommend>&ndash;&gt;-->
-    <!--      &lt;!&ndash;banner end&ndash;&gt;-->
-    <!--      &lt;!&ndash; 二级推荐 &ndash;&gt;-->
-    <!--      <div class="toppic">-->
-    <!--        <li v-for="item in secondData" :key="item.title" @click="goToInfo(item)">-->
-    <!--          <a href="javascript:void(0);">-->
-    <!--            <i>-->
-    <!--              <img v-if="item.photoList" :src="item.photoList[0]">-->
-    <!--            </i>-->
-    <!--            <h2>{{ item.title }}</h2>-->
-    <!--            <span>{{ item.labels[0] }}</span>-->
-    <!--          </a>-->
-    <!--        </li>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <VideoPlayer></VideoPlayer>
-
-    <div class="blank"></div>
-    <!--w2blogsbox begin-->
-    <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.isSingle != false">
-      <PhotoWall :imgs="this.urlData"></PhotoWall>
-    </div>
-
-    <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">
+    <div class="blogsbox">
       <div
         v-for="item in newBlogData"
         :key="item.blog_id"
@@ -124,14 +99,14 @@ import TagCloud from "../components/TagCloud";
 import HotBlog from "../components/HotBlog";
 import FollowUs from "../components/FollowUs";
 import Link from "../components/Link";
-import { getBlogByLevel, getNewBlog ,getAvatarsByUserID} from "../api/index";
+import { getBlogByLevel, getNewBlog } from "../api/index";
 import { Loading } from "element-ui";
 import CameraCapture from "../components/CameraCapture";
 import Camera from "../components/Camera";
 import PhotoWall from "../components/PhotoWall";
 
 export default {
-  name: "index",
+  name: "circle",
   components: {
     // 注册组件
     FirstRecommend,
@@ -148,7 +123,6 @@ export default {
   },
   data() {
     return {
-		urlData: [],
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
@@ -195,7 +169,6 @@ export default {
     // params.append('pageName', 'INDEX')
     // recorderVisitPage(params).then(response => {
     // })
-	this.getUserAvatars()
   },
   methods: {
     // 跳转到文章详情【或推广链接】
@@ -233,33 +206,6 @@ export default {
       //   window.open(blog.outsideLink, '_blank')
       // }
     },
-	getUserAvatars(){
-		let that=this
-		let params = new URLSearchParams()
-    	params.append('id',  this.$store.state.user.userInfo.id)
-		getAvatarsByUserID(params).then(response => {
-		if (response.data.code === this.$ECode.SUCCESS) {
-			that.urlData = response.data
-			console.log(response)
-			that.loadingInstance.close()
-		} else {
-			that.urlData=[
-				{"src":"http://121.196.111.9:5678/display/img/test.png"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png"},
-			]
-			that.loadingInstance.close()
-		}
-		}).catch(error => {
-			that.urlData=[
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-			]
-			console.log(this.urlData)
-			that.loadingInstance.close()
-		})
-	},
     // 跳转到搜索详情页
     goToList(uid) {
       this.$router.push({
