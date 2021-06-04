@@ -7,6 +7,7 @@ import pymysql
 from flask_cors import CORS
 import os
 
+#大志修改2021.6.4
 app = Flask(__name__,
             static_folder="./dist/static",
             template_folder="./dist")
@@ -23,16 +24,23 @@ cursor = db.cursor()
 cursor.execute("SELECT VERSION()")
 version = cursor.fetchone()
 
+#大志修改2021.6.4
 labels = {'1': "科技", '2': "新闻", '3': "美食", '4': "校园", '5': "更多"}
 user_info = {
     'user_id': '',
     'name': '',
+    'head_portrait': '',
     'password': '',
     'email': '',
-    'credit': 0,
-    'role': 0,
-    'state': 0,
-    'reputation': 5
+    'role': '',
+    'emotional_state': '',
+    'couple': '',
+    'sex': '',
+    'birth': '',
+    'job': '',
+    'city': '',
+    'ideal_type': '',
+    'question': ''
 }
 
 # @app.route('/', defaults={'path': ''})
@@ -42,27 +50,31 @@ user_info = {
 #         return requests.get('http://localhost:8603/{}'.format(path)).text
 #     return render_template("index.html")
 
-
+#大志修改2021.6.4
 def updateUserInfo():
-    sql = 'SELECT name,password,email,credit,role,state,reputation FROM Blog_user WHERE user_id="%s"' % user_info[
+    sql = 'SELECT name,password,head_portrait,email,role,emotional_state,couple,sex,birth,job,city,ideal_type,question FROM user WHERE user_id="%s"' % user_info[
         'user_id']
     cursor.execute(sql)
     row = cursor.fetchone()
     if row != None:
         user_info['name'] = row[0]
         user_info['password'] = row[1]
-        user_info['email'] = row[2]
-        user_info['credit'] = row[3]
+        user_info['head_portrait'] = row[2]
+        user_info['email'] = row[3]
         user_info['role'] = row[4]
-        user_info['reputation'] = row[6]
-        user_info['state'] = row[5]
+        user_info['emotional_state'] = row[5]
+        user_info['couple'] = row[6]
+        user_info['sex'] = row[7]
+        user_info['birth'] = row[8]
+        user_info['job'] = row[9]
+        user_info['city'] = row[10]
+        user_info['ideal_type'] = row[11]
+        user_info['question'] = row[12]
         file_object = open("user_info.txt", "w")
         json.dump(user_info, file_object)
         file_object.close()
 
-# 1.index
-
-
+# 这里没改
 @app.route('/index/getNewBlog', methods=['GET'])  # 指定接口访问的路径，支持什么请求方式get，post
 def getNewBlog():
     currentPage = int(request.values.get("currentPage"))
@@ -124,73 +136,28 @@ def getHotTag():
     return data
 
 
-# 3.info
+
+#大志_更改完成
 
 @app.route('/api/getBlogByUid', methods=['GET'])
 def getBlogByUid():
-    blog_id = int(request.values.get("blog_id"))
-    sql = "SELECT blog_id,Blog.user_id,publish_time,title,summary,content,approval_number,browse_number,need_credit,label,Blog.state,activity,name FROM Blog,Blog_user WHERE Blog_user.user_id=Blog.user_id AND blog_id=" + \
-        str(blog_id)
+    blog_id = int(request.values.get("moment_id"))
+    sql = 'SELECT moment_id,moment.user_id,publish_time,content,picture,read_limit,like_num FROM moment where moment_id ="%s"' \
+          %str(blog_id)
     cursor.execute(sql)
     blog = cursor.fetchone()
+    sql = 'SELECT name FROM user where user_id="%s"' %blog[1]
+    cursor.execute(sql)
+    user_name = cursor.fetchone()
     print(blog_id)
     result = {}
-    result['blogSort'] = blog[11]
-    result['title'] = blog[3]
-    result['author'] = blog[1]
-    result['name'] = blog[12]
-    sql = "SELECT name FROM Activity WHERE activity_id=%d" % (blog[11])
-    cursor.execute(sql)
-    sortname = cursor.fetchone()
-    result['blogSortName'] = sortname[0]
-
-    blog_labels = blog[9].split(",")
-    blog_label_name = []
-    for blog_label in blog_labels:
-        blog_label_name.append(labels[blog_label])
-    result['labels'] = blog_label_name
-    result['summary'] = blog[4]
-    result['clickCount'] = blog[7]
-    result['likeCount'] = blog[6]
+    result['author'] = user_name[0]
     result['time'] = blog[2].strftime("%Y-%m-%d %H:%M:%S")
-    result['content'] = blog[5]
+    result['content'] = blog[3]
+    result['picture'] = blog[4]
+    result['read_limit'] = blog[5]
+    result['likeCount'] = blog[6]
 
-    sql = 'SELECT * FROM History WHERE user_id="%s" AND blog_id=%d' % (
-        user_info['user_id'], blog_id)
-    cursor.execute(sql)
-    row = cursor.fetchall()
-    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    if len(row) == 0:
-        if user_info['reputation'] == 5:
-            result['need_credit'] = blog[8]
-        elif user_info['reputation'] == 4:
-            result['need_credit'] = blog[8] * 1.05
-        elif user_info['reputation'] == 3:
-            result['need_credit'] = blog[8] * 1.1
-        elif user_info['reputation'] == 2:
-            result['need_credit'] = blog[8] * 1.2
-        elif user_info['reputation'] == 1:
-            result['code'] = 'error'
-            result['message'] = '您信誉积分过低，无法查看'
-            return result
-
-        if result['need_credit'] == 0 and user_info['user_id'] is not '':
-            sql = 'INSERT INTO History VALUES("%s",%d,"%s")' % (
-                user_info['user_id'], blog_id, time)
-            cursor.execute(sql)
-            sql = 'UPDATE Blog SET browse_number=browse_number+1 WHERE blog_id=%d' % blog_id
-            cursor.execute(sql)
-            result['clickCount'] += 1
-
-    else:
-        result['need_credit'] = 0
-        sql = "UPDATE History SET time='%s' WHERE user_id='%s' AND blog_id='%d'" % (
-            time, user_info['user_id'], blog_id)
-        cursor.execute(sql)
-        sql = 'UPDATE Blog SET browse_number=browse_number+1 WHERE blog_id=%d' % blog_id
-        cursor.execute(sql)
-        result['clickCount'] += 1
-    updateUserInfo()
     result['code'] = 'success'
     return result
 
@@ -229,7 +196,7 @@ def payCreditByUid():
     updateUserInfo()
     return data
 
-
+#大志_添加评论   已更改
 @app.route('/web/comment/add', methods=['POST'])
 def addComment():
     datastr = str(request.data, 'utf-8')
@@ -246,8 +213,8 @@ def addComment():
     else:
         comment_id = int(row[0]) + 1
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = 'INSERT INTO Comment(comment_id,user_id,blog_id,time,content) VALUES (%d,"%s",%d,"%s","%s")' % (
-        comment_id, user_info['user_id'], blogUid, time, content)
+    sql = 'INSERT INTO comment(moment_id,user_id,time,content) VALUES (%d,%d,"%s","%s")' % (
+         user_info['user_id'], blogUid, time, content)
     cursor.execute(sql)
 
     data = {}
@@ -256,10 +223,11 @@ def addComment():
 
 
 # 6.home
+# 大志_更改数据库名称
 @app.route('/oauth/getFeedbackList', methods=['GET'])
 def getFeedbackList():
     data = {}
-    sql = 'SELECT content FROM Blog_message WHERE user_id="%s"' % user_info['user_id']
+    sql = 'SELECT content FROM message WHERE self_user_id="%s"' % user_info['user_id']
     cursor.execute(sql)
     row = cursor.fetchone()
     records = []
@@ -284,23 +252,21 @@ def getUserInfo():
 def logout():
     global user_info
     data = {}
-    # user_info['user_id'] = ''
-    #     # user_info['name'] = ''
-    #     # user_info['password'] = ''
-    #     # user_info['email'] = ''
-    #     # user_info['credit'] = ''
-    #     # user_info['role'] = 0
-    #     # user_info['reputation'] = 5
-    #     # user_info['state'] = 1
     user_info = {
         'user_id': '',
         'name': '',
+        'head_portrait': '',
         'password': '',
         'email': '',
-        'credit': 0,
-        'role': 0,
-        'state': 0,
-        'reputation': 5
+        'role': '',
+        'emotional_state': '',
+        'couple': '',
+        'sex': '',
+        'birth': '',
+        'job': '',
+        'city': '',
+        'ideal_type': '',
+        'question': ''
     }
     f = open('user_info.txt', 'w')
     f.write(str(user_info))
@@ -310,12 +276,12 @@ def logout():
     data['message'] = '退出成功'
     return data
 
-
+# 大志_ 更改成 查询好友列表
 @app.route('/web/comment/getFollowListByUser')
 def getFollowListByUser():
     data = {}
     records = []
-    sql = 'SELECT follower_id,time,name FROM Follow,Blog_user WHERE Follow.user_id=Blog_user.user_id AND Follow.user_id="%s" ORDER BY time DESC' % \
+    sql = 'SELECT user_id2,name FROM friend,user WHERE user_id2=user.user_id AND user_id1="%s" ORDER BY time DESC' % \
           user_info['user_id']
     cursor.execute(sql)
     row = cursor.fetchone()
@@ -323,7 +289,7 @@ def getFollowListByUser():
         record = {}
         record['follower_id'] = row[0]
         idd = row[0]
-        sql1 = " SELECT name from Blog_user WHERE user_id = %s" % idd
+        sql1 = " SELECT name from user WHERE user_id = %s" % idd
         cursor.execute(sql1)
         nname = cursor.fetchone()[0]
         record['createTime'] = row[1]
@@ -335,7 +301,7 @@ def getFollowListByUser():
     data['code'] = 'success'
     return data
 
-
+# 大志_ 我觉得莫得收藏
 @app.route('/web/comment/getCollectListByUser')
 def getCollectListByUser():
     data = {}
@@ -356,7 +322,7 @@ def getCollectListByUser():
     data['code'] = 'success'
     return data
 
-
+# 大志_ 我觉得没历史
 @app.route('/web/comment/getHistoryListByUser', methods=['POST'])
 def getHistoryListByUser():
     data = {}
@@ -385,7 +351,7 @@ def getHistoryListByUser():
         data['code'] = 'success'
     return data
 
-
+# 大志_juede 没搜索
 @app.route('/search/sqlSearchBlog', methods=['GET'])
 def search():
     # currentPage = int(request.values.get("currentPage"))
@@ -434,7 +400,7 @@ def search():
     data['records'] = records
     return data
 
-
+# 个人页查找所有moment 的 list
 @app.route('/web/comment/getListByUser', methods=['POST'])
 def getCommentListByUser():
     datastr = str(request.data, 'utf-8')
@@ -443,11 +409,11 @@ def getCommentListByUser():
     commentList = []
     replyList = []
     user_id = user_info['user_id']
-    sql = "select name from Blog_user where user_id=" + user_id
+    sql = "select name from user where user_id=" + user_id
     cursor.execute(sql)
     name = cursor.fetchone()[0]
     # 前面的name是我评论的文章的作者的姓名，后面的name是评论我的文章的用户姓名
-    sql = "SELECT Comment.comment_id,Comment.user_id,Comment.blog_id,Comment.time,Comment.content,Blog.user_id,Blog_user.name from Comment,Blog,Blog_user where Comment.blog_id=Blog.blog_id and Blog_user.user_id=Blog.user_id and Comment.user_id=" + user_id
+    sql = "SELECT comment.user_id,comment.moment_id,comment.time,comment.content,moment.user_id,user.name from comment,moment,user where comment.moment_id=moment.moment_id and user.user_id=moment.user_id and comment.user_id=" + user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     end = 10
@@ -472,7 +438,7 @@ def getCommentListByUser():
             break
         row = cursor.fetchone()
 
-    sql = "SELECT Comment.comment_id,Comment.user_id,Comment.blog_id,Comment.time,Comment.content,Blog.user_id,Blog_user.name from Comment,Blog,Blog_user where Comment.blog_id=Blog.blog_id and Blog_user.user_id=Comment.user_id and Blog.user_id=" + user_id
+    sql = "SELECT comment.user_id,comment.moment_id,comment.time,comment.content,moment.user_id,user.name from comment,moment,user where comment.moment_id=moment.moment_id and user.user_id=comment.user_id and moment.user_id=" + user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     end = 10
@@ -503,16 +469,16 @@ def getCommentListByUser():
     data['replyList'] = replyList
     return data
 
-
+# 大志_点赞
 @app.route('/api/praiseBlogByUid', methods=['GET'])
 def praiseBlogByUid():
     print("I am in praiseBlogByUid")
     id = int(request.values.get('uid'))
     # SQL语句点赞数+1
-    sql1 = "UPDATE Blog SET approval_number = approval_number+1 WHERE blog_id='%d'" % id
+    sql1 = "UPDATE moment SET like_num = like_num +1 WHERE moment_id='%d'" % id
     # SQL语句查询点赞数
-    sql2 = "SELECT approval_number FROM Blog WHERE blog_id='%d'" % id
-    sql3 = "INSERT INTO `blogs`.`Approval` (`user_id`, `blog_id`, `time`) VALUES ('%s', '%d', current_time);" % (
+    sql2 = "SELECT like_num FROM moment WHERE moment_id='%d'" % id
+    sql3 = "INSERT INTO `moment`.`like` (`user_id`, `moment_id`, `time`) VALUES ('%d', '%d', current_time);" % (
         user_info["user_id"], id)
 
     # 执行SQL语句
@@ -530,9 +496,10 @@ def praiseBlogByUid():
 
     return {"code": 'error', "number": number[0][0], "message": "您已经点过赞了！"}
 
+# 大志_获取点赞数
 
 def getPraise(id):
-    sql = "SELECT approval_number FROM Blog WHERE blog_id='%d'" % id
+    sql = "SELECT like_num FROM moment WHERE moment_id='%d'" % id
     try:
         # 执行SQL语句
         cursor.execute(sql)
@@ -542,7 +509,7 @@ def getPraise(id):
         db.rollback()
     return number
 
-
+# 大志_ 不需要改
 @app.route('/api/getBlogPraiseCountByUid', methods=['GET'])
 def getBlogPraiseCountByUid():
     print("I am in getBlogPraiseCountByUid")
@@ -550,7 +517,7 @@ def getBlogPraiseCountByUid():
     return getPraise(id)
 
 
-#  这里没写！
+#  大志_这没啥用
 @app.route('/api/addCollectBlog', methods=['GET'])
 def addCollectBlog():
     print("I am in addCollectBlog")
@@ -575,8 +542,7 @@ def addCollectBlog():
     return data
 
 
-#  这里没写！
-
+#  这没啥用_大志
 @app.route('/web/comment/getPraiseListByUser', methods=['POST'])
 def getPraiseList():
     datastr = str(request.data, 'utf-8')
@@ -614,7 +580,7 @@ def getPraiseList():
     data['records'] = records
     return data
 
-
+# 大志_用户登录验证
 @app.route('/oauth/verify/<params>')
 def authVerify(params):
     data = {}
@@ -645,9 +611,7 @@ def authVerify(params):
     data['uid'] = user_info['user_id']
     data['nickName'] = user_info['name']
     data['email'] = user_info['email']
-    data['credit'] = user_info['credit']
     data['role'] = user_info['role']
-    data['reputation'] = user_info['reputation']
     data['code'] = 'success'
     data['message'] = '恭喜登录成功!'
     # else:
@@ -667,7 +631,7 @@ def authVerify(params):
 #     data['code'] = 'success'
 #     return data
 
-
+# 大志_moment列表
 @app.route('/blogSort/getList', methods=['GET'])
 def getBlogSortList():
     data = {}
@@ -1166,6 +1130,7 @@ def GetCommentList():
     return data
 
 
+#大志_这里没改哦，应该加一个momentID
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
@@ -1173,6 +1138,9 @@ def upload():
         base_path = os.path.abspath(os.path.dirname(__file__))
         print(base_path)
         upload_path = os.path.join(base_path, 'static/uploads/')+"test.jpg"
+        sql = " "
+        cursor.execute(sql)
+        row = cursor.fetchone()
         print(upload_path)
         f.save(upload_path)
         return "文件上传成功!!"
