@@ -13,9 +13,9 @@ app = Flask(__name__,
 CORS(app, supports_credentials=True)
 db = pymysql.connect(host='121.196.111.9',
                      port=3306,
-                     user='test',
-                     passwd='123456',
-                     db='blogs'
+                     user='root',
+                     passwd='zxc110',
+                     db='alal'
                      )
 db.autocommit(True)
 # 使用 cursor() 方法创建一个游标对象 cursor
@@ -1069,6 +1069,7 @@ def localRegister():
     password = data_json.get("passWord")
     email = data_json.get("email")
     nickname = data_json.get("nickName")
+
 
     sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
     try:
