@@ -634,7 +634,7 @@ def authVerify(params):
 #     data['code'] = 'success'
 #     return data
 
-# 大志_moment列表
+# 大志_ 根据活动查询博客_ 没啥用了
 @app.route('/blogSort/getList', methods=['GET'])
 def getBlogSortList():
     data = {}
@@ -661,13 +661,13 @@ def getBlogSortList():
         data['code'] = 'success'
     return data
 
-
+# 大志_添加博客
 @app.route('/blog/add', methods=['POST'])
 def addBlog():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     form = data_json
-    sql = "SELECT MAX(blog_id) FROM Blog"
+    sql = "SELECT MAX(moment_id) FROM moment"
     cursor.execute(sql)
     max_id = cursor.fetchone()
     if max_id == None:
@@ -677,21 +677,12 @@ def addBlog():
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     label_num = form.get("tagUid")
     activityid = str(form.get("blogSortUid"))
-    sql = "INSERT INTO Blog VALUES (" + str(blog_id) + ",\"" + user_info['user_id'] + \
-          "\",\"" + time + "\",\"" + form.get("title") + "\",\"" + form.get("summary") + "\",\"" + \
-          form.get("content") + "\",0,0," + form.get("need_credit") + \
-          ",\"" + label_num + "\",0," + activityid + ")"
+    sql = "INSERT INTO momemt VALUES (" + str(blog_id) + ",\"" + user_info['user_id'] + \
+          "\",\"" + time + "\",\"" + form.get("content") + "\",\"" + form.get("picture") + "\",\"" + \
+          form.get("read_limit") + "\",0"
     cursor.execute(sql)
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = 'INSERT INTO History VALUES ("%s",%d,"%s")' % (
-        user_info['user_id'], blog_id, time)
-    cursor.execute(sql)
-    sql = 'SELECT credit FROM Activity WHERE activity_id=%s' % activityid
-    cursor.execute(sql)
-    credit = int(cursor.fetchone()[0])
-    sql = 'UPDATE Blog_user SET credit=credit+%d WHERE user_id="%s"' % (
-        credit, user_info['user_id'])
-    cursor.execute(sql)
+
     updateUserInfo()
     data = {}
     data['code'] = 'success'
@@ -699,7 +690,7 @@ def addBlog():
     return data
 
 
-# 8.FollowBtn
+# 8.大志_获取关注者列表，没啥用了
 @app.route('/api/getFollowedByUid', methods=['GET'])
 def getFollowedByUid():
     uid = request.values.get("uid")
@@ -719,7 +710,7 @@ def getFollowedByUid():
     print(data.get('liked'))
     return data
 
-
+# 大志_关注_应该没啥用
 @app.route('/api/FollowByUid', methods=['GET'])
 def followByUid():
     uid = request.values.get("uid")
@@ -749,6 +740,7 @@ def followByUid():
 
 
 # 9.sort
+# 大志_查看活动的博客_应该没啥用
 @app.route('/sort/getSortList', methods=['GET'])
 def getSortList():
     data = {}
@@ -775,7 +767,7 @@ def getSortList():
         data['code'] = 'success'
     return data
 
-
+# 查看活动下的博客
 @app.route('/sort/getArticleBySort', methods=['GET'])
 def getArticleBySort():
     id = int(request.values.get("id"))
@@ -821,6 +813,7 @@ def getArticleBySort():
 
 
 # 10.tag
+# 大志_获取tag列表_应该没啥用
 @app.route('/tag/getTagList', methods=['GET'])
 def getTagList():
     data = {'records': [
@@ -832,7 +825,7 @@ def getTagList():
     ], 'code': 'success'}
     return data
 
-
+# 大志_通过标签查博客_应该没啥用
 @app.route('/tag/getArticleByTagUid', methods=['GET'])
 def getArticleByTagUid():
     tagUid = request.values.get("tagUid")
@@ -874,7 +867,7 @@ def getArticleByTagUid():
         data['code'] = 'success'
     return data
 
-
+# 没啥用_管理员处理举报
 # 11.admin
 @app.route('/admin/workReport', methods=['POST'])
 def workReport():
@@ -898,7 +891,7 @@ def workReport():
     updateUserInfo()
     return data
 
-
+# dazhi_管理员获取举报列表_没啥用
 @app.route('/admin/getReportList')
 def getReportList():
     data = {}
@@ -923,7 +916,7 @@ def getReportList():
     data['message'] = '操作成功'
     return data
 
-
+# 举报_按时间排序
 @app.route('/admin/getSortList')
 def getActivityList():
     data = {}
@@ -945,7 +938,7 @@ def getActivityList():
     data['code'] = 'success'
     return data
 
-
+# 大志认为这没啥用_举报博客
 @app.route('/admin/blogSort/add', methods=['POST'])
 def addBlogSort():
     datastr = str(request.data, 'utf-8')
@@ -971,6 +964,7 @@ def addBlogSort():
     data['code'] = 'success'
     return data
 
+# 大志_登录函数
 
 @app.route('/login/login', methods=['POST'])
 def LocalLogin():
@@ -982,7 +976,7 @@ def LocalLogin():
     password = data_json.get("passWord")
     print(username)
     print(password)
-    sql = "SELECT * FROM Blog_user WHERE user_id = '%s' AND password = '%s' " % (
+    sql = "SELECT * FROM user WHERE user_id = '%s' AND password = '%s' " % (
         username, password)
     try:
         # 执行SQL语句
@@ -1001,22 +995,25 @@ def LocalLogin():
     else:
         data['code'] = 'success'
         data['message'] = '登录成功'
-        sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
+        sql = "SELECT * FROM user WHERE user_id = '%s'" % username
         cursor.execute(sql)
         results = cursor.fetchall()
         for row in results:
             user_info['user_id'] = row[0]
             user_info['name'] = row[1]
-            user_info['password'] = row[2]
-            user_info['email'] = row[3]
-            user_info['credit'] = row[4]
+            user_info['head_portrait'] = row[2]
+            user_info['password'] = row[3]
+            user_info['email'] = row[4]
             user_info['role'] = row[5]
-            user_info['state'] = row[6]
-            user_info['reputation'] = row[7]
+            user_info['emotional_state'] = row[6]
+            user_info['couple'] = row[7]
+            user_info['sex'] = row[8]
+            user_info['birth'] = row[9]
+            user_info['job'] = row[10]
+            user_info['city'] = row[11]
+            user_info['ideal_type'] = row[12]
+            user_info['question'] = row[13]
         data['id'] = user_info.get('user_id')
-        if int(user_info['reputation']) == 0:
-            data['message'] = '你个烂人！'
-            data['code'] = 'error'
     print("loginnn")
     print(user_info)
     data['records'] = user_info
@@ -1026,7 +1023,7 @@ def LocalLogin():
 
     return data
 
-
+# 大志_注册
 @app.route('/login/register', methods=['POST'])
 def localRegister():
     global user_info
@@ -1039,7 +1036,7 @@ def localRegister():
     nickname = data_json.get("nickName")
 
 
-    sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
+    sql = "SELECT * FROM user WHERE user_id = '%s'" % username
     try:
         # 执行SQL语句
         cursor.execute(sql)
@@ -1054,31 +1051,37 @@ def localRegister():
     if len(results) == 0:
         data['code'] = 'success'
         data['message'] = '注册成功'
-        sql = "INSERT INTO `blogs`.`Blog_user` (`user_id`, `name`, `password`, `email`, `credit`, `role`, `state`, `reputation`) VALUES ('%s', '%s', '%s', '%s', '100', '0', '1', '5');" % (
-            username, nickname, password, email)
+        sql = "INSERT INTO `user` (`user_id`, `name`, `head_portrait`，`password`, `email`, `role`, `emotional_state`, `couple`,`sex`,`birth`,`job`,`city`,`ideal_type`,`question`) VALUES ('%s','%s', '%s', '%s', '%s', '1', '%d', '%d', '%s','%s','%s','%s','%s','%s');" % (
+            username,data_json.get("head_portrait") ,nickname, password, email,data_json.get("emotional_state"),data_json.get("couple"),data_json.get("sex"),data_json.get("birth"),data_json.get("job"),data_json.get("city"),data_json.get("ideal_type"),data_json.get("question"))
         cursor.execute(sql)
-        sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
+        sql = "SELECT * FROM user WHERE user_id = '%s'" % username
         cursor.execute(sql)
         results = cursor.fetchall()
         for row in results:
             user_info['user_id'] = row[0]
             user_info['name'] = row[1]
-            user_info['password'] = row[2]
-            user_info['email'] = row[3]
-            user_info['credit'] = row[4]
+            user_info['head_portrait'] = row[2]
+            user_info['password'] = row[3]
+            user_info['email'] = row[4]
             user_info['role'] = row[5]
-            user_info['state'] = row[6]
-            user_info['reputation'] = row[7]
+            user_info['emotional_state'] = row[6]
+            user_info['couple'] = row[7]
+            user_info['sex'] = row[8]
+            user_info['birth'] = row[9]
+            user_info['job'] = row[10]
+            user_info['city'] = row[11]
+            user_info['ideal_type'] = row[12]
+            user_info['question'] = row[13]
     else:
         data['code'] = 'error'
         data['message'] = '注册失败,该账号已被注册'
 
-    sql = "SELECT * FROM Blog_user "
+    sql = "SELECT * FROM user "
     cursor.execute(sql)
     return data
 
 
-# 4.举报
+# 4.大志觉得没啥用_举报
 @app.route('/api/reportBlog', methods=['GET'])
 def ReportBlog():
     print("I AM IN ReportBlog!")
@@ -1100,7 +1103,7 @@ def ReportBlog():
     return data
 
 
-# 12 读取评论
+# 12 大志_读取评论
 @app.route('/web/comment/getList', methods=['POST'])
 def GetCommentList():
     print("I AM IN GetCommentList!")
@@ -1108,7 +1111,7 @@ def GetCommentList():
     data_json = json.loads(datastr)
     id = int(data_json.get('blogUid'))
     records = []
-    sql = "SELECT * FROM Comment WHERE blog_id='%d'" % id
+    sql = "SELECT * FROM comment WHERE moment_id='%d'" % id
     #   try:
     # 执行SQL语句
     cursor.execute(sql)
@@ -1117,7 +1120,7 @@ def GetCommentList():
         record = {}
         record['uid'] = int(i)
         record['createTime'] = comment[i][3].strftime("%Y-%m-%d %H:%M:%S")
-        sql = "SELECT name FROM Blog_user WHERE user_id = '%s'" % comment[i][1]
+        sql = "SELECT name FROM user WHERE user_id = '%s'" % comment[i][1]
         cursor.execute(sql)
         nname = cursor.fetchall()
         name = nname[0][0]
