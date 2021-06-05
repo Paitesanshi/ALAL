@@ -1,5 +1,65 @@
 <template>
   <article>
+    <div class="top">
+      <el-button><a href="index.vue>">返回</a></el-button>
+    </div>
+    <div class="userInfo">
+      <div align="center">
+        <td style="width: 25%">
+          <el-image
+            style="width: 128px; height: 128px; border-radius: 50%;"
+            :fit="fits">
+          </el-image>
+        </td>
+        <div class="myInfo">
+          <td>姓名：</td>
+          <td>{{this.$store.state.user.userInfo.name}}</td>
+          <tr>
+          <td>情感状况：</td>
+          <td>{{this.$store.state.user.userInfo.sex}}</td>
+          </tr>
+          <tr>
+            <td>理想型：</td>
+            <td>{{this.$store.state.user.userInfo.idealType}}</td>
+          </tr>
+          <br>
+          <button>填写问卷</button>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <br>
+      <div class="left">
+        <tr>
+          <td>性别：</td>
+          <td v-if="this.$store.state.user.userInfo.sex === 1">男</td>
+          <td v-else>女</td>
+        </tr>
+        <tr>
+          <td>手机号：</td>
+          <td>{{this.$store.state.user.userInfo.phone}}</td>
+        </tr>
+        <tr>
+          <td>邮箱：</td>
+          <td>{{this.$store.state.user.userInfo.email}}</td>
+        </tr>
+        <tr>
+          <td>城市：</td>
+          <td>{{this.$store.state.user.userInfo.city}}</td>
+        </tr>
+        <tr>
+          <td>职业：</td>
+          <td>{{this.$store.state.user.userInfo.career}}</td>
+        </tr>
+        <!--          <tr>-->
+        <!--            <td>学校：</td>-->
+        <!--            <td>{{this.$store.state.user.userInfo.school}}</td>-->
+        <!--          </tr>-->
+        <tr>
+          <td>出生日期：</td>
+          <td>{{this.$store.state.user.userInfo.birthDate}}</td>
+        </tr>
+      </div>
     <div class="blogsbox">
       <div
         v-for="item in newBlogData"
@@ -9,8 +69,8 @@
       >
         <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{
-            item.title
-          }}</a>
+              item.title
+            }}</a>
         </h3>
 
         <!--        <span class="blogpic">-->
@@ -25,14 +85,14 @@
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
               <a href="javascript:void(0);" @click="goToAuthor(item.user_id)">{{
-                item.name
-              }}</a>
+                  item.name
+                }}</a>
             </li>
             <li class="lmname" v-if="item.labels">
               <span class="iconfont">&#xe603;</span>
               <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
-                item.labels[0]
-              }}</a>
+                  item.labels[0]
+                }}</a>
             </li>
             <li class="view">
               <span class="iconfont">&#xe8c7;</span>
@@ -53,10 +113,6 @@
       <div class="isEnd">
         <!-- <span v-if="!isEnd">正在加载中~</span> -->
 
-        <div class="loadContent" @click="loadContent" v-if="!isEnd && !loading">
-          点击加载更多
-        </div>
-
         <div class="lds-css ng-scope" v-if="!isEnd && loading">
           <div style="width:100%;height:100%" class="lds-facebook">
             <div></div>
@@ -64,29 +120,9 @@
             <div></div>
           </div>
         </div>
-
-        <span v-if="isEnd">我也是有底线的~</span>
       </div>
     </div>
-    <!--blogsbox end-->
-
-    <!--    <div class="sidebar">-->
-    <!--      &lt;!&ndash;标签云&ndash;&gt;-->
-    <!--      <TagCloud></TagCloud>-->
-
-    <!--      &lt;!&ndash;关注我们&ndash;&gt;-->
-    <!--&lt;!&ndash;      <FollowUs></FollowUs>&ndash;&gt;-->
-
-    <!--      &lt;!&ndash; 三级推荐 &ndash;&gt;-->
-    <!--&lt;!&ndash;      <ThirdRecommend></ThirdRecommend>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;      &lt;!&ndash;四级推荐&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;      <FourthRecommend></FourthRecommend>&ndash;&gt;-->
-
-    <!--      &lt;!&ndash;点击排行&ndash;&gt;-->
-    <!--&lt;!&ndash;      <HotBlog></HotBlog>&ndash;&gt;-->
-
-    <!--    </div>-->
+    </div>
   </article>
 </template>
 
@@ -104,9 +140,11 @@ import { Loading } from "element-ui";
 import CameraCapture from "../components/CameraCapture";
 import Camera from "../components/Camera";
 import PhotoWall from "../components/PhotoWall";
+import Info from '../components/userInfo/click_resume'
 
 export default {
-  name: "circle",
+  props: ['list', 'imageUrl'],
+  name: 'circle',
   components: {
     // 注册组件
     FirstRecommend,
@@ -119,7 +157,8 @@ export default {
     VideoPlayer,
     CameraCapture,
     Camera,
-    PhotoWall
+    PhotoWall,
+    Info
   },
   data() {
     return {
@@ -205,19 +244,6 @@ export default {
       //   })
       //   window.open(blog.outsideLink, '_blank')
       // }
-    },
-    getResume(){
-      let params = new URLSearchParams()
-      params.append('id',  this.$store.state.user.userInfo.id)
-      getResumeByID(params).then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          this.blogSortData = response.data.records
-        }
-      }).catch(error => {
-        console.log(error)
-        this.blogSortData = [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}]
-      })
-
     },
     // 跳转到搜索详情页
     goToList(uid) {
@@ -310,7 +336,28 @@ export default {
 .el-loading-mask {
   z-index: 2002;
 }
-
+button{
+  background: #7fb4d7;
+  padding: 10px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius:15px;
+}
+.myInfo{
+  color: white;
+  /* 表格边框颜色 */
+  border: 0.5px;
+}
+.left{
+  font-weight: bold;
+  padding: 20px 200px 40px 50px;
+  background-color: white;
+  float:left
+}
+.blogsbox{
+  float: right;
+}
 .isEnd {
   float: left;
   width: 100%;
@@ -471,3 +518,4 @@ export default {
   margin-right: 2px;
 }
 </style>
+
