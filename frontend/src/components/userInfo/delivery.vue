@@ -3,11 +3,11 @@
     <div v-if="!show" class="nofind">
       <p>暂时没有记录哦</p>
     </div>
-    <div v-show="show" v-for="(item, index) in list" :key="index"  @click="checkDetail(item.recruitId)">
+    <div v-show="show" v-for="(item, index) in list" :key="index"  @click="checkDetail(item.id)">
       <el-card shadow="hover" class="deliverycard">
         <div class="resumeBox">
-          <p>{{item.title}}</p>
-          <p>{{item.content}}</p>
+          <p>{{item.applicant}}</p>
+          <p>{{item.createdTime}}</p>
         </div>
       </el-card>
     </div>
@@ -43,25 +43,43 @@
 </style>
 
 <script>
+import { getFriendsRequestList} from "@/api/user";
 export default {
   data() {
     return {
-      list: [
-        {
-          title: '有人向你发出好友申请',
-          content: 'hihihi，一起交个朋友吧！'
-        }
-      ],
+      list: [],
       show: true
     }
   },
-  mounted() {
-    this.getList()
+  created(){
+let that =this
+	    let params=new URLSearchParams()
+		params.append("id",this.$store.state.user.userInfo.id)
+		getFriendsRequestList(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+			this.list=response.data.list
+        }else{
+			this.$notify({
+            title: '失败',
+            message: '获取申请信息失败',
+            type: 'error',
+            offset: 100
+          })
+		}
+      }).catch(error => {
+        console.log(error)
+		 that.list= [
+        {
+			id:'',
+          applicant: 'wl',
+          createdTime: '2021.05.13'
+        }
+      ]
+      })
   },
   methods: {
-    checkDetail(id) {
-      localStorage.setItem('jobId', id)
-      this.$router.push({name: 'jobInfo'})
+    checkDetail(uid) {
+      this.$router.push({name: 'requestInfo',query: {id:uid}})
     },
 
   }

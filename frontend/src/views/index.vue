@@ -323,7 +323,6 @@ export default {
     loadContent: function() {
       var that = this;
       that.loading = false;
-      that.currentPage = that.currentPage + 1;
       var params = new URLSearchParams();
       params.append("currentPage", that.currentPage);
       params.append("pageSize", that.pageSize);

@@ -94,7 +94,7 @@
 
 <script>
 /* eslint-disable indent */
-
+import { editPassword} from "@/api/user";
 export default {
   props :["phone"],
   data() {
@@ -155,21 +155,44 @@ export default {
   },
   methods: {
     showPhone(phone){
-      return 111
+      return phone
     },
     changePhone(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-
+			
         } else {
           console.log("error submit!!");
         }
       });
     },
     changePass(formName) {
+		let that=this
       this.$refs[formName].validate(valid => {
         if (valid) {
-
+			let params=new URLSearchParams()
+			params.append("id",this.$store.state.user.userInfo.id)
+			params.append("password",that.passForm.password)
+			editPassword(params).then(response => {
+				if (response.data.code === this.$ECode.SUCCESS) {
+					this.$store.state.user.userInfo.password=that.passForm.password
+					this.$notify({
+					title: '成功',
+					message: '修改成功',
+					type: 'success',
+					offset: 100
+				})
+			}else{
+				this.$notify({
+					title: '失败',
+					message: '修改信息失败',
+					type: 'error',
+					offset: 100
+				})
+			}
+			}).catch(error => {
+				console.log(error)
+			})
         } else {
           console.log("error submit!!");
           return false;

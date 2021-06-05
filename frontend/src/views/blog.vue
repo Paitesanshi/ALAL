@@ -140,7 +140,7 @@
                  list-type="picture-card"
                  :on-preview="handlePictureCardPreview"
                  :on-remove="handleRemove"
-                 :http-request="uploadAvatar"
+                 :http-request="uploadPicture"
                  :before-upload="beforeAvatarUpload"
                  :file-list="fileList"
                >
@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { addBlog, editBlog,uploadPhoto } from '@/api/blog'
+import { addBlog, editBlog,uploadPhoto,uploadMomentPhotos} from '@/api/blog'
 // import { getSystemConfig } from '@/api/systemConfig'
 import { getTagList } from '@/api/tag'
 import { getBlogSortList } from '@/api/blogSort'
@@ -359,13 +359,14 @@ export default {
     // this.blogList()
   },
   methods: {
-	  uploadAvatar(item) {
+	  uploadPicture(item) {
           const formData = new FormData()
           formData.append('file', item.file)
+		  formData.append('avatar',true)
           const uid = item.file.uid
           uploadPhoto(formData).then(res => {
 			  console.log(res)
-            this.picList.push({ key: uid, value: res.data.data.url })
+            this.picList.push({ key: uid, value: res.data.url })
             this.emptyUpload()
           }).catch(() => {
             this.$message.error('上传失败，请重新上传')
@@ -549,13 +550,20 @@ export default {
               }
             })
           } else {
-		
+		let that =this
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 // 清空cookie中的内容
                 // delCookie('form')
                 // 清空触发器
+				let momentid=res.data.id
+				let para=new URLSearchParams()
+				para.append("moment_id",momentid)
+				para.append("picList",that.picList)
+				uploadMomentPhotos(para).then((res) => {
+					console.log(res)
+				})
                 clearInterval(this.interval)
                 this.dialogFormVisible = false
                 location.href=this.vueMoguWebUrl + '/#/'

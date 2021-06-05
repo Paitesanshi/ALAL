@@ -466,10 +466,6 @@ export default {
 			 this.resumeList.idealType=this.$store.state.user.userInfo.idealType
 			  this.resumeList.phone=this.$store.state.user.userInfo.phone
   },
-  mounted () {
-    let userId = sessionStorage.getItem('userId')
-    this.getResume(userId)
-  },
   watch: {
     tip() {
       location.reload()

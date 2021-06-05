@@ -124,15 +124,6 @@ export default {
       return this.list.photoUrl === ''?"./static/default_photo.png":this.list.photoUrl
     }
   },
-  mounted () {
-
-    this.head = {
-      ContentType: 'application/json',
-      'F-RECRUIT-TOKEN': localStorage.getItem('token')
-    }
-    this.getUserInfo()
-    this.refresh = this.$route.params.refresh !== undefined ? this.$route.params.refresh : 0
-  },
   watch: {
     refresh () {
       location.reload()
