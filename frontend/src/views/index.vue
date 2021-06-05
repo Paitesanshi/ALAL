@@ -22,10 +22,7 @@
     <div class="blank"></div>
     <!--w2blogsbox begin-->
     <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.isSingle != false">
-      <router-link to="/click_userInfo">
-        <a href="javascript:void(0);" :class="[saveTitle == '/click_userInfo' ? 'title' : '']">
-          <PhotoWall :imgs="this.urlData" ></PhotoWall></a>
-      </router-link>
+          <PhotoWall :imgs="this.urlData" ></PhotoWall>
     </div>
 
     <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">

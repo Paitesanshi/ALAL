@@ -13,14 +13,14 @@
         </td>
         <div class="myInfo">
           <td>姓名：</td>
-          <td>{{this.$store.state.user.userInfo.name}}</td>
+          <td>{{this.UserList.name}}</td>
           <tr>
           <td>情感状况：</td>
-          <td>{{this.$store.state.user.userInfo.sex}}</td>
+          <td>{{this.UserList.emotion}}</td>
           </tr>
           <tr>
             <td>理想型：</td>
-            <td>{{this.$store.state.user.userInfo.idealType}}</td>
+            <td>{{this.UserList.idealType}}</td>
           </tr>
           <br>
           <button>填写问卷</button>
@@ -32,24 +32,19 @@
       <div class="left">
         <tr>
           <td>性别：</td>
-          <td v-if="this.$store.state.user.userInfo.sex === 1">男</td>
-          <td v-else>女</td>
-        </tr>
-        <tr>
-          <td>手机号：</td>
-          <td>{{this.$store.state.user.userInfo.phone}}</td>
+          <td>{{this.UserList.sex}}</td>
         </tr>
         <tr>
           <td>邮箱：</td>
-          <td>{{this.$store.state.user.userInfo.email}}</td>
+          <td>{{this.UserList.email}}</td>
         </tr>
         <tr>
           <td>城市：</td>
-          <td>{{this.$store.state.user.userInfo.city}}</td>
+          <td>{{this.UserList.city}}</td>
         </tr>
         <tr>
           <td>职业：</td>
-          <td>{{this.$store.state.user.userInfo.career}}</td>
+          <td>{{this.UserList.career}}</td>
         </tr>
         <!--          <tr>-->
         <!--            <td>学校：</td>-->
@@ -57,7 +52,7 @@
         <!--          </tr>-->
         <tr>
           <td>出生日期：</td>
-          <td>{{this.$store.state.user.userInfo.birthDate}}</td>
+          <td>{{this.UserList.birthDate}}</td>
         </tr>
       </div>
     <div class="blogsbox">
@@ -127,19 +122,19 @@
 </template>
 
 <script>
-import FirstRecommend from "../components/FirstRecommend";
-import VideoPlayer from "../components/VideoPlayer";
-import ThirdRecommend from "../components/ThirdRecommend";
-import FourthRecommend from "../components/FourthRecommend";
-import TagCloud from "../components/TagCloud";
-import HotBlog from "../components/HotBlog";
-import FollowUs from "../components/FollowUs";
-import Link from "../components/Link";
-import { getBlogByLevel, getNewBlog } from "../api/index";
-import { Loading } from "element-ui";
-import CameraCapture from "../components/CameraCapture";
-import Camera from "../components/Camera";
-import PhotoWall from "../components/PhotoWall";
+import FirstRecommend from '../components/FirstRecommend'
+import VideoPlayer from '../components/VideoPlayer'
+import ThirdRecommend from '../components/ThirdRecommend'
+import FourthRecommend from '../components/FourthRecommend'
+import TagCloud from '../components/TagCloud'
+import HotBlog from '../components/HotBlog'
+import FollowUs from '../components/FollowUs'
+import Link from '../components/Link'
+import { getBlogByLevel, getNewBlog } from '../api/index'
+import { Loading } from 'element-ui'
+import CameraCapture from '../components/CameraCapture'
+import Camera from '../components/Camera'
+import PhotoWall from '../components/PhotoWall'
 import Info from '../components/userInfo/click_resume'
 
 export default {
@@ -160,7 +155,7 @@ export default {
     PhotoWall,
     Info
   },
-  data() {
+  data () {
     return {
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
@@ -169,41 +164,52 @@ export default {
       newBlogData: [], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
-      keyword: "",
+      keyword: '',
       currentPage: 1,
       pageSize: 15,
       total: 0, // 总数量
       isEnd: false, // 是否到底底部了
-      loading: false // 是否正在加载
-    };
+      loading: false,// 是否正在加载
+      //用户信息展示
+      UserList: {
+        city: '',
+        name: '',
+        sex: '',
+        emotion: '',
+        career: '',
+        email: '',
+        birthDate: '',
+        idealType: ''
+      },
+    }
   },
-  mounted() {
+  mounted () {
     // 注册scroll事件并监听
-    this.loading = false;
+    this.loading = false
   },
-  created() {
-    var secondParams = new URLSearchParams();
-    secondParams.append("level", 2);
+  created () {
+    var secondParams = new URLSearchParams()
+    secondParams.append('level', 2)
     // 是否排序
-    secondParams.append("useSort", 1);
+    secondParams.append('useSort', 1)
     getBlogByLevel(secondParams)
       .then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records;
+          this.secondData = response.data.records
         }
       })
       .catch(error => {
-        console.log(error);
+        console.log(error)
         for (let i = 0; i < 2; ++i) {
           this.secondData.push({
-            title: "Alibaba",
-            labels: "技术",
-            photoList: ["../../static/images/banner.png"]
-          });
+            title: 'Alibaba',
+            labels: '技术',
+            photoList: ['../../static/images/banner.png']
+          })
         }
-      });
+      })
     // 获取最新博客
-    this.newBlogList();
+    this.newBlogList()
     // var params = new URLSearchParams()
     // params.append('pageName', 'INDEX')
     // recorderVisitPage(params).then(response => {
@@ -211,23 +217,23 @@ export default {
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo(blog) {
+    goToInfo (blog) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
       ) {
         this.$notify.error({
-          title: "警告",
-          message: "宁信誉积分太低，宁不配",
+          title: '警告',
+          message: '宁信誉积分太低，宁不配',
           offset: 100
-        });
+        })
       } else {
         let routeData = this.$router.resolve({
-          path: "/info",
+          path: '/info',
           query: { blogUid: blog.blog_id }
-        });
-        console.log(blog.id);
-        window.open(routeData.href, "_blank");
+        })
+        console.log(blog.id)
+        window.open(routeData.href, '_blank')
       }
 
       // if (blog.type === '0') {
@@ -246,90 +252,94 @@ export default {
       // }
     },
     // 跳转到搜索详情页
-    goToList(uid) {
+    goToList (uid) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { sortUid: uid }
-      });
+      })
     },
 
     // 跳转到搜索详情页
-    goToAuthor(author) {
+    goToAuthor (author) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { author: author }
-      });
+      })
     },
 
     // 最新博客列表
-    newBlogList() {
-      var that = this;
+    newBlogList () {
+      var that = this
       that.loadingInstance = Loading.service({
         lock: true,
-        text: "正在努力加载中……",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
+        text: '正在努力加载中……',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
 
-      var params = new URLSearchParams();
-      params.append("currentPage", this.currentPage);
-      params.append("pageSize", this.pageSize);
+      var params = new URLSearchParams()
+      params.append('currentPage', this.currentPage)
+      params.append('pageSize', this.pageSize)
       getNewBlog(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
-            that.newBlogData = response.data.records;
-            that.total = response.data.total;
-            that.pageSize = response.data.size;
-            that.currentPage = response.data.currentPage;
+            that.newBlogData = response.data.records
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.currentPage
           }
-          that.loadingInstance.close();
+          that.loadingInstance.close()
           // eslint-disable-next-line handle-callback-err
         })
         .catch(error => {
           for (let i = 0; i < 5; ++i) {
             this.newBlogData.push({
-              title: "test",
-              author: "ptss",
-              labels: ["技术", "数据库"],
-              summary: "略略略",
+              title: 'test',
+              author: 'ptss',
+              labels: ['技术', '数据库'],
+              summary: '略略略',
               clickCount: 100,
               likeCount: 200,
-              time: "2020-12-2"
-            });
+              time: '2020-12-2'
+            })
           }
-          that.loadingInstance.close();
-        });
+          that.loadingInstance.close()
+        })
     },
 
-    loadContent: function() {
-      var that = this;
-      that.loading = false;
-      that.currentPage = that.currentPage + 1;
-      var params = new URLSearchParams();
-      params.append("currentPage", that.currentPage);
-      params.append("pageSize", that.pageSize);
+    loadContent: function () {
+      var that = this
+      that.loading = false
+      that.currentPage = that.currentPage + 1
+      var params = new URLSearchParams()
+      params.append('currentPage', that.currentPage)
+      params.append('pageSize', that.pageSize)
       getNewBlog(params).then(response => {
         if (
           response.data.code === this.$ECode.SUCCESS &&
           response.data.records.length > 0
         ) {
-          that.isEnd = false;
-          var newData = that.newBlogData.concat(response.data.records);
-          that.newBlogData = newData;
-          that.total = response.data.total;
-          that.pageSize = response.data.size;
-          that.currentPage = response.data.current;
+          that.isEnd = false
+          var newData = that.newBlogData.concat(response.data.records)
+          that.newBlogData = newData
+          that.total = response.data.total
+          that.pageSize = response.data.size
+          that.currentPage = response.data.current
           // 全部加载完毕
           if (newData.length < that.pageSize) {
-            that.isEnd = true;
+            that.isEnd = true
           }
         } else {
-          that.isEnd = true;
+          that.isEnd = true
         }
-        that.loading = false;
-      });
+        that.loading = false
+      })
+    },
+    create () {
+      let params = new URLSearchParams()
+      params.append('id', this.$route.query.id)
     }
   }
-};
+}
 </script>
 
 <style>
@@ -518,4 +528,3 @@ button{
   margin-right: 2px;
 }
 </style>
-
