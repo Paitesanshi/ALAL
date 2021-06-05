@@ -305,7 +305,7 @@
 </style>
 
 <script>/* eslint-disable indent */
-import { getResume} from "@/api/question";
+import { editResume} from "@/api/user";
 export default {
   data () {
     var checkname = (rule, value, callback) => {
@@ -455,6 +455,17 @@ export default {
       }
     }
   },
+  created(){
+	  this.resumeList.city=this.$store.state.user.userInfo.city
+	   this.resumeList.name=this.$store.state.user.userInfo.name
+	    this.resumeList.sex=this.$store.state.user.userInfo.sex
+		 this.resumeList.emotion=this.$store.state.user.userInfo.emotion
+		  this.resumeList.career=this.$store.state.user.userInfo.career
+		   this.resumeList.email=this.$store.state.user.userInfo.email
+		    this.resumeList.birthDate=this.$store.state.user.userInfo.birthDate
+			 this.resumeList.idealType=this.$store.state.user.userInfo.idealType
+			  this.resumeList.phone=this.$store.state.user.userInfo.phone
+  },
   mounted () {
     let userId = sessionStorage.getItem('userId')
     this.getResume(userId)
@@ -474,8 +485,31 @@ export default {
     deleteItem (key) {
       this.resumeList.skills.splice(key, 1)
     },
-
-
+	changeResume(info){
+		let params=new URLSearchParams()
+		params.append("id",this.$store.state.user.userInfo.id)
+		params.append("userInfo",info)
+		editResume(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+			this.resumeList=info
+			this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success',
+            offset: 100
+          })
+        }else{
+			this.$notify({
+            title: '失败',
+            message: '修改信息失败',
+            type: 'error',
+            offset: 100
+          })
+		}
+      }).catch(error => {
+        console.log(error)
+      })
+	},
     addSkill () {
       let newskills = {
         id: 0,
@@ -485,19 +519,21 @@ export default {
       }
       this.resumeList.skills.push(newskills)
     },
-	getResume(){
-		let params = new URLSearchParams()
-    	params.append('id',  this.$store.state.user.userInfo.id)
-		getResumeByID(params).then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          this.blogSortData = response.data.records
-        }
-      }).catch(error => {
-        console.log(error)
-        this.blogSortData = [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}]
-      })
+	// getResume(){
+	// 	let params = new URLSearchParams()
+    // 	params.append('id',  this.$store.state.user.userInfo.id)
+	// 	getResumeByID(params).then(response => {
+    //     if (response.data.code === this.$ECode.SUCCESS) {
+	// 		this.haveResume=true
+    //      	this.resumeList = response.data.records
+    //     }else{
+	// 		this.haveResume=false
+	// 	}
+    //   }).catch(error => {
+    //     console.log(error)
+    //   })
 
-	}
+	// }
   }
 }
 </script>

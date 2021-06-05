@@ -15,3 +15,10 @@ export function getResumeByID(params) {
 		params
 	})
 }
+export function editResume(params) {
+	return request({
+		url: process.env.ADMIN_API + '/editResume',
+		method: 'post',
+		params
+	})
+}

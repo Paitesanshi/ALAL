@@ -23,7 +23,7 @@
 <!--        </el-tab-pane>-->
         <el-tab-pane>
           <span slot="label">我的简历</span>
-          <my-resume></my-resume>
+          <myResume></myResume>
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label">消息记录</span>

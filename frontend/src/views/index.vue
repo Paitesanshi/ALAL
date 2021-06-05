@@ -149,6 +149,7 @@ export default {
   data() {
     return {
 		urlData: [],
+		ids:[],
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
@@ -239,8 +240,10 @@ export default {
     	params.append('id',  this.$store.state.user.userInfo.id)
 		getAvatarsByUserID(params).then(response => {
 		if (response.data.code === this.$ECode.SUCCESS) {
-			that.urlData = response.data
-			console.log(response)
+			for(var i=0;i<len(response.data.ids);++i){
+				that.urlData.push( {"src":"http://121.196.111.9:5678/display/img/"+response.data.ids[i]+"-a.png","id":response.data.ids[i]})
+			}
+			console.log(that.urlData)
 			that.loadingInstance.close()
 		} else {
 			that.urlData=[
@@ -248,6 +251,7 @@ export default {
 				{"src":"http://121.196.111.9:5678/display/img/test.png"},
 				{"src":"http://121.196.111.9:5678/display/img/test.png"},
 			]
+			that.ids=["test"]
 			that.loadingInstance.close()
 		}
 		}).catch(error => {
@@ -256,6 +260,7 @@ export default {
 				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
 				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
 			]
+			that.ids=["test"]
 			console.log(this.urlData)
 			that.loadingInstance.close()
 		})

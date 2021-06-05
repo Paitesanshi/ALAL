@@ -48,3 +48,17 @@ export function logout () {
     method: 'get'
   })
 }
+export function editResume (params) {
+	return request({
+	  url: process.env.WEB_API + '/user/editResume',
+	  method: 'post',
+	  data:params
+	})
+}
+export function getFriendsList (params) {
+	return request({
+	  url: process.env.WEB_API + '/user/getFriendsList',
+	  method: 'get',
+	  params
+	})
+}
