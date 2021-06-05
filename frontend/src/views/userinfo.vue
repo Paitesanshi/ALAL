@@ -17,17 +17,21 @@
         </div>
       </el-card>
       <el-tabs type="border-card" tabPosition="left" style="width:1000px;height: 100vh;margin: 14px auto auto auto;position: sticky">
-<!--        <el-tab-pane>-->
-<!--          <span slot="label">个人信息</span>-->
-<!--          <user :list="list" :photoUrl="list.photoUrl" class="user"></user>-->
-<!--        </el-tab-pane>-->
         <el-tab-pane>
-          <span slot="label">我的简历</span>
-          <my-resume></my-resume>
+          <span slot="label">个人信息</span>
+          <user :list="list" :photoUrl="list.photoUrl" class="user"></user>
         </el-tab-pane>
+<!--        <el-tab-pane>-->
+<!--          <span slot="label">我的简历</span>-->
+<!--          <myResume></myResume>-->
+<!--        </el-tab-pane>-->
         <el-tab-pane>
           <span slot="label">消息记录</span>
           <delivery></delivery>
+        </el-tab-pane>
+        <el-tab-pane>
+          <span slot="label">我的圈子</span>
+          <moment></moment>
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label">设置账号</span>
@@ -91,11 +95,12 @@ html * {
 </style>
 
 <script>/* eslint-disable indent */
-``
+
 import Info from '../components/userInfo/userinfo'
 import Resume from '../components/userInfo/resume'
-import Delivery from '../components/userInfo/delivery'
+import delivery from '../components/userInfo/delivery'
 import Setting from '../components/userInfo/setting'
+import moment from '../components/userInfo/moment'
 export default {
   data () {
     return {
@@ -141,9 +146,9 @@ export default {
   components: {
     user: Info,
     myResume: Resume,
-    delivery: Delivery,
-    setting: Setting,
-  },
-
+    delivery,
+    moment,
+    setting: Setting
+  }
 }
 </script>

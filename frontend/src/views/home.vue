@@ -71,7 +71,7 @@
         </li>
         <li>
           <router-link to="/userinfo">
-            <a href="javascript:void(0);" :class="[saveTitle == '/userinfo' ? 'title' : '']">用戶中心</a>
+            <a href="javascript:void(0);" :class="[saveTitle == '/userinfo' ? 'title' : '']">用户中心</a>
           </router-link>
         </li>
 

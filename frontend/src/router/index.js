@@ -25,7 +25,8 @@ export const constantRouterMap = [
 			{ path: '/admin', component: () => import('@/views/admin') },
 			{ path: '/circle', component: () => import('@/views/circle') },
      		{ path: '/userinfo', component: () => import('@/views/userinfo') },
-			{ path: '/questions', component: () => import('@/views/questions') }
+			{ path: '/questions', component: () => import('@/views/questions') },
+      { path: '/questionsDisabled', component: () => import('@/views/questionsDisabled') }
 
 		]
 	},

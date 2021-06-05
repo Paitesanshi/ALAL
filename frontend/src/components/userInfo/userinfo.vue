@@ -23,6 +23,16 @@
         <td>职业：</td>
         <td>{{list.career}}</td>
       </tr>
+      <tr>
+        <td>情感状况：</td>
+        <td v-if="list.emotion==2">非单身</td>
+        <td v-if="list.emotion==1">单身</td>
+      </tr>
+      <tr>
+        <td>出生日期：</td>
+        <td>{{list.career}}</td>
+      </tr>
+      <tr>
 <!--      <tr>-->
 <!--        <td>学历：</td>-->
 <!--        <td v-if="list.education==4">大专</td>-->
@@ -30,58 +40,137 @@
 <!--        <td v-if="list.education==2">硕士</td>-->
 <!--        <td v-if="list.education==3">博士及以上</td>-->
 <!--      </tr>-->
-      <tr>
-        <td>情感状况：</td>
-        <td v-if="list.emotion==2">非单身</td>
-        <td v-if="list.emotion==1">单身</td>
+
+        <td>理想型：</td>
+        <td>{{list.career}}</td>
       </tr>
-<!--      <el-button class="edit" @click="changeEdit">编辑</el-button>-->
+      <el-button class="edit" @click="changeEdit" style="margin-left: 350px">编辑</el-button>
     </table>
-<!--    <el-form  :model="list" status-icon :rules="rules2" ref="list" label-width="100px" class="formWrap"-->
-<!--              v-if="isEdit">-->
-<!--&lt;!&ndash;      <el-form-item label="ID" prop="nickName">&ndash;&gt;-->
-<!--&lt;!&ndash;        <el-input v-model="list.ID" auto-complete="off"></el-input>&ndash;&gt;-->
-<!--&lt;!&ndash;      </el-form-item>&ndash;&gt;-->
-<!--      <el-form-item label="姓名" prop="name">-->
-<!--        <el-input v-model="list.name" auto-complete="off"></el-input>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="性别" prop="sex">-->
-<!--        <el-select v-model="list.sex" placeholder="请选择性别" style="width: 100%">-->
-<!--          <el-option label="男" :value="1"></el-option>-->
-<!--          <el-option label="女" :value="2"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="城市" prop="address">-->
-<!--        <el-input v-model="list.city"></el-input>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="我的简介" prop="introduce">-->
-<!--        <el-input v-model="list.introduce"></el-input>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="情感状况" prop="sex">-->
-<!--        <el-select v-model="list.emotion" placeholder="请选择性别" style="width: 100%">-->
-<!--          <el-option label="单身" :value="1"></el-option>-->
-<!--          <el-option label="非单身" :value="2"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="学历" prop="education">-->
-<!--        <el-select v-model="list.education" placeholder="请选择学历" style="width: 100%">-->
-<!--          <el-option label="大专" :value="4"></el-option>-->
-<!--          <el-option label="本科" :value="1"></el-option>-->
-<!--          <el-option label="硕士" :value="2"></el-option>-->
-<!--          <el-option label="博士及以上" :value="3"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--      <el-form-item>-->
-<!--        <el-button class='editor' @click="changeEdit">返回</el-button>-->
-<!--        <el-button  @click="submitInfo('list')">提交</el-button>-->
-<!--      </el-form-item>-->
-<!--    </el-form>-->
+<!--    <el-button style="margin-left: 350px" @click="">编辑</el-button>-->
+<!--    <el-dialog class="myDialog">-->
+<!--      <el-form  :model="list" status-icon :rules="rules2" ref="list" label-width="100px" class="formWrap"-->
+<!--                v-if="isEdit">-->
+<!--        <el-form-item label="ID" prop="nickName">-->
+<!--          <el-input v-model="list.ID" auto-complete="off"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="姓名" prop="name">-->
+<!--          <el-input v-model="list.name" auto-complete="off"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="性别" prop="sex">-->
+<!--          <el-select v-model="list.sex" placeholder="请选择性别" style="width: 100%">-->
+<!--            <el-option label="男" :value="1"></el-option>-->
+<!--            <el-option label="女" :value="2"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="城市" prop="address">-->
+<!--          <el-input v-model="list.city"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="我的简介" prop="introduce">-->
+<!--          <el-input v-model="list.introduce"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="情感状况" prop="sex">-->
+<!--          <el-select v-model="list.emotion" placeholder="请选择性别" style="width: 100%">-->
+<!--            <el-option label="单身" :value="1"></el-option>-->
+<!--            <el-option label="非单身" :value="2"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="学历" prop="education">-->
+<!--          <el-select v-model="list.education" placeholder="请选择学历" style="width: 100%">-->
+<!--            <el-option label="大专" :value="4"></el-option>-->
+<!--            <el-option label="本科" :value="1"></el-option>-->
+<!--            <el-option label="硕士" :value="2"></el-option>-->
+<!--            <el-option label="博士及以上" :value="3"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item>-->
+<!--          <el-button class='editor' @click="changeEdit">返回</el-button>-->
+<!--          <el-button  @click="submitInfo('list')">提交</el-button>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+<!--    </el-dialog>-->
+    <el-dialog title="编辑简历" :visible.sync="isEdit" class="myDialog">
+      <el-form :model="list" status-icon :rules="rules2" ref="list" label-width="100px"
+               class="formWrap">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="list.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+          <el-select v-model="list.sex" placeholder="请选择性别" style="width: 100%">
+            <el-option label="男" :value="1"></el-option>
+            <el-option label="女" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <!--        <el-form-item label="年龄" prop="age">-->
+        <!--          <el-input v-model="resumeList.age"></el-input>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="城市" prop="address">
+          <el-input v-model="list.address"></el-input>
+        </el-form-item>
+        <el-form-item label="职业" prop="career">
+          <el-input v-model="list.career"></el-input>
+        </el-form-item>
+        <el-form-item label="出生日期" prop="birthDate">
+          <!--          <el-select v-model="resumeList.birthDate" style="width: 100%">-->
+          <!--            <el-option-->
+          <!--              v-for="item in options"-->
+          <!--              :key="item.value"-->
+          <!--              :label="item.label"-->
+          <!--              :value="item.value">-->
+          <!--            </el-option>-->
+          <!--          </el-select>-->
+          <el-input v-model="list.birthDate"></el-input>
+        </el-form-item>
+        <!--        <el-form-item label="学校" prop="school">-->
+        <!--          <el-input v-model="resumeList.school"></el-input>-->
+        <!--        </el-form-item>-->
+<!--        <el-form-item label="手机号" prop="phone">-->
+<!--          <el-input v-model="list.phone"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="邮箱" prop="email">-->
+<!--          <el-input v-model="list.email"></el-input>-->
+<!--        </el-form-item>-->
+        <el-form-item label="情感状况" prop="sex">
+          <el-select v-model="list.emotion" placeholder="请选择是否单身" style="width: 100%">
+            <el-option label="单身" :value="1"></el-option>
+            <el-option label="非单身" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <!--        <el-form-item label="技术栈" prop="skills">-->
+        <!--          <el-button @click="addSkill()" class="addbtn">添加</el-button>-->
+        <!--          <div class="skillContain">-->
+        <!--            <div v-for="(item, key) in resumeList.skills" :key="key">-->
+        <!--              <input placeholder="技术" class="input" v-model="item.name"/>-->
+        <!--              <select class="select" v-model="item.level">-->
+        <!--                <option label="了解" value=1></option>-->
+        <!--                <option label="熟悉" value=2></option>-->
+        <!--                <option label="掌握" value=3></option>-->
+        <!--                <option label="精通" value=4></option>-->
+        <!--              </select>-->
+        <!--              <i class="el-icon-error deleteIt" @click="deleteItem(key)"></i>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="理想型" prop="idealType">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="list.idealType "></el-input>
+        </el-form-item>
+        <!--        <el-form-item label="获奖经历" prop="awards">-->
+        <!--          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.awards"></el-input>-->
+        <!--        </el-form-item>-->
+        <el-form-item>
+          <el-button @click="changeEdit">取消</el-button>
+          <el-button type="primary" @click="submitInfo('list')">确定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <style>
 table {
   width: 600px;
   font-size: 16px
+}
+.myDialog {
+  width: 1500px;
 }
 table tr td {
   padding: 11.2px;
@@ -165,7 +254,7 @@ export default {
       }
     }
     return {
-      isEdit: true,
+      isEdit: false,
       rules2: {
         nickName: [{validator: checknickname, trigger: 'blur'}],
         name: [{validator: checkname, trigger: 'blur'}],

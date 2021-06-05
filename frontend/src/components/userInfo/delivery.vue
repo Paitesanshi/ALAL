@@ -44,9 +44,13 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       list: [
+        {
+          title: '有人向你发出好友申请',
+          content: 'hihihi，一起交个朋友吧！'
+        },
         {
           title: '有人向你发出好友申请',
           content: 'hihihi，一起交个朋友吧！'
@@ -55,15 +59,18 @@ export default {
       show: true
     }
   },
-  mounted() {
+  mounted () {
     this.getList()
   },
   methods: {
-    checkDetail(id) {
-      localStorage.setItem('jobId', id)
-      this.$router.push({name: 'jobInfo'})
-    },
+    checkDetail (id) {
+      // localStorage.setItem('jobId', id)
+      this.$router.push({path: '/questionsDisabled'})
+    }
 
+  },
+  created () {
+    // alert('111')
   }
 }
 </script>
