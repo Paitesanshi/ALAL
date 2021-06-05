@@ -1,6 +1,6 @@
 <template>
   <div class="survey">
-    <div><h1 align="center">请编辑您的问卷</h1></div>
+    <div><h1 align="center">怎么样？答案符合你的心意吗？</h1></div>
     <div v-for="(item, index) in questionData" class="question">
       <div class="num">{{ index + 1 }}</div>
       <div class="question-content">
@@ -16,7 +16,11 @@
         </template>
       </div>
     </div>
-    <el-button @click="handleSubmit" class="surveyBtn">提交问卷</el-button>
+    <div>
+      <el-button style="float:left ; margin-left: 400px ;margin-bottom: 200px" @click="handleSubmit" class="surveyBtn">不同意</el-button>
+      <el-button style="float:right ; margin-right: 400px;margin-bottom: 200px" @click="handleSubmit" class="surveyBtn">同意</el-button>
+    </div>
+
   </div>
 </template>
 
