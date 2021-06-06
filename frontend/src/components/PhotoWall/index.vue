@@ -1,53 +1,17 @@
 <template>
   <div class="grid" id="grid">
-	<photo-card v-for="pic in imgs" :key="pic" :img="pic.src" >
-	</photo-card>
-    <!-- <photo-card
-      img="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
-      link="#"
-    ></photo-card>
-    <photo-card
-      img="https://i.picsum.photos/id/1018/3914/2935.jpg?hmac=3N43cQcvTE8NItexePvXvYBrAoGbRssNMpuvuWlwMKg"
-      link="#"
-    ></photo-card>
-    <photo-card
-      link=""
-      img="https://i.picsum.photos/id/1011/5472/3648.jpg?hmac=Koo9845x2akkVzVFX3xxAc9BCkeGYA9VRVfLE4f0Zzk"
-    ></photo-card>
-    <photo-card
-      link=""
-      img="https://i.picsum.photos/id/1012/3973/2639.jpg?hmac=s2eybz51lnKy2ZHkE2wsgc6S81fVD1W2NKYOSh8bzDc"
-    ></photo-card>
-    <photo-card
-      link=""
-      img="https://i.picsum.photos/id/1013/4256/2832.jpg?hmac=UmYgZfqY_sNtHdug0Gd73bHFyf1VvzFWzPXSr5VTnDA"
-    ></photo-card>
-    <photo-card
-      link=""
-      img="https://i.picsum.photos/id/101/2621/1747.jpg?hmac=cu15YGotS0gIYdBbR1he5NtBLZAAY6aIY5AbORRAngs"
-    ></photo-card>
-    <photo-card
-      link=""
-      img="https://i.picsum.photos/id/1023/3955/2094.jpg?hmac=AW_7mARdoPWuI7sr6SG8t-2fScyyewuNscwMWtQRawU"
-    ></photo-card>
-    <photo-card
-      link=""
-      img="https://i.picsum.photos/id/1024/1920/1280.jpg?hmac=-PIpG7j_fRwN8Qtfnsc3M8-kC3yb0XYOBfVzlPSuVII"
-    ></photo-card>
-    <photo-card
-      img="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
-      link="#"
-    ></photo-card> -->
+    <photo-card v-for="pic in imgs" :key="pic" :img="pic.src" @click="goToUser(pic.id)">
+    </photo-card>
   </div>
 </template>
 <script>
 export default {
-  name: "PhotoWall",
-  props:["imgs"],
-//   data() {},
-//   computed() {},
-  created() {
-    Vue.component("photo-card", {
+  name: 'PhotoWall',
+  props: ['imgs', 'ids'],
+  //   data() {},
+  //   computed() {},
+  created () {
+    Vue.component('photo-card', {
       template: `<a class="card"
                 :href="link"
                 target="_blank"
@@ -58,49 +22,50 @@ export default {
                   <div class="reflection" ref="refl"></div>
                   <img :src="img"/>
             </a>`,
-      props: ["img", "link"],
-      mounted() {},
+      props: ['img', 'link'],
+      mounted () {},
       data: () => ({
         debounce: null
       }),
-
       methods: {
-        over() {
-          const refl = this.$refs.refl;
-          refl.style.opacity = 1;
+        over () {
+          const refl = this.$refs.refl
+          refl.style.opacity = 1
         },
-        leave() {
-          const card = this.$refs.card;
-          const refl = this.$refs.refl;
-          card.style.transform = `perspective(500px) scale(1)`;
-          refl.style.opacity = 0;
+        leave () {
+          const card = this.$refs.card
+          const refl = this.$refs.refl
+          card.style.transform = `perspective(500px) scale(1)`
+          refl.style.opacity = 0
         },
-
-        move() {
-          const card = this.$refs.card;
-          const refl = this.$refs.refl;
-
-          const relX = (event.offsetX + 1) / card.offsetWidth;
-          const relY = (event.offsetY + 1) / card.offsetHeight;
-          const rotY = `rotateY(${(relX - 0.5) * 60}deg)`;
-          const rotX = `rotateX(${(relY - 0.5) * -60}deg)`;
-          card.style.transform = `perspective(500px) scale(2) ${rotY} ${rotX}`;
-
-          const lightX = this.scale(relX, 0, 1, 150, -50);
-          const lightY = this.scale(relY, 0, 1, 30, -100);
-          const lightConstrain = Math.min(Math.max(relY, 0.3), 0.7);
-          const lightOpacity = this.scale(lightConstrain, 0.3, 1, 1, 0) * 255;
-          const lightShade = `rgba(${lightOpacity}, ${lightOpacity}, ${lightOpacity}, 1)`;
-          const lightShadeBlack = `rgba(0, 0, 0, 1)`;
-          refl.style.backgroundImage = `radial-gradient(circle at ${lightX}% ${lightY}%, ${lightShade} 20%, ${lightShadeBlack})`;
+        move () {
+          const card = this.$refs.card
+          const refl = this.$refs.refl
+          const relX = (event.offsetX + 1) / card.offsetWidth
+          const relY = (event.offsetY + 1) / card.offsetHeight
+          const rotY = `rotateY(${(relX - 0.5) * 60}deg)`
+          const rotX = `rotateX(${(relY - 0.5) * -60}deg)`
+          card.style.transform = `perspective(500px) scale(2) ${rotY} ${rotX}`
+          const lightX = this.scale(relX, 0, 1, 150, -50)
+          const lightY = this.scale(relY, 0, 1, 30, -100)
+          const lightConstrain = Math.min(Math.max(relY, 0.3), 0.7)
+          const lightOpacity = this.scale(lightConstrain, 0.3, 1, 1, 0) * 255
+          const lightShade = `rgba(${lightOpacity}, ${lightOpacity}, ${lightOpacity}, 1)`
+          const lightShadeBlack = `rgba(0, 0, 0, 1)`
+          refl.style.backgroundImage = `radial-gradient(circle at ${lightX}% ${lightY}%, ${lightShade} 20%, ${lightShadeBlack})`
         },
         scale: (val, inMin, inMax, outMin, outMax) =>
           outMin + ((val - inMin) * (outMax - outMin)) / (inMax - inMin)
       }
-    });
+    })
   },
-  methods: {}
-};
+  methods: {
+    goToUser (uid) {
+      console.log('组件中methods方法')
+      this.$router.push({path: '/click_userInfo', query: {id: uid}})// 取参 this.$route.query.id
+    }
+  }
+}
 </script>
 <style>
 body {
@@ -120,7 +85,6 @@ body {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-weight: 300;
 }
-
 #grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 150px);

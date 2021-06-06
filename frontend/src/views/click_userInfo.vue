@@ -23,7 +23,7 @@
             <td>{{this.UserList.idealType}}</td>
           </tr>
           <br>
-          <button>填写问卷</button>
+          <button @click="goToAnswer(id)">填写问卷</button>
         </div>
       </div>
     </div>
@@ -67,12 +67,6 @@
               item.title
             }}</a>
         </h3>
-
-        <!--        <span class="blogpic">-->
-        <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
-        <!--            <img v-if="item.photoList" :src="item.photoList[0]" alt>-->
-        <!--          </a>-->
-        <!--        </span>-->
 
         <p class="blogtext">{{ item.summary }}</p>
         <div class="bloginfo">
@@ -169,8 +163,8 @@ export default {
       pageSize: 15,
       total: 0, // 总数量
       isEnd: false, // 是否到底底部了
-      loading: false,// 是否正在加载
-      //用户信息展示
+      loading: false, // 是否正在加载
+      // 用户信息展示
       UserList: {
         city: '',
         name: '',
@@ -180,7 +174,7 @@ export default {
         email: '',
         birthDate: '',
         idealType: ''
-      },
+      }
     }
   },
   mounted () {
@@ -337,6 +331,9 @@ export default {
     create () {
       let params = new URLSearchParams()
       params.append('id', this.$route.query.id)
+    },
+    goToAnswer (id) {
+      this.$router.push({path: '/answer_question'})
     }
   }
 }

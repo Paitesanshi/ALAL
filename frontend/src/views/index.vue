@@ -22,7 +22,8 @@
     <div class="blank"></div>
     <!--w2blogsbox begin-->
     <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.isSingle != false">
-          <PhotoWall :imgs="this.urlData" ></PhotoWall>
+         <PhotoWall :imgs="this.urlData" ></PhotoWall>
+
     </div>
 
     <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">
@@ -116,22 +117,22 @@
 </template>
 
 <script>
-import FirstRecommend from "../components/FirstRecommend";
-import VideoPlayer from "../components/VideoPlayer";
-import ThirdRecommend from "../components/ThirdRecommend";
-import FourthRecommend from "../components/FourthRecommend";
-import TagCloud from "../components/TagCloud";
-import HotBlog from "../components/HotBlog";
-import FollowUs from "../components/FollowUs";
-import Link from "../components/Link";
-import { getBlogByLevel, getNewBlog ,getAvatarsByUserID} from "../api/index";
-import { Loading } from "element-ui";
-import CameraCapture from "../components/CameraCapture";
-import Camera from "../components/Camera";
-import PhotoWall from "../components/PhotoWall";
+import FirstRecommend from '../components/FirstRecommend'
+import VideoPlayer from '../components/VideoPlayer'
+import ThirdRecommend from '../components/ThirdRecommend'
+import FourthRecommend from '../components/FourthRecommend'
+import TagCloud from '../components/TagCloud'
+import HotBlog from '../components/HotBlog'
+import FollowUs from '../components/FollowUs'
+import Link from '../components/Link'
+import { getBlogByLevel, getNewBlog, getAvatarsByUserID} from '../api/index'
+import { Loading } from 'element-ui'
+import CameraCapture from '../components/CameraCapture'
+import Camera from '../components/Camera'
+import PhotoWall from '../components/PhotoWall'
 
 export default {
-  name: "index",
+  name: 'index',
   components: {
     // 注册组件
     FirstRecommend,
@@ -146,9 +147,9 @@ export default {
     Camera,
     PhotoWall
   },
-  data() {
+  data () {
     return {
-		urlData: [],
+      urlData: [],
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
@@ -156,66 +157,66 @@ export default {
       newBlogData: [], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
-      keyword: "",
+      keyword: '',
       currentPage: 1,
       pageSize: 15,
       total: 0, // 总数量
       isEnd: false, // 是否到底底部了
       loading: false // 是否正在加载
-    };
+    }
   },
-  mounted() {
+  mounted () {
     // 注册scroll事件并监听
-    this.loading = false;
+    this.loading = false
   },
-  created() {
-    var secondParams = new URLSearchParams();
-    secondParams.append("level", 2);
+  created () {
+    var secondParams = new URLSearchParams()
+    secondParams.append('level', 2)
     // 是否排序
-    secondParams.append("useSort", 1);
+    secondParams.append('useSort', 1)
     getBlogByLevel(secondParams)
       .then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records;
+          this.secondData = response.data.records
         }
       })
       .catch(error => {
-        console.log(error);
+        console.log(error)
         for (let i = 0; i < 2; ++i) {
           this.secondData.push({
-            title: "Alibaba",
-            labels: "技术",
-            photoList: ["../../static/images/banner.png"]
-          });
+            title: 'Alibaba',
+            labels: '技术',
+            photoList: ['../../static/images/banner.png']
+          })
         }
-      });
+      })
     // 获取最新博客
-    this.newBlogList();
+    this.newBlogList()
     // var params = new URLSearchParams()
     // params.append('pageName', 'INDEX')
     // recorderVisitPage(params).then(response => {
     // })
-	this.getUserAvatars()
+    this.getUserAvatars()
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo(blog) {
+    goToInfo (blog) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
       ) {
         this.$notify.error({
-          title: "警告",
-          message: "宁信誉积分太低，宁不配",
+          title: '警告',
+          message: '宁信誉积分太低，宁不配',
           offset: 100
-        });
+        })
       } else {
         let routeData = this.$router.resolve({
-          path: "/info",
+          path: '/info',
           query: { blogUid: blog.blog_id }
-        });
-        console.log(blog.id);
-        window.open(routeData.href, "_blank");
+        })
+        console.log(blog.id)
+        window.open(routeData.href, '_blank')
       }
 
       // if (blog.type === '0') {
@@ -233,118 +234,118 @@ export default {
       //   window.open(blog.outsideLink, '_blank')
       // }
     },
-	getUserAvatars(){
-		let that=this
-		let params = new URLSearchParams()
-    	params.append('id',  this.$store.state.user.userInfo.id)
-		getAvatarsByUserID(params).then(response => {
-		if (response.data.code === this.$ECode.SUCCESS) {
-			that.urlData = response.data
-			console.log(response)
-			that.loadingInstance.close()
-		} else {
-			that.urlData=[
-				{"src":"http://121.196.111.9:5678/display/img/test.png"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png"},
-			]
-			that.loadingInstance.close()
-		}
-		}).catch(error => {
-			that.urlData=[
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-			]
-			console.log(this.urlData)
-			that.loadingInstance.close()
-		})
-	},
+    getUserAvatars () {
+      let that = this
+      let params = new URLSearchParams()
+    	params.append('id', this.$store.state.user.userInfo.id)
+      getAvatarsByUserID(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+          that.urlData = response.data
+          console.log(response)
+          that.loadingInstance.close()
+        } else {
+          that.urlData = [
+            {'src': 'http://121.196.111.9:5678/display/img/test.png'},
+            {'src': 'http://121.196.111.9:5678/display/img/test.png'},
+            {'src': 'http://121.196.111.9:5678/display/img/test.png'}
+          ]
+          that.loadingInstance.close()
+        }
+      }).catch(error => {
+        that.urlData = [
+          {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc'},
+          {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc'},
+          {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc'}
+        ]
+        console.log(this.urlData)
+        that.loadingInstance.close()
+      })
+    },
     // 跳转到搜索详情页
-    goToList(uid) {
+    goToList (uid) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { sortUid: uid }
-      });
+      })
     },
 
     // 跳转到搜索详情页
-    goToAuthor(author) {
+    goToAuthor (author) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { author: author }
-      });
+      })
     },
 
     // 最新博客列表
-    newBlogList() {
-      var that = this;
+    newBlogList () {
+      var that = this
       that.loadingInstance = Loading.service({
         lock: true,
-        text: "正在努力加载中……",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
+        text: '正在努力加载中……',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
 
-      var params = new URLSearchParams();
-      params.append("currentPage", this.currentPage);
-      params.append("pageSize", this.pageSize);
+      var params = new URLSearchParams()
+      params.append('currentPage', this.currentPage)
+      params.append('pageSize', this.pageSize)
       getNewBlog(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
-            that.newBlogData = response.data.records;
-            that.total = response.data.total;
-            that.pageSize = response.data.size;
-            that.currentPage = response.data.currentPage;
+            that.newBlogData = response.data.records
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.currentPage
           }
-          that.loadingInstance.close();
+          that.loadingInstance.close()
           // eslint-disable-next-line handle-callback-err
         })
         .catch(error => {
           for (let i = 0; i < 5; ++i) {
             this.newBlogData.push({
-              title: "test",
-              author: "ptss",
-              labels: ["技术", "数据库"],
-              summary: "略略略",
+              title: 'test',
+              author: 'ptss',
+              labels: ['技术', '数据库'],
+              summary: '略略略',
               clickCount: 100,
               likeCount: 200,
-              time: "2020-12-2"
-            });
+              time: '2020-12-2'
+            })
           }
-          that.loadingInstance.close();
-        });
+          that.loadingInstance.close()
+        })
     },
 
-    loadContent: function() {
-      var that = this;
-      that.loading = false;
-      that.currentPage = that.currentPage + 1;
-      var params = new URLSearchParams();
-      params.append("currentPage", that.currentPage);
-      params.append("pageSize", that.pageSize);
+    loadContent: function () {
+      var that = this
+      that.loading = false
+      that.currentPage = that.currentPage + 1
+      var params = new URLSearchParams()
+      params.append('currentPage', that.currentPage)
+      params.append('pageSize', that.pageSize)
       getNewBlog(params).then(response => {
         if (
           response.data.code === this.$ECode.SUCCESS &&
           response.data.records.length > 0
         ) {
-          that.isEnd = false;
-          var newData = that.newBlogData.concat(response.data.records);
-          that.newBlogData = newData;
-          that.total = response.data.total;
-          that.pageSize = response.data.size;
-          that.currentPage = response.data.current;
+          that.isEnd = false
+          var newData = that.newBlogData.concat(response.data.records)
+          that.newBlogData = newData
+          that.total = response.data.total
+          that.pageSize = response.data.size
+          that.currentPage = response.data.current
           // 全部加载完毕
           if (newData.length < that.pageSize) {
-            that.isEnd = true;
+            that.isEnd = true
           }
         } else {
-          that.isEnd = true;
+          that.isEnd = true
         }
-        that.loading = false;
-      });
+        that.loading = false
+      })
     }
   }
-};
+}
 </script>
 
 <style>
