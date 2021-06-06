@@ -62,13 +62,6 @@ export function getFriendsRequestList(params) {
 		params
 	})
 }
-export function getFriendsRequestList(params) {
-	return request({
-		url: process.env.WEB_API + '/user/getFriendsRequestList',
-		method: 'get',
-		params
-	})
-}
 export function editPassword(params) {
 	return request({
 		url: process.env.WEB_API + '/user/editPassword',

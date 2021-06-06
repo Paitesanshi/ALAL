@@ -45,7 +45,7 @@
 <script>
 import { getFriendsRequestList} from "@/api/user";
 export default {
-  data() {
+  data () {
     return {
       list: [],
       show: true
@@ -70,7 +70,7 @@ let that =this
         console.log(error)
 		 that.list= [
         {
-			id:'',
+			id:1,
           applicant: 'wl',
           createdTime: '2021.05.13'
         }
@@ -79,9 +79,9 @@ let that =this
   },
   methods: {
     checkDetail(uid) {
-      this.$router.push({name: 'requestInfo',query: {id:uid}})
+      this.$router.push({path: '/questionsDisabled',query: {id:uid}})
     },
 
-  }
+  },
 }
 </script>

@@ -9,8 +9,8 @@
       >
         <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{
-            item.title
-          }}</a>
+              item.title
+            }}</a>
         </h3>
 
         <!--        <span class="blogpic">-->
@@ -25,14 +25,14 @@
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
               <a href="javascript:void(0);" @click="goToAuthor(item.user_id)">{{
-                item.name
-              }}</a>
+                  item.name
+                }}</a>
             </li>
             <li class="lmname" v-if="item.labels">
               <span class="iconfont">&#xe603;</span>
               <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
-                item.labels[0]
-              }}</a>
+                  item.labels[0]
+                }}</a>
             </li>
             <li class="view">
               <span class="iconfont">&#xe8c7;</span>
@@ -91,22 +91,22 @@
 </template>
 
 <script>
-import FirstRecommend from "../components/FirstRecommend";
-import VideoPlayer from "../components/VideoPlayer";
-import ThirdRecommend from "../components/ThirdRecommend";
-import FourthRecommend from "../components/FourthRecommend";
-import TagCloud from "../components/TagCloud";
-import HotBlog from "../components/HotBlog";
-import FollowUs from "../components/FollowUs";
-import Link from "../components/Link";
-import { getBlogByLevel, getNewBlog } from "../api/index";
+import FirstRecommend from "../FirstRecommend";
+import VideoPlayer from "../VideoPlayer";
+import ThirdRecommend from "../ThirdRecommend";
+import FourthRecommend from "../FourthRecommend";
+import TagCloud from "../TagCloud";
+import HotBlog from "../HotBlog";
+import FollowUs from "../FollowUs";
+import Link from "../Link";
+import { getBlogByLevel, getNewBlog } from "../../api/index";
 import { Loading } from "element-ui";
-import CameraCapture from "../components/CameraCapture";
-import Camera from "../components/Camera";
-import PhotoWall from "../components/PhotoWall";
+import CameraCapture from "../CameraCapture";
+import Camera from "../Camera";
+import PhotoWall from "../PhotoWall";
 
 export default {
-  name: "circle",
+  name: "moment",
   components: {
     // 注册组件
     FirstRecommend,

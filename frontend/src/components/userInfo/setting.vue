@@ -1,29 +1,29 @@
 <template>
   <div>
     <el-collapse>
-      <el-collapse-item name="1" class="set">
-        <template slot="title">
-          修改手机号 &emsp;&emsp;&emsp;&emsp; <span v-text="showPhone(phone)"></span>
-        </template>
-        <el-form
-          :model="phoneForm"
-          status-icon
-          :rules="phonerules"
-          ref="phoneForm"
-          label-width="100px"
-          class="demo-ruleForm"
-        >
-          <el-form-item label="手机号" prop="phone" class="settinginput">
-            <el-input v-model="phoneForm.phone" auto-complete="off"></el-input>
-          </el-form-item>
-          <br>
-          <br>
-          <br>
-          <el-form-item>
-            <el-button class="btn" @click="changePhone('phoneForm')">确定</el-button>
-          </el-form-item>
-        </el-form>
-      </el-collapse-item>
+<!--      <el-collapse-item name="1" class="set">-->
+<!--        <template slot="title">-->
+<!--          修改手机号 &emsp;&emsp;&emsp;&emsp; <span v-text="showPhone(phone)"></span>-->
+<!--        </template>-->
+<!--        <el-form-->
+<!--          :model="phoneForm"-->
+<!--          status-icon-->
+<!--          :rules="phonerules"-->
+<!--          ref="phoneForm"-->
+<!--          label-width="100px"-->
+<!--          class="demo-ruleForm"-->
+<!--        >-->
+<!--          <el-form-item label="手机号" prop="phone" class="settinginput">-->
+<!--            <el-input v-model="phoneForm.phone" auto-complete="off"></el-input>-->
+<!--          </el-form-item>-->
+<!--          <br>-->
+<!--          <br>-->
+<!--          <br>-->
+<!--          <el-form-item>-->
+<!--            <el-button class="btn" @click="changePhone('phoneForm')">确定</el-button>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+<!--      </el-collapse-item>-->
       <el-collapse-item title="修改密码" name="2" class="set">
         <el-form
           :model="passForm"
@@ -50,26 +50,26 @@
           </el-form-item>
         </el-form>
       </el-collapse-item>
-      <el-collapse-item title="修改邮箱" name="3" class="set">
-        <el-form
-          :model="emailForm"
-          status-icon
-          :rules="emailrules"
-          ref="emailForm"
-          label-width="100px"
-          class="demo-ruleForm"
-        >
-          <el-form-item label="邮箱" prop="email" class="settinginput">
-            <el-input v-model="emailForm.email" auto-complete="off"></el-input>
-          </el-form-item>
-          <br>
-          <br>
-          <br>
-          <el-form-item>
-            <el-button class="btn" @click="changeEmail('emailForm')">确定</el-button>
-          </el-form-item>
-        </el-form>
-      </el-collapse-item>
+<!--      <el-collapse-item title="修改邮箱" name="3" class="set">-->
+<!--        <el-form-->
+<!--          :model="emailForm"-->
+<!--          status-icon-->
+<!--          :rules="emailrules"-->
+<!--          ref="emailForm"-->
+<!--          label-width="100px"-->
+<!--          class="demo-ruleForm"-->
+<!--        >-->
+<!--          <el-form-item label="邮箱" prop="email" class="settinginput">-->
+<!--            <el-input v-model="emailForm.email" auto-complete="off"></el-input>-->
+<!--          </el-form-item>-->
+<!--          <br>-->
+<!--          <br>-->
+<!--          <br>-->
+<!--          <el-form-item>-->
+<!--            <el-button class="btn" @click="changeEmail('emailForm')">确定</el-button>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+<!--      </el-collapse-item>-->
     </el-collapse>
   </div>
 </template>

@@ -1,6 +1,5 @@
 <template>
   <div class="survey">
-    <div><h1 align="center">请编辑您的问卷</h1></div>
     <div v-for="(item, index) in questionData" class="question">
       <div class="num">{{ index + 1 }}</div>
       <div class="question-content">
@@ -12,59 +11,79 @@
           <MyCheckBox :checkboxData="item.data" :checkboxName="index" @checkboxChange="checkboxChange"></MyCheckBox>
         </template>
         <template v-else-if="item.type === 'textarea'">
-          <MyTextArea disabled :textareaName="index" style="margin-bottom: 38px;"  @changeTextarea="changeTextarea"></MyTextArea>
+          <MyTextArea disabled :textareaName="index" :value="item.data" style="margin-bottom: 38px;"  @changeTextarea="changeTextarea"></MyTextArea>
         </template>
       </div>
     </div>
-    <el-button @click="handleSubmit" class="surveyBtn">提交问卷</el-button>
+	<div><h1 align="center">怎么样？答案符合你的心意吗？</h1></div>
+    <div>
+      <el-button style="float:right ; margin-right: 400px;margin-bottom: 200px" @click="handleSubmit(true)" class="surveyBtn">同意</el-button>
+	   <el-button style="float:left ; margin-left: 400px ;margin-bottom: 200px" @click="handleSubmit(false)" class="surveyBtn">不同意</el-button>
+    </div>
+
   </div>
 </template>
 
 <script>
 import MyRadio from '../components/MyRadio';
 import MyCheckBox from '../components/MyCheckBox';
-import MyTextArea from '../components/MyTextArea';
-import {editQuestion} from '../api/question'
+import MyTextArea from '../components/MyTextAreaDisabled';
+import {getQuestions} from '../api/question'
 export default {
-  name: 'questions',
+  name: 'questionsDisabled',
   components: {
     MyRadio, MyCheckBox, MyTextArea
   },
   data () {
     return {
-      questionData: [
+      questionData: []
+    }
+  },
+  created(){
+	var that = this
+	let	params = new URLSearchParams()
+      params.append('id', this.$route.query.id)
+      getQuestions(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+          that.questionData = response.data.data
+          console.log(this.questionData)
+        }
+      }).catch(error => {
+        console.log(error)
+       that.questionData= [
         {
           id: 1,
-          title: '填空题：请填写你的问题',
+          title: '姓名',
           type: 'textarea',
-          data: ''
+          data: '111'
         },
         {
           id: 2,
-          title: '填空题：请填写你的问题',
+          title: '性别',
           type: 'textarea',
-          data: ''
+          data: '1'
         },
         {
           id: 3,
-          title: '填空题：请填写你的问题',
+          title: '城市',
           type: 'textarea',
-          data: ''
+          data: '2'
         },
         {
           id: 4,
-          title: '填空题：请填写你的问题',
+          title: '二刺螈？',
           type: 'textarea',
-          data: ''
+          data: '3'
         },
         {
           id: 5,
-          title: '填空题：请填写你的问题',
+          title: '为什么填',
           type: 'textarea',
-          data: ''
+          data: '4'
         },
       ]
-    }
+        that.loadingInstance.close()
+      })
   },
   methods: {
     radioChange(data, name) {
@@ -86,69 +105,34 @@ export default {
       const question = this.questionData[name];
       question.data = data;
     },
-    handleSubmit() {
-      const data = this.questionData;
-      const params = {};
-      for (let question of data) {
-        if (question.type === 'radio') {
-          const index = question.data.findIndex(item => item.status);
-          if (index !== -1) {
-            params[question.id] = question.data[index].value;
-          } else {
-            params[question.id] = '';
-          }
-        } else if (question.type === 'checkbox') {
-          const arr = [];
-          for (let item of question.data) {
-            if (item.status) {
-              arr.push(item.value);
-            }
-          }
-          params[question.id] = arr;
-        } else if (question.type === 'textarea') {
-          params[question.id] = question.data;
-        }
-      }
-      // console.log(data[0]);
-      console.log(params);
-	  var that = this
-    let	params2 = new URLSearchParams()
-    // if (this.blogUid) {
-    //   params.append('uid', this.blogUid)
-    // }
-    // if (this.blogOid) {
-    //   params.append('oid', this.blogOid)
-    // }
-    params2.append('id', this.$store.state.user.userInfo.uid)
-    editQuestion(params2).then(response => {
-      if (response.data.code === this.$ECode.SUCCESS) {
-        this.blogData = response.data
-        console.log(this.blogData)
-        // this.blogUid = response.data.uid
-        // this.blogOid = response.data.oid\
-        this.getCommentDataList()
-      } else {
-
-      }
-      setTimeout(() => {
-        that.blogContent = response.data.content
-        that.loadingInstance.close()
-      }, 20)
-    }).catch(error => {
-      console.log(error)
-      this.blogData.labels = ['技术', '大数据']
-      this.blogData.blogSort = '技术'
-      this.blogContent = 'This is a test'
-      this.blogData.title = 'test'
-      this.blogData.author = 'ptss'
-      this.blogData.summary = '概括'
-      this.blogData.clickCount = 100
-      this.blogData.likeCount = 200
-      this.blogData.time = '2020-12-2'
-      this.blogData.need = 1
-      this.getCommentDataList()
-      that.loadingInstance.close()
-    })
+    handleSubmit(info) {
+      console.log(info);
+      let	params = new URLSearchParams()
+      // if (this.blogUid) {
+      //   params.append('uid', this.blogUid)
+      // }
+      // if (this.blogOid) {
+      //   params.append('oid', this.blogOid)
+      // }
+      params.append('id', this.$route.query.id)
+	  params.append('accepted', info)
+      submitResult(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+			this.$notify({
+				title: '成功',
+				message: '申请处理成功',
+				type: 'success',
+				offset: 100
+			})
+		} 
+      }).catch(error => {
+      	this.$notify.error({
+			title: '失败',
+			message: error,
+			type: 'error',
+			offset: 100
+		})
+      })
     }
   }
 }
