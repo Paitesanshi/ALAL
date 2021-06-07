@@ -1,6 +1,6 @@
 <template>
   <div class="grid" id="grid">
-	<photo-card v-for="pic in imgs" :key="pic" :img="pic.src" @click="goToUser(pic.id)">
+	<photo-card v-for="pic in imgs" :key="pic" :img="pic.src" :id="pic.id" >
 	</photo-card>
   </div>
 </template>
@@ -12,63 +12,64 @@ export default {
 //   computed() {},
   created() {
     Vue.component("photo-card", {
-      template: `<a class="card"
-                :href="link"
+      template: `<div class="card"
                 target="_blank"
                 ref="card"
                 @mousemove="move"
                 @mouseleave="leave"
-                @mouseover="over">
+                @mouseover="over"
+				@click="goToUser(id)">
                   <div class="reflection" ref="refl"></div>
                   <img :src="img"/>
-            </a>`,
-      props: ["img", "link"],
-      mounted() {},
+            </div>`,
+      props: ['img', 'id'],
+      mounted () {},
       data: () => ({
         debounce: null
       }),
-
       methods: {
-        over() {
-          const refl = this.$refs.refl;
-          refl.style.opacity = 1;
+        over () {
+          const refl = this.$refs.refl
+          refl.style.opacity = 1
         },
-        leave() {
-          const card = this.$refs.card;
-          const refl = this.$refs.refl;
-          card.style.transform = `perspective(500px) scale(1)`;
-          refl.style.opacity = 0;
+        leave () {
+          const card = this.$refs.card
+          const refl = this.$refs.refl
+          card.style.transform = `perspective(500px) scale(1)`
+          refl.style.opacity = 0
         },
-
-        move() {
-          const card = this.$refs.card;
-          const refl = this.$refs.refl;
-
-          const relX = (event.offsetX + 1) / card.offsetWidth;
-          const relY = (event.offsetY + 1) / card.offsetHeight;
-          const rotY = `rotateY(${(relX - 0.5) * 60}deg)`;
-          const rotX = `rotateX(${(relY - 0.5) * -60}deg)`;
-          card.style.transform = `perspective(500px) scale(2) ${rotY} ${rotX}`;
-
-          const lightX = this.scale(relX, 0, 1, 150, -50);
-          const lightY = this.scale(relY, 0, 1, 30, -100);
-          const lightConstrain = Math.min(Math.max(relY, 0.3), 0.7);
-          const lightOpacity = this.scale(lightConstrain, 0.3, 1, 1, 0) * 255;
-          const lightShade = `rgba(${lightOpacity}, ${lightOpacity}, ${lightOpacity}, 1)`;
-          const lightShadeBlack = `rgba(0, 0, 0, 1)`;
-          refl.style.backgroundImage = `radial-gradient(circle at ${lightX}% ${lightY}%, ${lightShade} 20%, ${lightShadeBlack})`;
+        move () {
+          const card = this.$refs.card
+          const refl = this.$refs.refl
+          const relX = (event.offsetX + 1) / card.offsetWidth
+          const relY = (event.offsetY + 1) / card.offsetHeight
+          const rotY = `rotateY(${(relX - 0.5) * 60}deg)`
+          const rotX = `rotateX(${(relY - 0.5) * -60}deg)`
+          card.style.transform = `perspective(500px) scale(2) ${rotY} ${rotX}`
+          const lightX = this.scale(relX, 0, 1, 150, -50)
+          const lightY = this.scale(relY, 0, 1, 30, -100)
+          const lightConstrain = Math.min(Math.max(relY, 0.3), 0.7)
+          const lightOpacity = this.scale(lightConstrain, 0.3, 1, 1, 0) * 255
+          const lightShade = `rgba(${lightOpacity}, ${lightOpacity}, ${lightOpacity}, 1)`
+          const lightShadeBlack = `rgba(0, 0, 0, 1)`
+          refl.style.backgroundImage = `radial-gradient(circle at ${lightX}% ${lightY}%, ${lightShade} 20%, ${lightShadeBlack})`
         },
+		 goToUser (uid) {
+			console.log('组件中methods方法')
+			this.$router.push({path: '/click_userInfo', query: {id: uid}})// 取参 this.$route.query.id
+    	},
         scale: (val, inMin, inMax, outMin, outMax) =>
           outMin + ((val - inMin) * (outMax - outMin)) / (inMax - inMin)
       }
-    });
+    })
   },
   methods: {
-	  goToUser(uid){
-		this.$router.push({name:'#',query: {id:uid}})//取参 this.$route.query.id
-	  }
+    // goToUser (uid) {
+    //   console.log('组件中methods方法')
+    //   this.$router.push({path: '/click_userInfo', query: {id: uid}})// 取参 this.$route.query.id
+    // }
   }
-};
+}
 </script>
 <style>
 body {
@@ -88,7 +89,6 @@ body {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-weight: 300;
 }
-
 #grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 150px);

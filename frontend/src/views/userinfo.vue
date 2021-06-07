@@ -1,25 +1,10 @@
 <template>
   <div>
     <div class="wrapper">
-      <el-card class="box-card" style="margin-top: 60px">
-        <div>
-          <el-upload
-            class="avatar-uploader"
-            action="/api/v1/user/avatar"
-            :headers="head"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="this.list.photoUrl"  :src="getImage(this.list.photoUrl)" class="img">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-          <span class="username">{{list ? list.nickName : ''}}</span>
-        </div>
-      </el-card>
-      <el-tabs type="border-card" tabPosition="left" style="width:1000px;height: 100vh;margin: 14px auto auto auto;position: sticky">
+      <el-tabs type="border-card" tabPosition="left" style="width:1000px;height: 100vh;margin: 60px auto auto auto;position: sticky;">
         <el-tab-pane>
           <span slot="label">个人信息</span>
-          <user :list="list" :photoUrl="list.photoUrl" class="user"></user>
+          <user :list="list" :photoUrl="list.avatar" class="user"></user>
         </el-tab-pane>
 <!--        <el-tab-pane>-->
 <!--          <span slot="label">我的简历</span>-->
@@ -97,7 +82,6 @@ html * {
 <script>/* eslint-disable indent */
 
 import Info from '../components/userInfo/userinfo'
-import Resume from '../components/userInfo/resume'
 import delivery from '../components/userInfo/delivery'
 import Setting from '../components/userInfo/setting'
 import moment from '../components/userInfo/moment'
@@ -107,6 +91,7 @@ export default {
       activeIndex2: '1',
       btnText: '取消',
       list: {
+		avatar:'',
         nickName: '',
         sex: '',
         address: '',
@@ -124,6 +109,18 @@ export default {
       refresh: 0
     }
   },
+  created(){
+		this.list.city=this.$store.state.user.userInfo.city
+	   this.list.name=this.$store.state.user.userInfo.name
+	    this.list.sex=this.$store.state.user.userInfo.sex
+		 this.list.emotion=this.$store.state.user.userInfo.emotion
+		  this.list.career=this.$store.state.user.userInfo.career
+		   this.list.email=this.$store.state.user.userInfo.email
+		    this.list.birthDate=this.$store.state.user.userInfo.birthDate
+			 this.list.idealType=this.$store.state.user.userInfo.idealType
+			 this.list.avatar=this.$store.state.user.userInfo.avatar	
+			 //this.list.avatar="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
+  },
   computed: {
     setDefault () {
       return this.list.photoUrl === ''?"./static/default_photo.png":this.list.photoUrl
@@ -136,7 +133,6 @@ export default {
   },
   components: {
     user: Info,
-    myResume: Resume,
     delivery,
     moment,
     setting: Setting

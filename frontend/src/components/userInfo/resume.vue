@@ -449,6 +449,7 @@ export default {
       resumeList: {
         // id:'',
         // userId: sessionStorage.getItem('userId'),
+		avatar:'',
         city: '',
         name: '',
         sex: '',
@@ -519,7 +520,7 @@ export default {
 		   this.resumeList.email=this.$store.state.user.userInfo.email
 		    this.resumeList.birthDate=this.$store.state.user.userInfo.birthDate
 			 this.resumeList.idealType=this.$store.state.user.userInfo.idealType
-			  this.resumeList.phone=this.$store.state.user.userInfo.phone
+			 this.resumeList.avatar=this.$store.state.user.userInfo.avatar
   },
   watch: {
     tip() {

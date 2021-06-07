@@ -218,6 +218,19 @@ export default {
       //   window.open(blog.outsideLink, '_blank')
       // }
     },
+    getResume(){
+      let params = new URLSearchParams()
+      params.append('id',  this.$store.state.user.userInfo.id)
+      getResumeByID(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+          this.blogSortData = response.data.records
+        }
+      }).catch(error => {
+        console.log(error)
+        this.blogSortData = [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}]
+      })
+
+    },
     // 跳转到搜索详情页
     goToList(uid) {
       this.$router.push({

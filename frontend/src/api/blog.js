@@ -70,3 +70,10 @@ export function uploadMomentPhotos(params) {
 		data: params
 	})
 }
+export function getBlogListByID(params) {
+	return request({
+		url: process.env.WEB_API + '/getBlogListByID',
+		method: 'get',
+		params
+	})
+}

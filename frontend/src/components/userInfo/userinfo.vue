@@ -2,6 +2,16 @@
   <div>
     <table class="container">
 <!--      <th> 个人信息</th>-->
+ 	  <tr>
+		<td style="width: 75%;margin:0 auto;text-align:center;">
+          <el-image
+            style="width: 128px; height: 128px; border-radius: 50%;"
+			:src="this.list.avatar">
+          </el-image>
+        </td>
+        <!-- <td>头像：</td>
+        <td><img style="" src="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"></td> -->
+      </tr>
       <tr>
         <td>ID：</td>
         <td>{{list.ID}}</td>
@@ -91,6 +101,24 @@
     <el-dialog title="编辑简历" :visible.sync="isEdit" class="myDialog">
       <el-form :model="list" status-icon :rules="rules2" ref="list" label-width="100px"
                class="formWrap">
+			   <el-form-item label="上传图片" prop="picture" style="width: 800px;">
+               <el-upload
+			     action=""
+                 list-type="picture-card"
+                 :on-preview="handlePictureCardPreview"
+                 :on-remove="handleRemove"
+                 :http-request="uploadPicture"
+                 :before-upload="beforeAvatarUpload"
+                 :file-list="fileList"
+				 :multiple="false"
+				 :limit="1"
+               >
+                 <i class="el-icon-plus"></i>
+               </el-upload>
+               <el-dialog :visible.sync="dialogVisible">
+                 <img width="100%" :src="dialogImageUrl" alt="">
+               </el-dialog>
+            </el-form-item>
         <el-form-item label="姓名" prop="name">
           <el-input v-model="list.name" auto-complete="off"></el-input>
         </el-form-item>
@@ -158,7 +186,7 @@
         <!--        </el-form-item>-->
         <el-form-item>
           <el-button @click="changeEdit">取消</el-button>
-          <el-button type="primary" @click="submitInfo('list')">确定</el-button>
+          <el-button type="primary" @click="submitInfo">确定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -255,6 +283,7 @@ export default {
     }
     return {
       isEdit: false,
+	  isEmpty:true,
       rules2: {
         nickName: [{validator: checknickname, trigger: 'blur'}],
         name: [{validator: checkname, trigger: 'blur'}],
@@ -291,22 +320,67 @@ export default {
       companyOptions: [],
       jobOptions: [],
       intentionCompany: [],
-      intentionJob: []
-    }
-  },
-  mounted() {
-    this.getCompanyName()
-    this.getJobName()
-  },
-  watch: {
-    list(val, oldVal) {
-      if (val !== oldVal) {
-        this.intentionCompany = this.list.intentionCompany?this.list.intentionCompany.split(','):null
-        this.intentionJob = this.list.intentionJob?this.list.intentionJob.split(','):null
-      }
+      intentionJob: [],
+	  picList:[]
     }
   },
   methods: {
+	  uploadPicture(item) {
+		  this.isEmpty=false
+		  console.log(this.isEmpty)
+          const formData = new FormData()
+          formData.append('file', item.file)
+		  formData.append('avatar',true)
+          const uid = item.file.uid
+          uploadPhoto(formData).then(res => {
+			  console.log(res)
+            this.picList.push({ key: uid, value: res.data.url })
+            this.emptyUpload()
+          }).catch(() => {
+            this.$message.error('上传失败，请重新上传')
+            this.emptyUpload()
+          })
+        },
+        beforeAvatarUpload(file) {
+          const isJPG = file.type === 'image/jpeg'
+          const isPng = file.type === 'image/png'
+          const isLt2M = file.size / 1024 / 1024 < 2
+ 
+          if (!isJPG && !isPng) {
+            this.$message.error('上传图片只能是 JPG或png 格式!')
+          }
+          if (!isLt2M) {
+            this.$message.error('上传图片大小不能超过 2MB!')
+          }
+          return (isJPG || isPng) && isLt2M
+        },
+        handleRemove(file, fileList) {
+          for (const i in this.picList) {
+            if (this.picList[i].key === file.uid) {
+              this.picList.splice(i, 1)
+            }
+          }
+		  this.isEmpty=true
+        },
+        handlePictureCardPreview(file) {
+          this.dialogImageUrl = file.url
+          this.dialogVisible = true
+        },
+        /**
+         * 清空上传组件
+         */
+        emptyUpload() {
+          const mainImg = this.$refs.upload
+          if (mainImg) {
+            if (mainImg.length) {
+              mainImg.forEach(item => {
+                item.clearFiles()
+              })
+            } else {
+              this.$refs.upload.clearFiles()
+            }
+          }
+        },
     changeEdit () {
       // alert(this.isEdit)
       this.isEdit = !this.isEdit
@@ -315,9 +389,31 @@ export default {
     submitInfo (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.list.intentionCompany = this.intentionCompany.toString();
-          this.list.intentionJob = this.intentionJob.toString();
-          this.list.userId = sessionStorage.getItem("userId");
+			list.avatar=this.picList[this.picList-1]
+			let params=new URLSearchParams()
+		params.append("id",this.$store.state.user.userInfo.id)
+		params.append("userInfo",list)
+
+				editResume(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+			this.resumeList=info
+			this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success',
+            offset: 100
+          })
+        }else{
+			this.$notify({
+            title: '失败',
+            message: '修改信息失败',
+            type: 'error',
+            offset: 100
+          })
+		}
+      }).catch(error => {
+        console.log(error)
+      })
         } else {
           console.log('error submit!!')
         }

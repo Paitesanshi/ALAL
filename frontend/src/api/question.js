@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function editQuestion(params) {
 	return request({
-		url: process.env.ADMIN_API + '/question/editQuestion',
+		url: process.env.WEB_API + '/question/editQuestion',
 		method: 'post',
 		data: params
 	})
@@ -10,28 +10,35 @@ export function editQuestion(params) {
 
 export function getResumeByID(params) {
 	return request({
-		url: process.env.ADMIN_API + '/question/getResumeByID',
+		url: process.env.WEB_API + '/question/getResumeByID',
 		method: 'get',
 		params
 	})
 }
-export function editResume(params) {
-	return request({
-		url: process.env.ADMIN_API + '/editResume',
-		method: 'post',
-		data: params
-	})
-}
 export function getQuestions(params) {
 	return request({
-		url: process.env.ADMIN_API + '/getQuestions',
+		url: process.env.WEB_API + '/getQuestions',
 		method: 'get',
 		params
 	})
 }
 export function submitResult(params) {
 	return request({
-		url: process.env.ADMIN_API + '/submitResult',
+		url: process.env.WEB_API + '/submitResult',
+		method: 'post',
+		data: params
+	})
+}
+export function getQuestion(params) {
+	return request({
+		url: process.env.WEB_API + '/getQuestion',
+		method: 'get',
+		params
+	})
+}
+export function submitQuestion(params) {
+	return request({
+		url: process.env.WEB_API + '/submitQuestion',
 		method: 'post',
 		data: params
 	})

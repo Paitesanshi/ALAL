@@ -1,32 +1,61 @@
 <template>
   <article>
-    <!--banner begin-->
-    <!--    <div class="picsbox">-->
-    <!--&lt;!&ndash;      <FirstRecommend></FirstRecommend>&ndash;&gt;-->
-    <!--      &lt;!&ndash;banner end&ndash;&gt;-->
-    <!--      &lt;!&ndash; 二级推荐 &ndash;&gt;-->
-    <!--      <div class="toppic">-->
-    <!--        <li v-for="item in secondData" :key="item.title" @click="goToInfo(item)">-->
-    <!--          <a href="javascript:void(0);">-->
-    <!--            <i>-->
-    <!--              <img v-if="item.photoList" :src="item.photoList[0]">-->
-    <!--            </i>-->
-    <!--            <h2>{{ item.title }}</h2>-->
-    <!--            <span>{{ item.labels[0] }}</span>-->
-    <!--          </a>-->
-    <!--        </li>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <VideoPlayer></VideoPlayer>
-
-    <div class="blank"></div>
-    <!--w2blogsbox begin-->
-    <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.isSingle != false">
-         <PhotoWall :imgs="this.urlData" ></PhotoWall>
-
+    <div class="top">
+      <el-button><a href="index.vue>">返回</a></el-button>
     </div>
-
-    <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">
+    <div class="userInfo">
+      <div align="center">
+        <td style="width: 25%" aligin="center">
+          <el-image
+            style="width: 128px; height: 128px; border-radius: 50%;"
+			:src="this.UserList.avatar">
+          </el-image>
+        </td>
+        <div class="myInfo">
+          <td>姓名：</td>
+          <td>{{this.UserList.name}}</td>
+          <tr>
+          <td>情感状况：</td>
+          <td>{{this.UserList.emotion}}</td>
+          </tr>
+          <tr>
+            <td>理想型：</td>
+            <td>{{this.UserList.idealType}}</td>
+          </tr>
+          <br>
+          <button @click="goToAnswer">填写问卷</button>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <br>
+      <div class="left">
+        <tr>
+          <td>性别：</td>
+          <td>{{this.UserList.sex}}</td>
+        </tr>
+        <tr>
+          <td>邮箱：</td>
+          <td>{{this.UserList.email}}</td>
+        </tr>
+        <tr>
+          <td>城市：</td>
+          <td>{{this.UserList.city}}</td>
+        </tr>
+        <tr>
+          <td>职业：</td>
+          <td>{{this.UserList.career}}</td>
+        </tr>
+        <!--          <tr>-->
+        <!--            <td>学校：</td>-->
+        <!--            <td>{{this.$store.state.user.userInfo.school}}</td>-->
+        <!--          </tr>-->
+        <tr>
+          <td>出生日期：</td>
+          <td>{{this.UserList.birthDate}}</td>
+        </tr>
+      </div>
+    <div class="blogsbox">
       <div
         v-for="item in newBlogData"
         :key="item.blog_id"
@@ -35,15 +64,9 @@
       >
         <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{
-            item.title
-          }}</a>
+              item.title
+            }}</a>
         </h3>
-
-        <!--        <span class="blogpic">-->
-        <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
-        <!--            <img v-if="item.photoList" :src="item.photoList[0]" alt>-->
-        <!--          </a>-->
-        <!--        </span>-->
 
         <p class="blogtext">{{ item.summary }}</p>
         <div class="bloginfo">
@@ -51,14 +74,14 @@
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
               <a href="javascript:void(0);" @click="goToAuthor(item.user_id)">{{
-                item.name
-              }}</a>
+                  item.name
+                }}</a>
             </li>
             <li class="lmname" v-if="item.labels">
               <span class="iconfont">&#xe603;</span>
               <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
-                item.labels[0]
-              }}</a>
+                  item.labels[0]
+                }}</a>
             </li>
             <li class="view">
               <span class="iconfont">&#xe8c7;</span>
@@ -79,10 +102,6 @@
       <div class="isEnd">
         <!-- <span v-if="!isEnd">正在加载中~</span> -->
 
-        <div class="loadContent" @click="loadContent" v-if="!isEnd && !loading">
-          点击加载更多
-        </div>
-
         <div class="lds-css ng-scope" v-if="!isEnd && loading">
           <div style="width:100%;height:100%" class="lds-facebook">
             <div></div>
@@ -90,29 +109,9 @@
             <div></div>
           </div>
         </div>
-
-        <span v-if="isEnd">我也是有底线的~</span>
       </div>
     </div>
-    <!--blogsbox end-->
-
-    <!--    <div class="sidebar">-->
-    <!--      &lt;!&ndash;标签云&ndash;&gt;-->
-    <!--      <TagCloud></TagCloud>-->
-
-    <!--      &lt;!&ndash;关注我们&ndash;&gt;-->
-    <!--&lt;!&ndash;      <FollowUs></FollowUs>&ndash;&gt;-->
-
-    <!--      &lt;!&ndash; 三级推荐 &ndash;&gt;-->
-    <!--&lt;!&ndash;      <ThirdRecommend></ThirdRecommend>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;      &lt;!&ndash;四级推荐&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;      <FourthRecommend></FourthRecommend>&ndash;&gt;-->
-
-    <!--      &lt;!&ndash;点击排行&ndash;&gt;-->
-    <!--&lt;!&ndash;      <HotBlog></HotBlog>&ndash;&gt;-->
-
-    <!--    </div>-->
+    </div>
   </article>
 </template>
 
@@ -125,14 +124,15 @@ import TagCloud from '../components/TagCloud'
 import HotBlog from '../components/HotBlog'
 import FollowUs from '../components/FollowUs'
 import Link from '../components/Link'
-import { getBlogByLevel, getNewBlog, getAvatarsByUserID} from '../api/index'
+import {getBlogListByID } from '../api/blog'
+import {getUserInfoByID } from '../api/user'
 import { Loading } from 'element-ui'
 import CameraCapture from '../components/CameraCapture'
 import Camera from '../components/Camera'
 import PhotoWall from '../components/PhotoWall'
 
 export default {
-  name: 'index',
+  props: ['list', 'imageUrl'],
   components: {
     // 注册组件
     FirstRecommend,
@@ -145,12 +145,10 @@ export default {
     VideoPlayer,
     CameraCapture,
     Camera,
-    PhotoWall
+    PhotoWall,
   },
   data () {
     return {
-		urlData: [],
-		ids:[],
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
@@ -163,7 +161,19 @@ export default {
       pageSize: 15,
       total: 0, // 总数量
       isEnd: false, // 是否到底底部了
-      loading: false // 是否正在加载
+      loading: false, // 是否正在加载
+      // 用户信息展示
+      UserList: {
+		avatar:'',
+        city: '',
+        name: '',
+        sex: '',
+        emotion: '',
+        career: '',
+        email: '',
+        birthDate: '',
+        idealType: ''
+      }
     }
   },
   mounted () {
@@ -171,33 +181,9 @@ export default {
     this.loading = false
   },
   created () {
-    var secondParams = new URLSearchParams()
-    secondParams.append('level', 2)
-    // 是否排序
-    secondParams.append('useSort', 1)
-    getBlogByLevel(secondParams)
-      .then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        for (let i = 0; i < 2; ++i) {
-          this.secondData.push({
-            title: 'Alibaba',
-            labels: '技术',
-            photoList: ['../../static/images/banner.png']
-          })
-        }
-      })
     // 获取最新博客
-    this.newBlogList()
-    // var params = new URLSearchParams()
-    // params.append('pageName', 'INDEX')
-    // recorderVisitPage(params).then(response => {
-    // })
-    this.getUserAvatars()
+    this.getBlogList()
+	this.getClickUserInfo()
   },
   methods: {
     // 跳转到文章详情【或推广链接】
@@ -219,53 +205,7 @@ export default {
         console.log(blog.id)
         window.open(routeData.href, '_blank')
       }
-
-      // if (blog.type === '0') {
-      //   let routeData = this.$router.resolve({
-      //     path: '/info',
-      //     query: {blogOid: blog.oid}
-      //   })
-      //   window.open(routeData.href, '_blank')
-      // } else if (blog.type === '1') {
-      //   var params = new URLSearchParams()
-      //   params.append('uid', blog.uid)
-      //   getBlogByUid(params).then(response => {
-      //     // 记录一下用户点击日志
-      //   })
-      //   window.open(blog.outsideLink, '_blank')
-      // }
     },
-	getUserAvatars(){
-		let that=this
-		let params = new URLSearchParams()
-    	params.append('id',  this.$store.state.user.userInfo.id)
-		getAvatarsByUserID(params).then(response => {
-		if (response.data.code === this.$ECode.SUCCESS) {
-			for(var i=0;i<len(response.data.ids);++i){
-				that.urlData.push( {"src":"http://121.196.111.9:5678/display/img/"+response.data.ids[i]+"-a.png","id":response.data.ids[i]})
-			}
-			console.log(that.urlData)
-			that.loadingInstance.close()
-		} else {
-			that.urlData=[
-				{"src":"http://121.196.111.9:5678/display/img/test.png","id":"1"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png","id":"2"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png","id":"3"},
-			]
-			that.ids=["test"]
-			that.loadingInstance.close()
-		}
-		}).catch(error => {
-			that.urlData=[
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc","id":"1"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc","id":"2"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc","id":"3"},
-			]
-			that.ids=["test"]
-			console.log(this.urlData)
-			that.loadingInstance.close()
-		})
-	},
     // 跳转到搜索详情页
     goToList (uid) {
       this.$router.push({
@@ -283,7 +223,7 @@ export default {
     },
 
     // 最新博客列表
-    newBlogList () {
+    getBlogList () {
       var that = this
       that.loadingInstance = Loading.service({
         lock: true,
@@ -292,9 +232,10 @@ export default {
       })
 
       var params = new URLSearchParams()
+	  params.append('id', this.$route.query.id)
       params.append('currentPage', this.currentPage)
       params.append('pageSize', this.pageSize)
-      getNewBlog(params)
+      getBlogListByID(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
             that.newBlogData = response.data.records
@@ -303,7 +244,6 @@ export default {
             that.currentPage = response.data.currentPage
           }
           that.loadingInstance.close()
-          // eslint-disable-next-line handle-callback-err
         })
         .catch(error => {
           for (let i = 0; i < 5; ++i) {
@@ -320,13 +260,37 @@ export default {
           that.loadingInstance.close()
         })
     },
-
-    loadContent: function() {
-      var that = this;
-      that.loading = false;
-      var params = new URLSearchParams();
-      params.append("currentPage", that.currentPage);
-      params.append("pageSize", that.pageSize);
+	getClickUserInfo () {
+      var that = this
+      var params = new URLSearchParams()
+	  params.append('id', this.$route.query.id)
+      getUserInfoByID(params)
+        .then(response => {
+          if (response.data.code === this.$ECode.SUCCESS) {
+            that.UserList=response.data.userInfo
+          }
+        })
+        .catch(error => {
+          that.UserList= {
+		avatar:'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc',
+        city: 'bj',
+        name: 'wl',
+        sex: 'm',
+        emotion: 'c',
+        career: 'coder',
+        email: '1',
+        birthDate: '1',
+        idealType: '1'
+      }
+        })
+    },	
+    loadContent: function () {
+      var that = this
+      that.loading = false
+      that.currentPage = that.currentPage + 1
+      var params = new URLSearchParams()
+      params.append('currentPage', that.currentPage)
+      params.append('pageSize', that.pageSize)
       getNewBlog(params).then(response => {
         if (
           response.data.code === this.$ECode.SUCCESS &&
@@ -347,6 +311,9 @@ export default {
         }
         that.loading = false
       })
+    },
+    goToAnswer () {
+      this.$router.push({path: '/answer_questions',query:{id:this.$route.query.id}})
     }
   }
 }
@@ -356,7 +323,28 @@ export default {
 .el-loading-mask {
   z-index: 2002;
 }
-
+button{
+  background: #7fb4d7;
+  padding: 10px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius:15px;
+}
+.myInfo{
+  color: white;
+  /* 表格边框颜色 */
+  border: 0.5px;
+}
+.left{
+  font-weight: bold;
+  padding: 20px 200px 40px 50px;
+  background-color: white;
+  float:left
+}
+.blogsbox{
+  float: right;
+}
 .isEnd {
   float: left;
   width: 100%;

@@ -69,3 +69,10 @@ export function editPassword(params) {
 		data: params
 	})
 }
+export function getUserInfoByID(params) {
+	return request({
+		url: process.env.WEB_API + '/user/getUserInfoByID',
+		method: 'get',
+		params
+	})
+}
