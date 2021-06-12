@@ -964,64 +964,6 @@ def addBlogSort():
     data['code'] = 'success'
     return data
 
-# 大志_登录函数
-
-@app.route('/login/login', methods=['POST'])
-def LocalLogin():
-    global user_info
-    print("I am in loginAndLogin")
-    datastr = str(request.data, 'utf-8')
-    data_json = json.loads(datastr)
-    username = data_json.get("userName")
-    password = data_json.get("passWord")
-    print(username)
-    print(password)
-    sql = "SELECT * FROM user WHERE user_id = '%s' AND password = '%s' " % (
-        username, password)
-    try:
-        # 执行SQL语句
-        cursor.execute(sql)
-        # 向数据库提交
-        results = cursor.fetchall()
-
-    except:
-        # 发生错误时回滚
-        print('error')
-        db.rollback()
-    data = {}
-    if len(results) == 0:
-        data['code'] = 'error'
-        data['message'] = '密码不正确'
-    else:
-        data['code'] = 'success'
-        data['message'] = '登录成功'
-        sql = "SELECT * FROM user WHERE user_id = '%s'" % username
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        for row in results:
-            user_info['user_id'] = row[0]
-            user_info['name'] = row[1]
-            user_info['head_portrait'] = row[2]
-            user_info['password'] = row[3]
-            user_info['email'] = row[4]
-            user_info['role'] = row[5]
-            user_info['emotional_state'] = row[6]
-            user_info['couple'] = row[7]
-            user_info['sex'] = row[8]
-            user_info['birth'] = row[9]
-            user_info['job'] = row[10]
-            user_info['city'] = row[11]
-            user_info['ideal_type'] = row[12]
-            user_info['question'] = row[13]
-        data['id'] = user_info.get('user_id')
-    print("loginnn")
-    print(user_info)
-    data['records'] = user_info
-    file_object = open("user_info.txt", "w")
-    json.dump(user_info, file_object)
-    file_object.close()
-
-    return data
 
 # 大志_注册
 @app.route('/login/register', methods=['POST'])
@@ -1152,6 +1094,28 @@ def upload():
         f.save(upload_path)
         return "文件上传成功!!"
 
+@app.route('/uploadMomentPhotos', methods=['POST'])
+def uploadMomentPhoto(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    moment_id = data_json.get("moment_id")
+    pics = []
+    pics = data_json.get("picList")
+    uurl = ""
+    for pic in pics:
+        uurl = uurl + "," + pic
+    data = {}
+    sql = "Update 'moment' SET 'picture'='%s' WHERE (moment_id='%d');" %(uurl,moment_id)
+    data ['code'] = 'success'
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code'] = 'error'
+    return data
 
 # show photo
 @app.route('/display/img/<string:filename>', methods=['GET'])
@@ -1232,6 +1196,129 @@ def editQuestion(params):
     data = {}
     data['code'] = 200
     return data
+
+# 大志_登录函数
+
+@app.route('/login/login', methods=['POST'])
+def LocalLogin(params):
+    global user_info
+    print("I am in loginAndLogin")
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    username = data_json.get("userName")
+    password = data_json.get("passWord")
+    print(username)
+    print(password)
+    sql = "SELECT * FROM user WHERE user_id = '%s' AND password = '%s' " % (
+        username, password)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    data = {}
+    if len(results) == 0:
+        data['code'] = 'error'
+        data['message'] = '密码不正确'
+    else:
+        data['code'] = 'success'
+        data['message'] = '登录成功'
+        sql = "SELECT * FROM user WHERE user_id = '%s'" % username
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        for row in results:
+            user_info['user_id'] = row[0]
+            user_info['name'] = row[1]
+            user_info['head_portrait'] = row[2]
+            user_info['password'] = row[3]
+            user_info['email'] = row[4]
+            user_info['role'] = row[5]
+            user_info['emotional_state'] = row[6]
+            user_info['couple'] = row[7]
+            user_info['sex'] = row[8]
+            user_info['birth'] = row[9]
+            user_info['job'] = row[10]
+            user_info['city'] = row[11]
+            user_info['ideal_type'] = row[12]
+            user_info['question'] = row[13]
+        data['id'] = user_info.get('user_id')
+    print("loginnn")
+    print(user_info)
+    data['records'] = user_info
+    file_object = open("user_info.txt", "w")
+    json.dump(user_info, file_object)
+    file_object.close()
+
+    return data
+
+@app.route('/user/editResume', methods=['POST'])
+def editInformation(params):
+    global user_info
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    newUesrInfo = data_json.get("userInfo")
+    data = {}
+    data['code'] = 'success'
+    user_info = newUesrInfo
+    sql ="UPDATE `ALAL`.`user` SET `user_id` = '%d', `name` = '%s', `head_portrait` = '%s', `password` = '%s', `email` = '%s', `role` = '%d', `emotional_state` = %d', `couple` = '%d', `sex` = '%s', `birth` = '%s', `job` = '%s', `city` = '%s', `ideal_type` = '%s', `question` = '%s' WHERE (`user_id` = '%d');"\
+         %(user_info['user_id'],user_info['name'],user_info['head_portrait'],user_info['password'],user_info['email'],user_info['role'],user_info['emotional_state'],user_info['couple'],user_info['sex'],user_info['birth'],user_info['job'],user_info['city'],user_info['ideal_type'],user_info['question'])
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code'] = 'error'
+    return data
+
+@app.route('/user/getFriendsRequestList', methods=['GET'])
+def getFriendRequest(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    data = {}
+    data['code'] = 'success'
+    sql = "SELECT * FROM 'friend_apply' WHERE ('state'='0' and 'respondent_id'='%s')" %(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    if len(results) == 0:
+        data['code'] = 'error'
+        data['message'] = 'no application'
+    else :
+        applications = []
+        for i in range(0,len(results)):
+            application = {}
+            application['id'] = results[i][1]
+            application['createdTime'] = results[i][3].strftime("%Y-%m-%d %H:%M:%S")
+            sql1 = "SELECT 'user'.'name' from 'user' WHERE ('user_id'= '%s')" % (application['id'])
+            try:
+                # 执行SQL语句
+                cursor.execute(sql1)
+                # 向数据库提交
+                uuser = cursor.fetchone()
+            except:
+                # 发生错误时回滚
+                print('error')
+                db.rollback()
+            nname = uuser[0]
+            application['applicant']=nname
+            applications.append(application)
+        data['list'] = applications
+    return data
+
 
 
 if __name__ == '__main__':
