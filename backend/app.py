@@ -1319,6 +1319,72 @@ def getFriendRequest(params):
         data['list'] = applications
     return data
 
+@app.route('/user/editPassword', methods=['POST'])
+def LocalLogin(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    pwd = data_json.get("password")
+    data = {}
+    data['code'] = 'success'
+    sql = "UPDATE 'user' SET 'password'='%s' WHERE ('user_id'='%d');" % (pwd,id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code']='error'
+
+    return data
+
+@app.route('/submitResult', methods=['POST'])
+def submitResult(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    accept = data_json.get("accept")
+    sql = "SELECT * from 'friend_apply' WHERE ('application_id'='%d');"%(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        apply = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    if accept == true:
+        sql = "INSERT INTO `ALAL`.`friend`(`user_id1`, `user_id2`, `time`) VALUES('%d', '%d', '%s');"%(apply[1],apply[2],apply[3])
+        try:
+            # 执行SQL语句
+            cursor.execute(sql1)
+        except:
+            # 发生错误时回滚
+            print('error')
+            db.rollback()
+        sql1 = "UPDATE 'friend_apply' SET 'state'='1' WHERE ('application_id'='%d');" % (id)
+        try:
+            # 执行SQL语句
+            cursor.execute(sql1)
+        except:
+            # 发生错误时回滚
+            print('error')
+            db.rollback()
+    else :
+        sql1 = "UPDATE 'friend_apply' SET 'state'='2' WHERE ('application_id'='%d');" % (id)
+        try:
+            # 执行SQL语句
+            cursor.execute(sql1)
+        except:
+            # 发生错误时回滚
+            print('error')
+            db.rollback()
+    data = {}
+    data['code'] = 'success'
+    return data
+
 
 
 if __name__ == '__main__':
