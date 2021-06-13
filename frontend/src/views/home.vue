@@ -1072,8 +1072,9 @@ export default {
         console.log('this issssssssssssssssssssssssss')
         console.log(token)
         authVerify(token).then(response => {
+          alert(response.data.code,this.$ECode.SUCCESS)
           if (response.data.code == this.$ECode.SUCCESS) {
-            console.log('login end success!')
+           alert('login end success!')
             this.isLogin = true
             this.showLogin=false
             let userInfo = response.data

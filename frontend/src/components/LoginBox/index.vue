@@ -151,7 +151,7 @@ export default {
   },
   components: {},
   methods: {
-    ...mapMutations(['setUserInfo', 'setLoginState']),
+    ...mapMutations(['setUserInfo', 'setLoginState','setSingleState']),
     startLogin: function () {
       console.log('---------------!!!!!!!!!!!')
       this.$refs.loginForm.validate((valid) => {
@@ -169,9 +169,14 @@ export default {
               // 跳转到首页
               this.isLogin = true
               let userInfo = response.data.userInfo
+              console.log(this.$store.state.user.)
               this.setUserInfo(userInfo)
               this.setLoginState(this.isLogin)
-              // console.log(response.data.id)
+              if( response.data.userInfo["emotional_state"]=1)
+                this.setSingleState(true)
+              else
+                this.setSingleState(false)
+              alert(this.$store.state.user.isSingle)
               window.location.replace(this.vueMoguWebUrl + '/#/?token=' + response.data.id)
               window.location.reload()
             } else {

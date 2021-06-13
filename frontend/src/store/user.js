@@ -1,12 +1,12 @@
-import { SET_USER_INFO, SET_LOGIN_STATE } from './mutation-types'
+import { SET_USER_INFO, SET_LOGIN_STATE, SET_SINGLE_STATE} from './mutation-types'
 
 const app = {
 	// 全局状态
 	state: {
 		// 用户信息
 		userInfo: {},
-		isLogin: true,
-		isSingle: true,
+		isLogin: false,
+		isSingle: false,
 	},
 	// getters是对数据的包装，例如对数据进行拼接，或者过滤
 	getters: {
@@ -32,6 +32,9 @@ const app = {
 		},
 		[SET_LOGIN_STATE](state, isLogin) {
 			state.isLogin = isLogin
+		},
+		[SET_SINGLE_STATE](state, isSingle) {
+			state.isSingle = isSingle
 		}
 	},
 

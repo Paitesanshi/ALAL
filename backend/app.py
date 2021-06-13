@@ -16,7 +16,7 @@ db = pymysql.connect(host='121.196.111.9',
                      port=3306,
                      user='root',
                      passwd='zxc110',
-                     db='alal'
+                     db='ALAL'
                      )
 db.autocommit(True)
 # 使用 cursor() 方法创建一个游标对象 cursor
@@ -362,9 +362,9 @@ def search():
     str = request.values.get("keywords")
     data = {}
     sql = 'SELECT COUNT(*) FROM Blog WHERE state=0 AND title LIKE %s '
-    params = ['%' + str + '%']
+    request = ['%' + str + '%']
     print(sql)
-    cursor.execute(sql, params)
+    cursor.execute(sql, request)
     total = cursor.fetchone()[0]
     print(total)
     data['total'] = total
@@ -372,7 +372,7 @@ def search():
     # print(data['currentPage'])
     records = []
     sql = 'SELECT * FROM Blog WHERE state=0 AND title LIKE %s  ORDER BY publish_time DESC'
-    cursor.execute(sql, params)
+    cursor.execute(sql, request)
     row = cursor.fetchone()
     # start = (currentPage - 1) * pageSize
     # end = currentPage * pageSize
@@ -584,10 +584,10 @@ def getPraiseList():
     return data
 
 # 大志_用户登录验证
-@app.route('/oauth/verify/<params>')
-def authVerify(params):
+@app.route('/oauth/verify/<request>')
+def authVerify():
     data = {}
-    # sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % params
+    # sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % request
     # cursor.execute(sql)
     # results = cursor.fetchall()
     # for row in results:
@@ -604,7 +604,7 @@ def authVerify(params):
     #     data['message'] = '你个烂人！'
     #     data['code'] = 'error'
     #     return data
-    # if (params == user_info["user_id"]):
+    # if (request == user_info["user_id"]):
     global user_info
     file = open("user_info.txt", 'r')
     user_info = json.load(file)
@@ -1095,8 +1095,8 @@ def upload():
         return "文件上传成功!!"
 
 @app.route('/uploadMomentPhotos', methods=['POST'])
-def uploadMomentPhoto(params):
-    datastr = str(params.data, 'utf-8')
+def uploadMomentPhoto():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     moment_id = data_json.get("moment_id")
     pics = []
@@ -1188,10 +1188,10 @@ def getAvatarsByUserID(id):
 
     return data
 
-@app.route('/question/editQuestion/<params>', methods=['POST'])
-def editQuestion(params):
-    user_id=params['id']
-    sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (params,user_id)
+@app.route('/question/editQuestion/<request>', methods=['POST'])
+def editQuestion():
+    user_id=request['id']
+    sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (request,user_id)
     cursor.execute(sql)
     data = {}
     data['code'] = 200
@@ -1200,10 +1200,11 @@ def editQuestion(params):
 # 大志_登录函数
 
 @app.route('/login/login', methods=['POST'])
-def LocalLogin(params):
+def LocalLogin():
     global user_info
     print("I am in loginAndLogin")
-    datastr = str(params.data, 'utf-8')
+    
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     username = data_json.get("userName")
     password = data_json.get("passWord")
@@ -1241,7 +1242,7 @@ def LocalLogin(params):
             user_info['emotional_state'] = row[6]
             user_info['couple'] = row[7]
             user_info['sex'] = row[8]
-            user_info['birth'] = row[9]
+            user_info['birth'] = row[9].strftime("%Y-%m-%d")
             user_info['job'] = row[10]
             user_info['city'] = row[11]
             user_info['ideal_type'] = row[12]
@@ -1257,9 +1258,9 @@ def LocalLogin(params):
     return data
 
 @app.route('/user/editResume', methods=['POST'])
-def editInformation(params):
+def editInformation():
     global user_info
-    datastr = str(params.data, 'utf-8')
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     newUesrInfo = data_json.get("userInfo")
     data = {}
@@ -1278,8 +1279,8 @@ def editInformation(params):
     return data
 
 @app.route('/user/getFriendsRequestList', methods=['GET'])
-def getFriendRequest(params):
-    datastr = str(params.data, 'utf-8')
+def getFriendRequest():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     data = {}
@@ -1320,8 +1321,8 @@ def getFriendRequest(params):
     return data
 
 @app.route('/user/editPassword', methods=['POST'])
-def LocalLogin(params):
-    datastr = str(params.data, 'utf-8')
+def editPassword():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     pwd = data_json.get("password")
@@ -1340,8 +1341,8 @@ def LocalLogin(params):
     return data
 
 @app.route('/submitResult', methods=['POST'])
-def submitResult(params):
-    datastr = str(params.data, 'utf-8')
+def submitResult():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     accept = data_json.get("accept")
@@ -1386,8 +1387,8 @@ def submitResult(params):
     return data
 
 @app.route('/getBlogListByID', methods=['GET'])
-def getBlogListByID(params):
-    datastr = str(params.data, 'utf-8')
+def getBlogListByID():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     page = data_json.get("currentPage")
@@ -1422,8 +1423,8 @@ def getBlogListByID(params):
     return data
 
 @app.route('/getQuestion', methods=['GET'])
-def getQuestion(params):
-    datastr = str(params.data, 'utf-8')
+def getQuestion():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     sql = "SELECT 'question' from user WHERE 'user_id'=%d;"%(id)
@@ -1450,8 +1451,8 @@ def getQuestion(params):
     return data
 
 @app.route('/submitQuestion', methods=['POST'])
-def submitQuestions(params):
-    datastr = str(params.data, 'utf-8')
+def submitQuestions():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     ans = data_json.get("questionData")
@@ -1470,8 +1471,8 @@ def submitQuestions(params):
     return data
 
 @app.route('/getQuestions', methods=['GET'])
-def getQuestions(params):
-    datastr = str(params.data, 'utf-8')
+def getQuestions():
+    datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = data_json.get("id")
     sql = "SELECT * from friend_apply WHERE 'application_id'=%d;" % (id)
