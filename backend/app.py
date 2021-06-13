@@ -1421,7 +1421,84 @@ def getBlogListByID(params):
         data['records'] = records
     return data
 
+@app.route('/getQuestion', methods=['GET'])
+def getQuestion(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    sql = "SELECT 'question' from user WHERE 'user_id'=%d;"%(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    qs=result[0].split("/")
+    data = {}
+    qd=[]
+    qusetion={}
+    for i in (1,5):
+        qusetion['id']=i
+        qusetion['title']='填空题：请填写你的问题'
+        qusetion['type']='textarea'
+        qusetion['data']=qs[i-1]
+        qd.append(qusetion)
+    data['qusetionData'] = qd
+    return data
 
+@app.route('/submitQuestion', methods=['POST'])
+def submitQuestions(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    ans = data_json.get("questionData")
+    qans = ans[0]+"/"+ans[1] + "/" + ans[2] + "/" + ans[3] + "/" + ans[4]
+    data = {}
+    data ['code'] = 'success'
+    sql = "UPDATE 'friend_apply' SET 'question_answer'='%s' WHERE 'application_id'='%d';"%(qans,id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code']='error'
+    return data
+
+@app.route('/getQuestions', methods=['GET'])
+def getQuestions(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    sql = "SELECT * from friend_apply WHERE 'application_id'=%d;" % (id)
+    data = {}
+    data['code'] = 'success'
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code'] = 'error'
+
+    qs = result[0].split("/")
+    qd = []
+    qusetion = {}
+    for i in (1, 5):
+        qusetion['id'] = i
+        qusetion['title'] = '填空题：请填写你的问题'
+        qusetion['type'] = 'textarea'
+        qusetion['data'] = qs[i - 1]
+        qd.append(qusetion)
+    data['qusetionData'] = qd
+    return data
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port="5678")
