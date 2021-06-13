@@ -1385,6 +1385,42 @@ def submitResult(params):
     data['code'] = 'success'
     return data
 
+@app.route('/getBlogListByID', methods=['GET'])
+def getBlogListByID(params):
+    datastr = str(params.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    page = data_json.get("currentPage")
+    size = data_json.get("size")
+
+    sql = "SELECT * from 'moment' WHERE 'user_id'='%d'"%(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    data = {}
+    data['code']='success'
+    if len(results) == 0:
+        data['code'] = 'success'
+        data['total'] = 0
+        data['size'] = size
+        data['currentPage'] = page
+        records = []
+        data['records'] = records
+    else :
+        data['code'] = 'success'
+        data['total'] = len(results)
+        data['size'] = size
+        data['currentPage'] = page
+        records = results
+        data['records'] = records
+    return data
+
 
 
 if __name__ == '__main__':
