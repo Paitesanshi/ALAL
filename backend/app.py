@@ -82,13 +82,13 @@ def getNewBlog():
     currentPage = int(request.values.get("currentPage"))
     pageSize = int(request.values.get("pageSize"))
     data = {}
-    sql = "SELECT COUNT(*) FROM Blog WHERE state=0"
+    sql = "SELECT COUNT(*) FROM moment"
     cursor.execute(sql)
     total = cursor.fetchone()
     data['total'] = total
     data['currentPage'] = currentPage + 1
     records = []
-    sql = "SELECT blog_id,Blog.user_id,publish_time,title,summary,content,approval_number,browse_number,need_credit,label,Blog.state,activity,name FROM Blog,Blog_user WHERE Blog_user.user_id=Blog.user_id AND Blog.state=0 ORDER BY publish_time DESC"
+    sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
     cursor.execute(sql)
     row = cursor.fetchone()
     start = (currentPage - 1) * pageSize
@@ -99,20 +99,11 @@ def getNewBlog():
         if i >= start:
             size += 1
             record = {}
+            record['moment_id'] = row[0]
             record['user_id'] = row[1]
-            record['blog_id'] = row[0]
-            record['name'] = row[12]
-            blog_labels = row[9].split(",")
-            blog_label_name = []
-            for blog_label in blog_labels:
-                blog_label_name.append(labels[blog_label])
-
-            record['labels'] = blog_label_name
-            record['summary'] = row[4][0:100]
-            record['clickCount'] = row[7]
-            record['likeCount'] = row[6]
-            record['time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
-            record['title'] = row[3]
+            record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
+            record['content'] = row[3]
+            record['like_num'] = row[4]
             records.append(record)
             i += 1
             if i >= end:
@@ -1077,8 +1068,8 @@ def upload():
         f = request.files['file']
         base_path = os.path.abspath(os.path.dirname(__file__))
         print(base_path)
-
-        upload_path = os.path.join(base_path, 'static/uploads/')+"test.jpg"
+        dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        upload_path = os.path.join(base_path, 'static/uploads/') + "%s.jpg" % dt
         print(upload_path)
         f.save(upload_path)
         return "文件上传成功!!"
