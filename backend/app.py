@@ -1,7 +1,6 @@
 import datetime
 import json
 
-import requests
 from flask import Flask, request, render_template, make_response
 import pymysql
 from flask_cors import CORS
@@ -584,43 +583,36 @@ def getPraiseList():
     return data
 
 # 大志_用户登录验证
-@app.route('/oauth/verify/<request>')
-def authVerify():
-    data = {}
-    # sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % request
-    # cursor.execute(sql)
-    # results = cursor.fetchall()
-    # for row in results:
-    #     user_info['user_id'] = row[0]
-    #     user_info['name'] = row[1]
-    #     user_info['password'] = row[2]
-    #     user_info['email'] = row[3]
-    #     user_info['credit'] = row[4]
-    #     user_info['role'] = row[5]
-    #     user_info['state'] = row[6]
-    #     user_info['reputation'] = row[7]
-    # data['id'] = user_info.get('user_id')
-    # if int(user_info['reputation']) == 0:
-    #     data['message'] = '你个烂人！'
-    #     data['code'] = 'error'
-    #     return data
-    # if (request == user_info["user_id"]):
-    global user_info
-    file = open("user_info.txt", 'r')
-    user_info = json.load(file)
-    print(user_info)
-    file.close()
-    print("用户登录正常")
-    data['uid'] = user_info['user_id']
-    data['nickName'] = user_info['name']
-    data['email'] = user_info['email']
-    data['role'] = user_info['role']
+@app.route('/oauth/verify/<token>')
+def authVerify(token):
+    data={}
     data['code'] = 'success'
-    data['message'] = '恭喜登录成功!'
-    # else:
-    #     print("用户登录异常！")
-    #     data['code'] = 'error'
-    #     data['message']='上一个账号未退出'
+    data['message'] = '登录成功'
+    sql = "SELECT * FROM user WHERE user_id = '%s'" % token
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    for row in results:
+        user_info['user_id'] = row[0]
+        user_info['name'] = row[1]
+        user_info['head_portrait'] = row[2]
+        user_info['password'] = row[3]
+        user_info['email'] = row[4]
+        user_info['role'] = row[5]
+        user_info['emotional_state'] = row[6]
+        user_info['couple'] = row[7]
+        user_info['sex'] = row[8]
+        user_info['birth'] = row[9].strftime("%Y-%m-%d")
+        user_info['job'] = row[10]
+        user_info['city'] = row[11]
+        user_info['ideal_type'] = row[12]
+        user_info['question'] = row[13]
+    data['id'] = user_info.get('user_id')
+    print("loginnn")
+    print(user_info)
+    data['records'] = user_info
+    file_object = open("user_info.txt", "w")
+    json.dump(user_info, file_object)
+    file_object.close()
     return data
 
 
@@ -1087,9 +1079,6 @@ def upload():
         print(base_path)
 
         upload_path = os.path.join(base_path, 'static/uploads/')+"test.jpg"
-        sql = " "
-        cursor.execute(sql)
-        row = cursor.fetchone()
         print(upload_path)
         f.save(upload_path)
         return "文件上传成功!!"
@@ -1150,8 +1139,9 @@ def welcome():
 
 
 
-@app.route('/api/getBlogPicByUid/<moment_id>', methods=['GET'])
-def getBlogPicByUid(moment_id):
+@app.route('/api/getBlogPicByUid', methods=['GET'])
+def getBlogPicByUid():
+    moment_id=request.values.get("moment_id")
     data = {}
     data['code'] = 200
     sql = 'SELECT picture FROM moment WHERE moment_id="%s"' % moment_id
@@ -1163,12 +1153,13 @@ def getBlogPicByUid(moment_id):
         data['urls']=picture.split(str=",")
     return data
 
-@app.route('/index/getAvatarsByUserID/<id>', methods=['GET'])
-def getAvatarsByUserID(id):
+@app.route('/index/getAvatarsByUserID', methods=['GET'])
+def getAvatarsByUserID():
+    id=request.values.get("id")
     data = {}
     data['code'] = 200
     data['urls']=[]
-    sql='SELECT sex FROM user WHERE user_id=""'%id
+    sql='SELECT sex FROM user WHERE user_id="%s"'%id
     cursor.execute(sql)
     row = cursor.fetchone()
     sex=row[0]
@@ -1188,10 +1179,14 @@ def getAvatarsByUserID(id):
 
     return data
 
-@app.route('/question/editQuestion/<request>', methods=['POST'])
+@app.route('/question/editQuestion', methods=['POST'])
 def editQuestion():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    user_id=data_json.get("id")
+    questions=str(data_json.get("questionData"),'utf-8') 
     user_id=request['id']
-    sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (request,user_id)
+    sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (questions,user_id)
     cursor.execute(sql)
     data = {}
     data['code'] = 200
@@ -1502,4 +1497,4 @@ def getQuestions():
     return data
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="5678")
+    app.run(host="127.0.0.1", port="5000")
