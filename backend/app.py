@@ -168,6 +168,7 @@ def getWebConfig():
 @app.route('/web/comment/payCreditByUid', methods=['GET'])
 def payCreditByUid():
     blog_id = int(request.values.get("blog_id"))
+    user_id=int(request.values.get("id"))
     data = {}
     credit = 0
     sql = 'CALL readBlog(%d,"%s",%s)' % (
@@ -194,20 +195,22 @@ def payCreditByUid():
 def addComment():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
+    user_id=int(data_json.get("id"))
     blogUid = int(data_json.get("blogUid"))
-    userUid = data_json.get("userUid")
     content = data_json.get("content")
-    sql = 'SELECT MAX(comment_id) FROM Comment'
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    comment_id = 0
-    if row[0] == None:
-        comment_id = 1
-    else:
-        comment_id = int(row[0]) + 1
+
+    # sql = 'SELECT MAX(comment_id) FROM Comment'
+    # cursor.execute(sql)
+    #
+    # row = cursor.fetchone()
+    # comment_id = 0
+    # if row[0] == None:
+    #     comment_id = 1
+    # else:
+    #     comment_id = int(row[0]) + 1
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     sql = 'INSERT INTO comment(moment_id,user_id,time,content) VALUES (%d,%d,"%s","%s")' % (
-         user_info['user_id'], blogUid, time, content)
+         blogUid, user_id, time, content)
     cursor.execute(sql)
 
     data = {}
@@ -219,8 +222,9 @@ def addComment():
 # 大志_更改数据库名称
 @app.route('/oauth/getFeedbackList', methods=['GET'])
 def getFeedbackList():
+    user_id = int(request.values.get("id"))
     data = {}
-    sql = 'SELECT content FROM message WHERE self_user_id="%s"' % user_info['user_id']
+    sql = 'SELECT content FROM message WHERE self_user_id="%s"' % user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     records = []
@@ -229,53 +233,34 @@ def getFeedbackList():
         row = cursor.fetchone()
     print(records)
     data['records'] = records
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 
 @app.route('/getUserinfo', methods=['GET'])
 def getUserInfo():
+    user_id = int(request.values.get("id"))
     data = {}
     data['user_info'] = user_info
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 
 @app.route('/logout/logout', methods=['GET'])
 def logout():
-    global user_info
-    data = {}
-    user_info = {
-        'user_id': '',
-        'name': '',
-        'head_portrait': '',
-        'password': '',
-        'email': '',
-        'role': '',
-        'emotional_state': '',
-        'couple': '',
-        'sex': '',
-        'birth': '',
-        'job': '',
-        'city': '',
-        'ideal_type': '',
-        'question': ''
-    }
-    f = open('user_info.txt', 'w')
-    f.write(str(user_info))
-    print(user_info)
-    f.close()
-    data['code'] = 'success'
+    data={}
+    data['code'] = '200'
     data['message'] = '退出成功'
     return data
 
 # 大志_ 更改成 查询好友列表
-@app.route('/web/comment/getFollowListByUser')
+@app.route('/web/comment/getFollowListByUser',methods=['GET'])
 def getFollowListByUser():
+    user_id = int(request.values.get("id"))
     data = {}
     records = []
     sql = 'SELECT user_id2,name FROM friend,user WHERE user_id2=user.user_id AND user_id1="%s" ORDER BY time DESC' % \
-          user_info['user_id']
+          user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     while row:
@@ -291,7 +276,7 @@ def getFollowListByUser():
         row = cursor.fetchone()
 
     data['records'] = records
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 # 大志_ 我觉得莫得收藏
@@ -393,6 +378,7 @@ def search():
     data['records'] = records
     return data
 
+
 # 个人页查找所有moment 的 list
 @app.route('/web/comment/getListByUser', methods=['POST'])
 def getCommentListByUser():
@@ -402,11 +388,11 @@ def getCommentListByUser():
     commentList = []
     replyList = []
     user_id = user_info['user_id']
-    sql = "select name from user where user_id=" + user_id
+    sql = 'select name from user where user_id="%d"' % user_id
     cursor.execute(sql)
     name = cursor.fetchone()[0]
     # 前面的name是我评论的文章的作者的姓名，后面的name是评论我的文章的用户姓名
-    sql = "SELECT comment.user_id,comment.moment_id,comment.time,comment.content,moment.user_id,user.name from comment,moment,user where comment.moment_id=moment.moment_id and user.user_id=moment.user_id and comment.user_id=" + user_id
+    sql = "SELECT comment.user_id,comment.moment_id,comment.time,comment.content,moment.user_id,user.name from comment,moment,user where comment.moment_id=moment.moment_id and user.user_id=moment.user_id and comment.user_id='%d'" % user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     end = 10
@@ -467,12 +453,13 @@ def getCommentListByUser():
 def praiseBlogByUid():
     print("I am in praiseBlogByUid")
     id = int(request.values.get('uid'))
+    user_id = int(request.values.get('id'))
     # SQL语句点赞数+1
     sql1 = "UPDATE moment SET like_num = like_num +1 WHERE moment_id='%d'" % id
     # SQL语句查询点赞数
     sql2 = "SELECT like_num FROM moment WHERE moment_id='%d'" % id
     sql3 = "INSERT INTO `moment`.`like` (`user_id`, `moment_id`, `time`) VALUES ('%d', '%d', current_time);" % (
-        user_info["user_id"], id)
+        user_id, id)
 
     # 执行SQL语句
     flag = False
@@ -541,11 +528,11 @@ def getPraiseList():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     currentPage = data_json.get("currentPage")
+    user_id = data_json.get("id")
     pageSize = data_json.get("pageSize")
     data = {}
     records = []
     data["records"] = records
-    user_id = user_info['user_id']
     sql = "select Approval.user_id,Approval.blog_id,Approval.time,Blog.title from Approval,Blog where Approval.blog_id=Blog.blog_id and Approval.user_id='" + user_id + "'"
     cursor.execute(sql)
     row = cursor.fetchone()
@@ -617,31 +604,24 @@ def authVerify(token):
 #     data['code'] = 'success'
 #     return data
 
-# 大志_ 根据活动查询博客_ 没啥用了
+# 66改成返回动态查看状态选择
 @app.route('/blogSort/getList', methods=['GET'])
 def getBlogSortList():
     data = {}
     records = []
-    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = "SELECT activity_id,name,description FROM Activity WHERE start_time<='%s' AND end_time>='%s'" % (
-        time, time)
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    i = 0
-    while row:
-        i += 1
-        activity = {}
-        activity['uid'] = int(row[0])
-        activity['name'] = row[1]
-        records.append(activity)
-        row = cursor.fetchone()
+    activity = {}
+    activity['uid'] = 0
+    activity['name'] = "所有人均可见"
+    records.append(activity)
+    activity['uid'] = 1
+    activity['name'] = "仅好友可见"
+    records.append(activity)
+    activity['uid'] = 2
+    activity['name'] = "仅自己可见"
+    records.append(activity)
 
     data['records'] = records
-    if i == 0:
-        data['code'] = 'error'
-        data['message'] = '暂无活动'
-    else:
-        data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 # 大志_添加博客
@@ -660,7 +640,7 @@ def addBlog():
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     label_num = form.get("tagUid")
     activityid = str(form.get("blogSortUid"))
-    sql = "INSERT INTO momemt VALUES (" + str(blog_id) + ",\"" + user_info['user_id'] + \
+    sql = "INSERT INTO momemt VALUES (" + str(blog_id) + ",\"" + form.get("user_id") + \
           "\",\"" + time + "\",\"" + form.get("content") + "\",\"" + form.get("picture") + "\",\"" + \
           form.get("read_limit") + "\",0"
     cursor.execute(sql)
@@ -668,7 +648,7 @@ def addBlog():
 
     updateUserInfo()
     data = {}
-    data['code'] = 'success'
+    data['code'] = '200'
     data['message'] = '发布博客成功'
     return data
 
@@ -951,7 +931,6 @@ def addBlogSort():
 # 大志_注册
 @app.route('/login/register', methods=['POST'])
 def localRegister():
-    global user_info
     print("I am in registerAndregister")
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
