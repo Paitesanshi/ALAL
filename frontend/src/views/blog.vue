@@ -43,7 +43,7 @@
 
         <el-row>
           <el-col :span="6.5">
-            <el-form-item :label-width="formLabelWidth" label="活动" prop="blogSortUid">
+            <el-form-item :label-width="formLabelWidth" label="选择可见范围" prop="blogSortUid">
               <el-select
                 v-model="form.blogSortUid"
                 size="small"
@@ -51,39 +51,46 @@
                 style="width:150px"
               >
                 <el-option
-                  v-for="item in blogSortData"
+                  v-for="item in blogSingleData"
                   :key="item.uid"
                   :label="item.name"
                   :value="item.uid"
                 />
+<!--                <el-option-->
+<!--                  v-if="this.$store.state.user.isSingle == false"-->
+<!--                  v-for="item in blogNotSingleData"-->
+<!--                  :key="item.uid"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.uid"-->
+<!--                />-->
               </el-select>
             </el-form-item>
           </el-col>
 
-          <el-col :span="6.5">
-            <el-form-item label="标签" label-width="80px">
-              <el-select
-                v-model="tagValue"
-                multiple
-                size="small"
-                placeholder="请选择"
-                style="width:210px"
-                filterable
-              >
-                <el-option
-                  v-for="item in tagData"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6.5">
-            <el-form-item label="所需积分" label-width="80px">
-              <el-input v-model="form.need_credit" auto-complete="off" @input="contentChange"/>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="标签" label-width="80px">-->
+<!--              <el-select-->
+<!--                v-model="tagValue"-->
+<!--                multiple-->
+<!--                size="small"-->
+<!--                placeholder="请选择"-->
+<!--                style="width:210px"-->
+<!--                filterable-->
+<!--              >-->
+<!--                <el-option-->
+<!--                  v-for="item in tagData"-->
+<!--                  :key="item.id"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.id"-->
+<!--                />-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="所需积分" label-width="80px">-->
+<!--              <el-input v-model="form.need_credit" auto-complete="off" @input="contentChange"/>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
 <!--          <el-col :span="6.5">-->
 <!--            <el-form-item :label-width="maxLineLabelWidth" label="推荐等级" prop="level">-->
 <!--              <el-select v-model="form.level" size="small" placeholder="请选择" style="width:210px">-->
@@ -133,7 +140,7 @@
           <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/>
         </el-form-item>
 
-     
+
 			<el-form-item label="上传图片" prop="picture" style="width: 800px;">
                <el-upload
 			     action=""
@@ -197,7 +204,8 @@ export default {
       tableData: [], // 博客数据
       tagData: [], // 标签数据
       tagValue: [], // 保存选中标签id(编辑时)
-      blogSortData: [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}],
+      // blogNotSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}, {uid: 3, name: '仅自己与对象可见'}],
+      blogSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}],
       title: '增加博客',
       dialogFormVisible: true, // 控制弹出框
       subjectVisible: false, // 是否显示专题
@@ -276,6 +284,10 @@ export default {
   created () {
     console.log('-----------------------------------------')
     this.title = '增加博客'
+    if(this.$store.state.user.isSingle == true){
+      // alert()
+      this.blogSingleData=[{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己与对象可见'}, {uid: 3, name: '仅自己可见'}]
+    }
     //  const that = this
     // // const tempForm = JSON.parse(getCookie('form'))
     //  const tempForm=null
@@ -376,7 +388,7 @@ export default {
           const isJPG = file.type === 'image/jpeg'
           const isPng = file.type === 'image/png'
           const isLt2M = file.size / 1024 / 1024 < 2
- 
+
           if (!isJPG && !isPng) {
             this.$message.error('上传图片只能是 JPG或png 格式!')
           }
@@ -549,7 +561,7 @@ export default {
               }
             })
           } else {
-		
+
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)

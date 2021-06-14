@@ -37,11 +37,11 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
-          <router-link to="/sort">
-            <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">活动</a>
-          </router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/sort">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">活动</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
 <!--        <li>-->
 <!--          <router-link to="/classify">-->
@@ -49,9 +49,9 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
-          <router-link to="/tag">
-            <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>
+        <li v-if="this.$store.state.user.isSingle == true">
+          <router-link to="/blog">
+            <a href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">发布爱</a>
           </router-link>
         </li>
 		<li>
@@ -64,7 +64,7 @@
             <a href="javascript:void(0);" :class="[saveTitle == '/questions' ? 'title' : '']">问卷</a>
           </router-link>
         </li>
-		<li v-if="this.$store.state.user.isSingle == true">
+		<li>
           <router-link to="/circle">
             <a href="javascript:void(0);" :class="[saveTitle == '/circle' ? 'title' : '']">记录爱</a>
           </router-link>
@@ -74,6 +74,11 @@
             <a href="javascript:void(0);" :class="[saveTitle == '/userinfo' ? 'title' : '']">用户中心</a>
           </router-link>
         </li>
+        <li>
+          <router-link to="/admin">
+            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>
+          </router-link>
+        </li>
 
 <!--        <li>-->
 <!--          <router-link to="/subject">-->
@@ -81,27 +86,27 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
-          <router-link to="/blog">
-            <a  v-if="this.$store.state.user.userInfo.reputation>2" href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">写博客</a>
-          </router-link>
-        </li>
-        <li v-if="userInfo.role==1&&isLogin==true">
-          <router-link to="/admin">
-            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>
-          </router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/blog">-->
+<!--            <a  v-if="this.$store.state.user.userInfo.reputation>2" href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">写博客</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
+<!--        <li v-if="userInfo.role==1&&isLogin==true">-->
+<!--          <router-link to="/admin">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
         <!--        <li>-->
         <!--          <router-link to="/time">-->
         <!--            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>-->
         <!--          </router-link>-->
         <!--        </li>-->
 
-        <li v-if="openComment=='1'">
-          <router-link to="/messageBoard">
-            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>
-          </router-link>
-        </li>
+<!--        <li v-if="openComment=='1'">-->
+<!--          <router-link to="/messageBoard">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
       </ul>
 

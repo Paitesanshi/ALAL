@@ -6,7 +6,7 @@ const app = {
 		// 用户信息
 		userInfo: {},
 		isLogin: true,
-		isSingle: true,
+		isSingle: false,
 	},
 	// getters是对数据的包装，例如对数据进行拼接，或者过滤
 	getters: {
