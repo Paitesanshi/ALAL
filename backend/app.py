@@ -1567,7 +1567,7 @@ def getQuestions():
     return data
 
 #获取用户最新发布的10条动态
-@app.route('/getQBlogsByUid', methods=['GET'])
+@app.route('/getBlogsByUid', methods=['GET'])
 def getQBlogsByUid():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
