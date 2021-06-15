@@ -26,7 +26,7 @@ version = cursor.fetchone()
 #大志修改2021.6.4
 labels = {'1': "科技", '2': "新闻", '3': "美食", '4': "校园", '5': "更多"}
 user_info = {
-    'user_id': '',
+    'id': '',
     'name': '',
     'head_portrait': '',
     'password': '',
@@ -82,13 +82,13 @@ def getNewBlog():
     currentPage = int(request.values.get("currentPage"))
     pageSize = int(request.values.get("pageSize"))
     data = {}
-    sql = "SELECT COUNT(*) FROM Blog WHERE state=0"
+    sql = "SELECT COUNT(*) FROM moment"
     cursor.execute(sql)
     total = cursor.fetchone()
     data['total'] = total
     data['currentPage'] = currentPage + 1
     records = []
-    sql = "SELECT blog_id,Blog.user_id,publish_time,title,summary,content,approval_number,browse_number,need_credit,label,Blog.state,activity,name FROM Blog,Blog_user WHERE Blog_user.user_id=Blog.user_id AND Blog.state=0 ORDER BY publish_time DESC"
+    sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
     cursor.execute(sql)
     row = cursor.fetchone()
     start = (currentPage - 1) * pageSize
@@ -99,20 +99,11 @@ def getNewBlog():
         if i >= start:
             size += 1
             record = {}
+            record['moment_id'] = row[0]
             record['user_id'] = row[1]
-            record['blog_id'] = row[0]
-            record['name'] = row[12]
-            blog_labels = row[9].split(",")
-            blog_label_name = []
-            for blog_label in blog_labels:
-                blog_label_name.append(labels[blog_label])
-
-            record['labels'] = blog_label_name
-            record['summary'] = row[4][0:100]
-            record['clickCount'] = row[7]
-            record['likeCount'] = row[6]
-            record['time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
-            record['title'] = row[3]
+            record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
+            record['content'] = row[3]
+            record['like_num'] = row[4]
             records.append(record)
             i += 1
             if i >= end:
@@ -123,7 +114,6 @@ def getNewBlog():
     data['code'] = 'success'
     data['records'] = records
     return data
-
 
 # 2.TagCloud;
 @app.route('/index/getHotTag', methods=['GET'])
@@ -481,7 +471,7 @@ def praiseBlogByUid():
     # SQL语句查询点赞数
     sql2 = "SELECT like_num FROM moment WHERE moment_id='%d'" % id
     sql3 = "INSERT INTO `moment`.`like` (`user_id`, `moment_id`, `time`) VALUES ('%d', '%d', current_time);" % (
-        user_info["user_id"], id)
+        user_info["id"], id)
 
     # 执行SQL语句
     flag = False
@@ -585,14 +575,20 @@ def getPraiseList():
 # 大志_用户登录验证
 @app.route('/oauth/verify/<token>')
 def authVerify(token):
+
     data={}
     data['code'] = 'success'
     data['message'] = '登录成功'
+    try:
+        db.ping()
+    except:
+        db.connect()
+        print("disconect")
     sql = "SELECT * FROM user WHERE user_id = '%s'" % token
     cursor.execute(sql)
     results = cursor.fetchall()
     for row in results:
-        user_info['user_id'] = row[0]
+        user_info['id'] = row[0]
         user_info['name'] = row[1]
         user_info['head_portrait'] = row[2]
         user_info['password'] = row[3]
@@ -606,7 +602,7 @@ def authVerify(token):
         user_info['city'] = row[11]
         user_info['ideal_type'] = row[12]
         user_info['question'] = row[13]
-    data['id'] = user_info.get('user_id')
+    data['id'] = user_info.get('id')
     print("loginnn")
     print(user_info)
     data['records'] = user_info
@@ -629,29 +625,23 @@ def authVerify(token):
 # 大志_ 根据活动查询博客_ 没啥用了
 @app.route('/blogSort/getList', methods=['GET'])
 def getBlogSortList():
-    data = {}
-    records = []
-    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = "SELECT activity_id,name,description FROM Activity WHERE start_time<='%s' AND end_time>='%s'" % (
-        time, time)
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    i = 0
-    while row:
-        i += 1
+    def getBlogSortList():
+        data = {}
+        records = []
         activity = {}
-        activity['uid'] = int(row[0])
-        activity['name'] = row[1]
+        activity['uid'] = 0
+        activity['name'] = "所有人均可见"
         records.append(activity)
-        row = cursor.fetchone()
+        activity['uid'] = 1
+        activity['name'] = "仅好友可见"
+        records.append(activity)
+        activity['uid'] = 2
+        activity['name'] = "仅自己可见"
+        records.append(activity)
 
-    data['records'] = records
-    if i == 0:
-        data['code'] = 'error'
-        data['message'] = '暂无活动'
-    else:
-        data['code'] = 'success'
-    return data
+        data['records'] = records
+        data['code'] = '200'
+        return data
 
 # 大志_添加博客
 @app.route('/blog/add', methods=['POST'])
@@ -1077,8 +1067,8 @@ def upload():
         f = request.files['file']
         base_path = os.path.abspath(os.path.dirname(__file__))
         print(base_path)
-
-        upload_path = os.path.join(base_path, 'static/uploads/')+"test.jpg"
+        dt = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        upload_path = os.path.join(base_path, 'static\\uploads\\') + "%s.jpg" % dt
         print(upload_path)
         f.save(upload_path)
         return "文件上传成功!!"
@@ -1156,13 +1146,17 @@ def getBlogPicByUid():
 @app.route('/index/getAvatarsByUserID', methods=['GET'])
 def getAvatarsByUserID():
     id=request.values.get("id")
+    print(id)
     data = {}
     data['code'] = 200
     data['urls']=[]
+
     sql='SELECT sex FROM user WHERE user_id="%s"'%id
+    print(sql)
     cursor.execute(sql)
     row = cursor.fetchone()
     sex=row[0]
+    print(sex)
     if sex=='f':
         sql = 'SELECT head_portrait FROM user WHERE sex="m" and emotional_state=0'
     else:
@@ -1196,7 +1190,6 @@ def editQuestion():
 
 @app.route('/login/login', methods=['POST'])
 def LocalLogin():
-    global user_info
     print("I am in loginAndLogin")
     
     datastr = str(request.data, 'utf-8')
@@ -1218,6 +1211,7 @@ def LocalLogin():
         print('error')
         db.rollback()
     data = {}
+    user_info={}
     if len(results) == 0:
         data['code'] = 'error'
         data['message'] = '密码不正确'
@@ -1228,9 +1222,9 @@ def LocalLogin():
         cursor.execute(sql)
         results = cursor.fetchall()
         for row in results:
-            user_info['user_id'] = row[0]
+            user_info['id'] = row[0]
             user_info['name'] = row[1]
-            user_info['head_portrait'] = row[2]
+            user_info['avatar'] = row[2]
             user_info['password'] = row[3]
             user_info['email'] = row[4]
             user_info['role'] = row[5]
@@ -1240,9 +1234,9 @@ def LocalLogin():
             user_info['birth'] = row[9].strftime("%Y-%m-%d")
             user_info['job'] = row[10]
             user_info['city'] = row[11]
-            user_info['ideal_type'] = row[12]
+            user_info['idealType'] = row[12]
             user_info['question'] = row[13]
-        data['id'] = user_info.get('user_id')
+        data['id'] = user_info.get('id')
     print("loginnn")
     print(user_info)
     data['records'] = user_info
