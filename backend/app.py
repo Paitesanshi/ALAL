@@ -49,12 +49,13 @@ user_info = {
 #         return requests.get('http://localhost:8603/{}'.format(path)).text
 #     return render_template("index.html")
 
-#大志修改2021.6.4
+#大志修改2021.6.4 66感觉没用
 def updateUserInfo():
     sql = 'SELECT name,password,head_portrait,email,role,emotional_state,couple,sex,birth,job,city,ideal_type,question FROM user WHERE user_id="%s"' % user_info[
         'user_id']
     cursor.execute(sql)
     row = cursor.fetchone()
+
     if row != None:
         user_info['name'] = row[0]
         user_info['password'] = row[1]
@@ -75,27 +76,43 @@ def updateUserInfo():
 
 
 # 1.index
-
-
 @app.route('/index/getNewBlog', methods=['GET'])  # 指定接口访问的路径，支持什么请求方式get，post
 def getNewBlog():
     currentPage = int(request.values.get("currentPage"))
     pageSize = int(request.values.get("pageSize"))
     data = {}
     sql = "SELECT COUNT(*) FROM moment"
-    cursor.execute(sql)
-    total = cursor.fetchone()
+
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        total = cursor.fetchone()
+
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+
     data['total'] = total
     data['currentPage'] = currentPage + 1
     records = []
     sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
-    cursor.execute(sql)
-    row = cursor.fetchone()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+
     start = (currentPage - 1) * pageSize
     end = currentPage * pageSize
     i = 0
     size = 0
-    while row:
+    for row in result:
         if i >= start:
             size += 1
             record = {}
@@ -108,7 +125,6 @@ def getNewBlog():
             i += 1
             if i >= end:
                 break
-        row = cursor.fetchone()
 
     data['size'] = size
     data['code'] = 'success'
@@ -116,7 +132,7 @@ def getNewBlog():
     return data
 
 
-# 2.TagCloud;
+# 2.TagCloud;66感觉没用
 @app.route('/index/getHotTag', methods=['GET'])
 def getHotTag():
     data = {}
@@ -137,11 +153,26 @@ def getBlogByUid():
     blog_id = int(request.values.get("moment_id"))
     sql = 'SELECT moment_id,moment.user_id,publish_time,content,picture,read_limit,like_num FROM moment where moment_id ="%s"' \
           %str(blog_id)
-    cursor.execute(sql)
-    blog = cursor.fetchone()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        blog = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+
     sql = 'SELECT name FROM user where user_id="%s"' %blog[1]
-    cursor.execute(sql)
-    user_name = cursor.fetchone()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        user_name = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
     print(blog_id)
     result = {}
     result['author'] = user_name[0]
@@ -164,7 +195,7 @@ def getWebConfig():
     data['code'] = 'success'
     return data
 
-
+#66感觉没用
 @app.route('/web/comment/payCreditByUid', methods=['GET'])
 def payCreditByUid():
     blog_id = int(request.values.get("blog_id"))
@@ -191,6 +222,7 @@ def payCreditByUid():
     return data
 
 #大志_添加评论   已更改
+#66已更改
 @app.route('/web/comment/add', methods=['POST'])
 def addComment():
     datastr = str(request.data, 'utf-8')
@@ -211,7 +243,14 @@ def addComment():
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     sql = 'INSERT INTO comment(moment_id,user_id,time,content) VALUES (%d,%d,"%s","%s")' % (
          blogUid, user_id, time, content)
-    cursor.execute(sql)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
 
     data = {}
     data['code'] = 'success'
@@ -220,23 +259,30 @@ def addComment():
 
 # 6.home
 # 大志_更改数据库名称
+#66添加容错
 @app.route('/oauth/getFeedbackList', methods=['GET'])
 def getFeedbackList():
     user_id = int(request.values.get("id"))
     data = {}
     sql = 'SELECT content FROM message WHERE self_user_id="%s"' % user_id
-    cursor.execute(sql)
-    row = cursor.fetchone()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
     records = []
-    while row != None:
+    for row in results:
         records.append(row[0])
-        row = cursor.fetchone()
     print(records)
     data['records'] = records
     data['code'] = '200'
     return data
 
-
+#66感觉没用
 @app.route('/getUserinfo', methods=['GET'])
 def getUserInfo():
     user_id = int(request.values.get("id"))
@@ -254,6 +300,7 @@ def logout():
     return data
 
 # 大志_ 更改成 查询好友列表
+#66增加容错
 @app.route('/web/comment/getFollowListByUser',methods=['GET'])
 def getFollowListByUser():
     user_id = int(request.values.get("id"))
@@ -261,9 +308,16 @@ def getFollowListByUser():
     records = []
     sql = 'SELECT user_id2,name FROM friend,user WHERE user_id2=user.user_id AND user_id1="%s" ORDER BY time DESC' % \
           user_id
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    while row:
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    for row in results:
         record = {}
         record['follower_id'] = row[0]
         idd = row[0]
@@ -273,7 +327,6 @@ def getFollowListByUser():
         record['createTime'] = row[1]
         record['nickName'] = nname
         records.append(record)
-        row = cursor.fetchone()
 
     data['records'] = records
     data['code'] = '200'
@@ -380,6 +433,7 @@ def search():
 
 
 # 个人页查找所有moment 的 list
+#66 没有用到
 @app.route('/web/comment/getListByUser', methods=['POST'])
 def getCommentListByUser():
     datastr = str(request.data, 'utf-8')
@@ -471,6 +525,7 @@ def praiseBlogByUid():
         flag = True
     except:
         flag = False
+        db.rollback()
     if flag == True:
         return {"code": 'success', "number": number[0][0] + 1}
 
@@ -567,8 +622,17 @@ def authVerify(token):
     data['code'] = 'success'
     data['message'] = '登录成功'
     sql = "SELECT * FROM user WHERE user_id = '%s'" % token
-    cursor.execute(sql)
-    results = cursor.fetchall()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+
+    user_info={}
     for row in results:
         user_info['user_id'] = row[0]
         user_info['name'] = row[1]
@@ -588,9 +652,6 @@ def authVerify(token):
     print("loginnn")
     print(user_info)
     data['records'] = user_info
-    file_object = open("user_info.txt", "w")
-    json.dump(user_info, file_object)
-    file_object.close()
     return data
 
 
@@ -630,9 +691,18 @@ def addBlog():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     form = data_json
+    user_id=form.get("id")
     sql = "SELECT MAX(moment_id) FROM moment"
-    cursor.execute(sql)
-    max_id = cursor.fetchone()
+
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        max_id = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
     if max_id == None:
         blog_id = 1
     else:
@@ -640,15 +710,21 @@ def addBlog():
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     label_num = form.get("tagUid")
     activityid = str(form.get("blogSortUid"))
-    sql = "INSERT INTO momemt VALUES (" + str(blog_id) + ",\"" + form.get("user_id") + \
-          "\",\"" + time + "\",\"" + form.get("content") + "\",\"" + form.get("picture") + "\",\"" + \
-          form.get("read_limit") + "\",0"
-    nnum=0
-    sql1 = "INSERT INTO `ALAL`.`moment` (`moment_id`, `user_id`, `publish_time`, `content`, `picture`, `read_limit`, `like_num`) VALUES ('%d', '%d', '%s', '%s', '%s', '%d', '%d');"%(blog_id , form.get("user_id"),time,form.get("content"),form.get("picture"),form.get("read_limit"),nnum)
-    cursor.execute(sql)
+    # sql = "INSERT INTO momemt VALUES (" + str(blog_id) + ",\"" + form.get("id") + \
+    #       "\",\"" + time + "\",\"" + form.get("content") + "\",\"" + form.get("picture") + "\",\"" + \
+    #       form.get("read_limit") + "\",0"
+    # nnum=0
+    sql1 = "INSERT INTO `ALAL`.`moment` (`moment_id`, `user_id`, `publish_time`, `content`, `picture`, `read_limit`, `like_num`) VALUES ('%d', '%d', '%s', '%s', '%s', '%d', '%d');"%(blog_id , form.get("id"),time,form.get("content"),form.get("picture"),form.get("read_limit"),nnum)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql1)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    updateUserInfo()
+    #updateUserInfo()
     data = {}
     data['code'] = '200'
     data['message'] = '发布博客成功'
@@ -732,7 +808,7 @@ def getSortList():
         data['code'] = 'success'
     return data
 
-# 查看活动下的博客
+# 查看活动下的博客,没啥用
 @app.route('/sort/getArticleBySort', methods=['GET'])
 def getArticleBySort():
     id = int(request.values.get("id"))
@@ -1489,6 +1565,49 @@ def getQuestions():
         qd.append(qusetion)
     data['qusetionData'] = qd
     return data
+
+#获取用户最新发布的10条动态
+@app.route('/getQBlogsByUid', methods=['GET'])
+def getQBlogsByUid():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    data={}
+    records = []
+    result=[]
+    sql = 'SELECT moment_id,user_id,publish_time,content,like_num FROM moment WHERE user_id="%d" ORDER BY publish_time DESC' % int(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    if len(result)==0:
+        data['size'] = 0
+        data['records'] = records
+    else:
+        size = 0
+        for row in result:
+            size += 1
+            record = {}
+            record['moment_id'] = row[0]
+            record['user_id'] = row[1]
+            record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
+            record['content'] = row[3]
+            record['like_num'] = row[4]
+            records.append(record)
+            if size==0:
+                break
+
+        data['size'] = size
+        data['records'] = records
+
+    data['code'] = 'success'
+    return data
+
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port="5000")
