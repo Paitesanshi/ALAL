@@ -29,15 +29,16 @@
     <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">
       <div
         v-for="item in newBlogData"
-        :key="item.blog_id"
+        :key="item.moment_id"
         class="blogs"
         data-scroll-reveal="enter bottom over 1s"
+        @click="goToInfo(item)"
       >
-        <h3 class="blogtitle">
+        <!-- <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{
             item.title
           }}</a>
-        </h3>
+        </h3> -->
 
         <!--        <span class="blogpic">-->
         <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
@@ -45,7 +46,7 @@
         <!--          </a>-->
         <!--        </span>-->
 
-        <p class="blogtext">{{ item.summary }}</p>
+        <p class="blogtext">{{ item.content }}</p>
         <div class="bloginfo">
           <ul>
             <li class="author">
@@ -54,23 +55,23 @@
                 item.name
               }}</a>
             </li>
-            <li class="lmname" v-if="item.labels">
+            <!-- <li class="lmname" v-if="item.labels">
               <span class="iconfont">&#xe603;</span>
               <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
                 item.labels[0]
               }}</a>
-            </li>
-            <li class="view">
+            </li> -->
+            <!-- <li class="view">
               <span class="iconfont">&#xe8c7;</span>
               <span>{{ item.clickCount }}</span>
-            </li>
+            </li> -->
             <li class="like">
               <span class="iconfont">&#xe663;</span>
-              {{ item.likeCount }}
+              {{ item.like_num }}
             </li>
             <li class="createTime">
               <span class="iconfont">&#xe606;</span>
-              {{ item.time }}
+              {{ item.publish_time }}
             </li>
           </ul>
         </div>
@@ -172,11 +173,11 @@ export default {
   },
   created () {
     this.newBlogList()
-    this.getUserAvatars()
+    // this.getUserAvatars()
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo (blog) {
+    goToInfo (moment) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
@@ -187,12 +188,16 @@ export default {
           offset: 100
         })
       } else {
-        let routeData = this.$router.resolve({
+        // let routeData = this.$router.resolve({
+        //   path: '/info',
+        //   query: { blogUid: moment.moment_id }
+        // })
+        // console.log(moment.moment_id)
+        // window.open(routeData.href, '_blank')
+        this.$router.push({
           path: '/info',
-          query: { blogUid: blog.blog_id }
+          query: {blogUid: moment.moment_id}
         })
-        console.log(blog.id)
-        window.open(routeData.href, '_blank')
       }
 
       // if (blog.type === '0') {
@@ -213,8 +218,8 @@ export default {
     getUserAvatars () {
       let that = this
       let params = new URLSearchParams()
-      console.log("id is "+this.$store.state.user.userInfo.id)
-    	params.append('id',this.$store.state.user.userInfo.id)
+      console.log('id is ' + this.$store.state.user.userInfo.id)
+    	params.append('id', this.$store.state.user.userInfo.id)
       getAvatarsByUserID(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
           for (var i = 0; i < len(response.data.ids); ++i) {
@@ -274,6 +279,7 @@ export default {
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
             that.newBlogData = response.data.records
+            console.log(that.newBlogData)
             that.total = response.data.total
             that.pageSize = response.data.size
             that.currentPage = response.data.currentPage
