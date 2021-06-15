@@ -233,7 +233,7 @@ def getFeedbackList():
         row = cursor.fetchone()
     print(records)
     data['records'] = records
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 
@@ -242,7 +242,7 @@ def getUserInfo():
     user_id = int(request.values.get("id"))
     data = {}
     data['user_info'] = user_info
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 
@@ -276,7 +276,7 @@ def getFollowListByUser():
         row = cursor.fetchone()
 
     data['records'] = records
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 # 大志_ 我觉得莫得收藏
@@ -655,7 +655,7 @@ def addBlog():
 
     updateUserInfo()
     data = {}
-    data['code'] = 'success'
+    data['code'] = '200'
     data['message'] = '发布博客成功'
     data['moment_id']=blog_id
     return data
@@ -1022,12 +1022,23 @@ def GetCommentList():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = int(data_json.get('blogUid'))
+    data = {}
+    data['code'] = 'success'
     records = []
     sql = "SELECT * FROM comment WHERE moment_id='%d'" % id
     #   try:
     # 执行SQL语句
-    cursor.execute(sql)
-    comment = cursor.fetchall()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        comment = cursor.fetchall()
+    except:
+        print('error')
+        data['code'] = 'error'
+        db.rollback()
+    if len(comment)== 0 :
+        data['code'] = 'success'
+        data['records']= []
     for i in range(0, min(9, len(comment))):
         record = {}
         record['uid'] = int(i)
@@ -1042,8 +1053,7 @@ def GetCommentList():
         record['user'] = user
         record['content'] = comment[i][4]
         records.append(record)
-    data = {}
-    data['code'] = 'success'
+
     data['records'] = records
     return data
 
@@ -1159,15 +1169,23 @@ def getAvatarsByUserID():
         sql = 'SELECT head_portrait FROM user WHERE sex="m" and emotional_state=0'
     else:
         sql = 'SELECT head_portrait FROM user WHERE sex="f" and emotional_state=0'
-    cursor.execute(sql)
-    row=cursor.fetchone()
+    try :
+       cursor.execute(sql)
+       row=cursor.fetchone()
+    except :
+        print("error")
+        db.rollback()
     i=0
     while row:
         data['urls'].append(row[0])
         i+=1
-        if i==9:
+        if i == 9:
             break
-        row=cursor.fetchone()
+        try :
+            row = cursor.fetchone()
+        except :
+            print("error")
+            db.rollback()
 
     return data
 
@@ -1179,7 +1197,11 @@ def editQuestion():
     questions=str(data_json.get("questionData"),'utf-8') 
     user_id=request['id']
     sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (questions,user_id)
-    cursor.execute(sql)
+    try :
+        cursor.execute(sql)
+    except :
+        print("error")
+        db.rollback()
     data = {}
     data['code'] = 'success'
     return data
