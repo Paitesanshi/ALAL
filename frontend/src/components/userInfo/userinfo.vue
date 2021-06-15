@@ -1,17 +1,16 @@
 <template>
   <div>
-    <table>
+      <div align="center">
+        <el-image
+          style="width: 128px; height: 128px; border-radius: 50%;"
+          :src="this.list.avatar">
+        </el-image>
+      </div>
+      <!-- <td>头像：</td>
+      <td><img style="" src="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"></td> -->
+    <table style="width: 400px">
 <!--      <th> 个人信息</th>-->
- 	  <tr>
-		<td style="width: 75%;margin:0 auto;text-align:center;">
-          <el-image
-            style="width: 128px; height: 128px; border-radius: 50%;"
-			:src="this.list.avatar">
-          </el-image>
-        </td>
-        <!-- <td>头像：</td>
-        <td><img style="" src="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"></td> -->
-      </tr>
+
       <tr>
         <td>ID：</td>
         <td>{{list.ID}}</td>
@@ -54,8 +53,9 @@
         <td>理想型：</td>
         <td>{{list.idealType}}</td>
       </tr>
-      <el-button class="edit" @click="changeEdit" style="margin-left: 350px">编辑</el-button>
+
     </table>
+    <el-button class="edit" @click="changeEdit" style="margin-left: 350px">编辑</el-button>
 <!--    <el-button style="margin-left: 350px" @click="">编辑</el-button>-->
 <!--    <el-dialog class="myDialog">-->
 <!--      <el-form  :model="list" status-icon :rules="rules2" ref="list" label-width="100px" class="formWrap"-->
@@ -194,15 +194,17 @@
 </template>
 <style>
 table {
-  width: 100%;
-  font-size: 16px
+  margin: 0 auto;
+  font-size: 16px;
+  border-collapse: collapse;
+  table-layout:fixed;
+  word-wrap:break-word;
 }
 .myDialog {
   width: 1500px;
 }
 table tr td {
-  padding: 11.2px;
-  text-align: left;
+  text-align: center;
 }
 .formWrap {
   width: 500px;
