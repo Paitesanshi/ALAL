@@ -73,7 +73,7 @@
           <ul>
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(item.user_id)">{{
+              <a href="javascript:void(0);" @click="goToAuthor(item.id)">{{
                   item.name
                 }}</a>
             </li>

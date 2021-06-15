@@ -37,11 +37,11 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
+        <!-- <li>
           <router-link to="/sort">
             <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">活动</a>
           </router-link>
-        </li>
+        </li> -->
 
 <!--        <li>-->
 <!--          <router-link to="/classify">-->
@@ -50,8 +50,8 @@
 <!--        </li>-->
 
         <li>
-          <router-link to="/tag">
-            <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>
+          <router-link to="/blog">
+            <a href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">发布爱</a>
           </router-link>
         </li>
 		<li>
@@ -133,7 +133,7 @@
 
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="login" v-show="!this.$store.state.user.isLogin">登录</el-dropdown-item>
-          <el-dropdown-item command="goUserInfo" v-show="isLogin">个人中心</el-dropdown-item>
+          <!-- <el-dropdown-item command="goUserInfo" v-show="isLogin">个人中心</el-dropdown-item> -->
           <el-dropdown-item command="logout" v-show="isLogin">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -671,6 +671,9 @@ export default {
       }
       after = scrollTop
     })
+    window.onbeforeunload = function (e) {
+      this.getToken()
+    }
   },
   watch: {
     $route (to, from) {
@@ -691,7 +694,7 @@ export default {
   },
   methods: {
     // 拿到vuex中的写的方法
-    ...mapMutations(['setUserInfo', 'setLoginState', 'setWebConfigData']),
+    ...mapMutations(['setUserInfo', 'setLoginState', 'setSingleState']),
     // 搜索
     search: function () {
       if (this.keyword === '' || this.keyword.trim() === '') {
@@ -888,7 +891,7 @@ export default {
       if (this.activeName === '0') {
         // 激活个人中心页面
         this.userInfo.photoUrl = resData
-       // this.userInfo.avatar = resData[0].uid
+        // this.userInfo.avatar = resData[0].uid
       } else if (this.activeName === '5') {
         let photoList = []
         photoList.push(resData[0].url)
@@ -902,7 +905,7 @@ export default {
           this.userInfo.photoUrl = null
           this.userInfo.avatar = ''
           this.icon = false
-          this.selectFileShow=false
+          this.selectFileShow = false
         }
           break
 
@@ -913,10 +916,10 @@ export default {
           break
       }
     },
-    close: function() {
+    close: function () {
       this.imagecropperShow = false
     },
-    change: function() {
+    change: function () {
       this.selectFileShow = !this.selectFileShow
     },
     submitForm: function (type) {
@@ -1058,6 +1061,7 @@ export default {
 
     getToken: function () {
       let token = this.getUrlVars()['token']
+     
       // 判断url中是否含有token
       if (token != undefined) {
         // 设置token七天过期
@@ -1067,26 +1071,27 @@ export default {
         token = getCookie('token')
       }
       let that = this
-      console.log('token:------------' + token)
+       console.log("token is "+token)
       if (token != undefined) {
-        console.log('this issssssssssssssssssssssssss')
-        console.log(token)
         authVerify(token).then(response => {
-          alert(response.data.code,this.$ECode.SUCCESS)
           if (response.data.code == this.$ECode.SUCCESS) {
-           alert('login end success!')
             this.isLogin = true
-            this.showLogin=false
-            let userInfo = response.data
+            this.showLogin = false
+            let userInfo = response.data.records
             this.userInfo = userInfo
             this.setUserInfo(userInfo)
             this.setLoginState(this.isLogin)
+            console.log(this.$store.state.user.userInfo)
+            if (this.$store.state.user.userInfo.emotional_state === 1) {
+              this.setSingleState(false)
+            } else {
+              this.setSingleState(true)
+            }
           } else {
             delCookie('token')
           }
         }).catch(error => {
-          this.userInfo.role = 1
-          this.userInfo.reputation = 5
+          console.log(error)
         })
       }
     },

@@ -133,7 +133,6 @@
           <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/>
         </el-form-item>
 
-     
 			<el-form-item label="上传图片" prop="picture" style="width: 800px;">
                <el-upload
 			     action=""
@@ -160,7 +159,7 @@
 </template>
 
 <script>
-import { addBlog, editBlog,uploadPhoto,uploadMomentPhotos} from '@/api/blog'
+import { addBlog, editBlog, uploadPhoto, uploadMomentPhotos} from '@/api/blog'
 // import { getSystemConfig } from '@/api/systemConfig'
 import { getTagList } from '@/api/tag'
 import { getBlogSortList } from '@/api/blogSort'
@@ -188,9 +187,9 @@ export default {
   },
   data () {
     return {
-		          dialogImageUrl: '',
-          dialogVisible: false,
-          picList: [],
+		  dialogImageUrl: '',
+      dialogVisible: false,
+      picList: [],
     	fileList: [],
       uploadLoading: null, // 文件上传loading
       CKEditorData: null,
@@ -238,7 +237,8 @@ export default {
         author: '', // 作者
         clickCount: 0,
         articlesPart: '', // 文章出处
-        need_credit:''
+        need_credit: '',
+        id: ''
       },
       rules: {
         title: [
@@ -359,59 +359,59 @@ export default {
     // this.blogList()
   },
   methods: {
-	  uploadPicture(item) {
-          const formData = new FormData()
-          formData.append('file', item.file)
-		  formData.append('avatar',true)
-          const uid = item.file.uid
-          uploadPhoto(formData).then(res => {
+	  uploadPicture (item) {
+      const formData = new FormData()
+      formData.append('file', item.file)
+		  formData.append('avatar', true)
+      const uid = item.file.uid
+      uploadPhoto(formData).then(res => {
 			  console.log(res)
-            this.picList.push({ key: uid, value: res.data.url })
-            this.emptyUpload()
-          }).catch(() => {
-            this.$message.error('上传失败，请重新上传')
-            this.emptyUpload()
-          })
-        },
-        beforeAvatarUpload(file) {
-          const isJPG = file.type === 'image/jpeg'
-          const isPng = file.type === 'image/png'
-          const isLt2M = file.size / 1024 / 1024 < 2
- 
-          if (!isJPG && !isPng) {
-            this.$message.error('上传图片只能是 JPG或png 格式!')
-          }
-          if (!isLt2M) {
-            this.$message.error('上传图片大小不能超过 2MB!')
-          }
-          return (isJPG || isPng) && isLt2M
-        },
-        handleRemove(file, fileList) {
-          for (const i in this.picList) {
-            if (this.picList[i].key === file.uid) {
-              this.picList.splice(i, 1)
-            }
-          }
-        },
-        handlePictureCardPreview(file) {
-          this.dialogImageUrl = file.url
-          this.dialogVisible = true
-        },
-        /**
+        this.picList.push({ key: uid, value: res.data.url })
+        this.emptyUpload()
+      }).catch(() => {
+        this.$message.error('上传失败，请重新上传')
+        this.emptyUpload()
+      })
+    },
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isPng = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG && !isPng) {
+        this.$message.error('上传图片只能是 JPG或png 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return (isJPG || isPng) && isLt2M
+    },
+    handleRemove (file, fileList) {
+      for (const i in this.picList) {
+        if (this.picList[i].key === file.uid) {
+          this.picList.splice(i, 1)
+        }
+      }
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    /**
          * 清空上传组件
          */
-        emptyUpload() {
-          const mainImg = this.$refs.upload
-          if (mainImg) {
-            if (mainImg.length) {
-              mainImg.forEach(item => {
-                item.clearFiles()
-              })
-            } else {
-              this.$refs.upload.clearFiles()
-            }
-          }
-        },
+    emptyUpload () {
+      const mainImg = this.$refs.upload
+      if (mainImg) {
+        if (mainImg.length) {
+          mainImg.forEach(item => {
+            item.clearFiles()
+          })
+        } else {
+          this.$refs.upload.clearFiles()
+        }
+      }
+    },
     openLoading () {
       this.uploadLoading = Loading.service({
         lock: true,
@@ -550,23 +550,24 @@ export default {
               }
             })
           } else {
-		let that =this
+            let that = this
+            
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 // 清空cookie中的内容
                 // delCookie('form')
                 // 清空触发器
-				let momentid=res.data.id
-				let para=new URLSearchParams()
-				para.append("moment_id",momentid)
-				para.append("picList",that.picList)
-				uploadMomentPhotos(para).then((res) => {
-					console.log(res)
-				})
+                let momentid = res.data.id
+                let para = new URLSearchParams()
+                para.append('moment_id', momentid)
+                para.append('picList', that.picList)
+                uploadMomentPhotos(para).then((res) => {
+                  console.log(res)
+                })
                 clearInterval(this.interval)
                 this.dialogFormVisible = false
-                location.href=this.vueMoguWebUrl + '/#/'
+                location.href = this.vueMoguWebUrl + '/#/'
               } else {
                 this.$commonUtil.message.error(response.message)
               }

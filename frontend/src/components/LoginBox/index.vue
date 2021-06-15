@@ -151,7 +151,7 @@ export default {
   },
   components: {},
   methods: {
-    ...mapMutations(['setUserInfo', 'setLoginState','setSingleState']),
+    ...mapMutations(['setUserInfo', 'setLoginState', 'setSingleState']),
     startLogin: function () {
       console.log('---------------!!!!!!!!!!!')
       this.$refs.loginForm.validate((valid) => {
@@ -159,24 +159,26 @@ export default {
         if (!valid) {
           console.log('校验失败')
         } else {
+          let that = this
           var params = {}
           params.userName = this.loginForm.userName
           params.passWord = this.loginForm.password
           // params.isRememberMe = 1
-          console.log(params)
+          console.log(this.$store.state.user.isLogin)
           localLogin(params).then(response => {
             if (response.data.code === this.$ECode.SUCCESS) {
               // 跳转到首页
               this.isLogin = true
-              let userInfo = response.data.userInfo
-              console.log(this.$store.state.user.)
+              let userInfo = response.data.records
               this.setUserInfo(userInfo)
               this.setLoginState(this.isLogin)
-              if( response.data.userInfo["emotional_state"]=1)
-                this.setSingleState(true)
-              else
+              if (this.$store.state.user.userInfo.emotional_state === 1) {
                 this.setSingleState(false)
-              alert(this.$store.state.user.isSingle)
+              } else {
+                this.setSingleState(true)
+              }
+              console.log('userinfo:', that.$store.state.user.userInfo)
+              console.log('login:', that.$store.state.user.isLogin)
               window.location.replace(this.vueMoguWebUrl + '/#/?token=' + response.data.id)
               window.location.reload()
             } else {
@@ -186,7 +188,7 @@ export default {
               })
             }
           }).catch(error => {
-            console.log(error+"6666666666666666")
+            console.log(error + '6666666666666666')
           })
         }
       })
@@ -198,7 +200,7 @@ export default {
         } else {
           let passWord = this.registerForm.password
           let passWord2 = this.registerForm.password2
-          if (passWord != passWord2) {
+          if (passWord !== passWord2) {
             this.$message({
               type: 'error',
               message: '两次密码不一致'
@@ -211,7 +213,7 @@ export default {
           params.email = this.registerForm.email
           params.nickName = this.registerForm.nickName
           localRegister(params).then(response => {
-            if (response.data.code == this.$ECode.SUCCESS) {
+            if (response.data.code === this.$ECode.SUCCESS) {
               this.$message({
                 type: 'success',
                 message: response.data.message

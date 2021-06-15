@@ -24,7 +24,7 @@
           <ul>
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(item.user_id)">{{
+              <a href="javascript:void(0);" @click="goToAuthor(item.id)">{{
                 item.name
               }}</a>
             </li>
@@ -91,22 +91,22 @@
 </template>
 
 <script>
-import FirstRecommend from "../components/FirstRecommend";
-import VideoPlayer from "../components/VideoPlayer";
-import ThirdRecommend from "../components/ThirdRecommend";
-import FourthRecommend from "../components/FourthRecommend";
-import TagCloud from "../components/TagCloud";
-import HotBlog from "../components/HotBlog";
-import FollowUs from "../components/FollowUs";
-import Link from "../components/Link";
-import { getBlogByLevel, getNewBlog } from "../api/index";
-import { Loading } from "element-ui";
-import CameraCapture from "../components/CameraCapture";
-import Camera from "../components/Camera";
-import PhotoWall from "../components/PhotoWall";
+import FirstRecommend from '../components/FirstRecommend'
+import VideoPlayer from '../components/VideoPlayer'
+import ThirdRecommend from '../components/ThirdRecommend'
+import FourthRecommend from '../components/FourthRecommend'
+import TagCloud from '../components/TagCloud'
+import HotBlog from '../components/HotBlog'
+import FollowUs from '../components/FollowUs'
+import Link from '../components/Link'
+import { getBlogByLevel, getNewBlog } from '../api/index'
+import { Loading } from 'element-ui'
+import CameraCapture from '../components/CameraCapture'
+import Camera from '../components/Camera'
+import PhotoWall from '../components/PhotoWall'
 
 export default {
-  name: "circle",
+  name: 'circle',
   components: {
     // 注册组件
     FirstRecommend,
@@ -121,7 +121,7 @@ export default {
     Camera,
     PhotoWall
   },
-  data() {
+  data () {
     return {
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
@@ -129,18 +129,18 @@ export default {
       secondData: [], // ；二级级推荐数据
       newBlogData: [
         {
-          title: "test",
-          author: "ptss",
-          labels: ["技术", "数据库"],
-          summary: "略略略",
+          title: 'test',
+          author: 'ptss',
+          labels: ['技术', '数据库'],
+          summary: '略略略',
           clickCount: 100,
           likeCount: 200,
-          time: "2020-12-2"
+          time: '2020-12-2'
         }
       ], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
-      keyword: "",
+      keyword: '',
       currentPage: 1,
       pageSize: 15,
       total: 0, // 总数量
@@ -148,34 +148,34 @@ export default {
       loading: false // 是否正在加载
     }
   },
-  mounted() {
+  mounted () {
     // 注册scroll事件并监听
-    this.loading = false;
+    this.loading = false
   },
-  created() {
-    console.log("hhhhhhhhhhhhh")
-    var secondParams = new URLSearchParams();
-    secondParams.append("level", 2);
+  created () {
+    console.log('hhhhhhhhhhhhh')
+    var secondParams = new URLSearchParams()
+    secondParams.append('level', 2)
     // 是否排序
-    secondParams.append("useSort", 1);
+    secondParams.append('useSort', 1)
     getBlogByLevel(secondParams)
       .then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records;
+          this.secondData = response.data.records
         }
       })
       .catch(error => {
-        console.log(error);
+        console.log(error)
         for (let i = 0; i < 2; ++i) {
           this.secondData.push({
-            title: "Alibaba",
-            labels: "技术",
-            photoList: ["../../static/images/banner.png"]
-          });
+            title: 'Alibaba',
+            labels: '技术',
+            photoList: ['../../static/images/banner.png']
+          })
         }
-      });
+      })
     // 获取最新博客
-    this.newBlogList();
+    this.newBlogList()
     // alert();
     // var params = new URLSearchParams()
     // params.append('pageName', 'INDEX')
@@ -184,23 +184,23 @@ export default {
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo(blog) {
+    goToInfo (blog) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
       ) {
         this.$notify.error({
-          title: "警告",
-          message: "宁信誉积分太低，宁不配",
+          title: '警告',
+          message: '宁信誉积分太低，宁不配',
           offset: 100
-        });
+        })
       } else {
         let routeData = this.$router.resolve({
-          path: "/info",
+          path: '/info',
           query: { blogUid: blog.blog_id }
-        });
-        console.log(blog.id);
-        window.open(routeData.href, "_blank");
+        })
+        console.log(blog.id)
+        window.open(routeData.href, '_blank')
       }
 
       // if (blog.type === '0') {
@@ -218,9 +218,9 @@ export default {
       //   window.open(blog.outsideLink, '_blank')
       // }
     },
-    getResume(){
+    getResume () {
       let params = new URLSearchParams()
-      params.append('id',  this.$store.state.user.userInfo.id)
+      params.append('id', this.$store.state.user.userInfo.id)
       getResumeByID(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
           this.blogSortData = response.data.records
@@ -229,36 +229,35 @@ export default {
         console.log(error)
         this.blogSortData = [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}]
       })
-
     },
     // 跳转到搜索详情页
-    goToList(uid) {
+    goToList (uid) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { sortUid: uid }
-      });
+      })
     },
 
     // 跳转到搜索详情页
-    goToAuthor(author) {
+    goToAuthor (author) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { author: author }
-      });
+      })
     },
 
     // 最新博客列表
-    newBlogList() {
-      var that = this;
+    newBlogList () {
+      var that = this
       that.loadingInstance = Loading.service({
         lock: true,
-        text: "正在努力加载中……",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
+        text: '正在努力加载中……',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
 
-      var params = new URLSearchParams();
-      params.append("currentPage", this.currentPage);
-      params.append("pageSize", this.pageSize);
+      var params = new URLSearchParams()
+      params.append('currentPage', this.currentPage)
+      params.append('pageSize', this.pageSize)
       getNewBlog(params)
         .then(response => {
           // if (response.data.code === this.$ECode.SUCCESS) {
@@ -270,65 +269,65 @@ export default {
           // that.loadingInstance.close();
           // eslint-disable-next-line handle-callback-err
           for (let i = 0; i < 5; ++i) {
-            console.log("error!!!")
+            console.log('error!!!')
             this.newBlogData.push({
-              title: "test",
-              author: "ptss",
-              labels: ["技术", "数据库"],
-              summary: "略略略",
+              title: 'test',
+              author: 'ptss',
+              labels: ['技术', '数据库'],
+              summary: '略略略',
               clickCount: 100,
               likeCount: 200,
-              time: "2020-12-2"
-            });
+              time: '2020-12-2'
+            })
           }
         })
         .catch(error => {
           for (let i = 0; i < 5; ++i) {
-            console.log("error!!!")
+            console.log('error!!!')
             this.newBlogData.push({
-              title: "test",
-              author: "ptss",
-              labels: ["技术", "数据库"],
-              summary: "略略略",
+              title: 'test',
+              author: 'ptss',
+              labels: ['技术', '数据库'],
+              summary: '略略略',
               clickCount: 100,
               likeCount: 200,
-              time: "2020-12-2"
-            });
+              time: '2020-12-2'
+            })
           }
-          that.loadingInstance.close();
-        });
+          that.loadingInstance.close()
+        })
     },
 
-    loadContent: function() {
-      var that = this;
-      that.loading = false;
-      that.currentPage = that.currentPage + 1;
-      var params = new URLSearchParams();
-      params.append("currentPage", that.currentPage);
-      params.append("pageSize", that.pageSize);
+    loadContent: function () {
+      var that = this
+      that.loading = false
+      that.currentPage = that.currentPage + 1
+      var params = new URLSearchParams()
+      params.append('currentPage', that.currentPage)
+      params.append('pageSize', that.pageSize)
       getNewBlog(params).then(response => {
         if (
           response.data.code === this.$ECode.SUCCESS &&
           response.data.records.length > 0
         ) {
-          that.isEnd = false;
-          var newData = that.newBlogData.concat(response.data.records);
-          that.newBlogData = newData;
-          that.total = response.data.total;
-          that.pageSize = response.data.size;
-          that.currentPage = response.data.current;
+          that.isEnd = false
+          var newData = that.newBlogData.concat(response.data.records)
+          that.newBlogData = newData
+          that.total = response.data.total
+          that.pageSize = response.data.size
+          that.currentPage = response.data.current
           // 全部加载完毕
           if (newData.length < that.pageSize) {
-            that.isEnd = true;
+            that.isEnd = true
           }
         } else {
-          that.isEnd = true;
+          that.isEnd = true
         }
-        that.loading = false;
-      });
+        that.loading = false
+      })
     }
   }
-};
+}
 </script>
 
 <style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="container">
+    <table>
 <!--      <th> 个人信息</th>-->
  	  <tr>
 		<td style="width: 75%;margin:0 auto;text-align:center;">
@@ -31,7 +31,7 @@
       </tr>
       <tr>
         <td>职业：</td>
-        <td>{{list.career}}</td>
+        <td>{{list.job}}</td>
       </tr>
       <tr>
         <td>情感状况：</td>
@@ -40,7 +40,7 @@
       </tr>
       <tr>
         <td>出生日期：</td>
-        <td>{{list.career}}</td>
+        <td>{{list.birthDate}}</td>
       </tr>
       <tr>
 <!--      <tr>-->
@@ -52,7 +52,7 @@
 <!--      </tr>-->
 
         <td>理想型：</td>
-        <td>{{list.career}}</td>
+        <td>{{list.idealType}}</td>
       </tr>
       <el-button class="edit" @click="changeEdit" style="margin-left: 350px">编辑</el-button>
     </table>
@@ -132,10 +132,10 @@
         <!--          <el-input v-model="resumeList.age"></el-input>-->
         <!--        </el-form-item>-->
         <el-form-item label="城市" prop="address">
-          <el-input v-model="list.address"></el-input>
+          <el-input v-model="list.city"></el-input>
         </el-form-item>
         <el-form-item label="职业" prop="career">
-          <el-input v-model="list.career"></el-input>
+          <el-input v-model="list.job"></el-input>
         </el-form-item>
         <el-form-item label="出生日期" prop="birthDate">
           <!--          <el-select v-model="resumeList.birthDate" style="width: 100%">-->
@@ -194,7 +194,7 @@
 </template>
 <style>
 table {
-  width: 600px;
+  width: 100%;
   font-size: 16px
 }
 .myDialog {
@@ -282,8 +282,8 @@ export default {
       }
     }
     return {
-      isEdit: false,
-	  isEmpty:true,
+    isEdit: false,
+	  isEmpty: true,
       rules2: {
         nickName: [{validator: checknickname, trigger: 'blur'}],
         name: [{validator: checkname, trigger: 'blur'}],
@@ -321,16 +321,16 @@ export default {
       jobOptions: [],
       intentionCompany: [],
       intentionJob: [],
-	  picList:[]
+	  picList: []
     }
   },
   methods: {
-	  uploadPicture(item) {
-		  this.isEmpty=false
+	  uploadPicture (item) {
+		  this.isEmpty = false
 		  console.log(this.isEmpty)
           const formData = new FormData()
           formData.append('file', item.file)
-		  formData.append('avatar',true)
+		  formData.append('avatar', true)
           const uid = item.file.uid
           uploadPhoto(formData).then(res => {
 			  console.log(res)
@@ -341,11 +341,11 @@ export default {
             this.emptyUpload()
           })
         },
-        beforeAvatarUpload(file) {
+        beforeAvatarUpload (file) {
           const isJPG = file.type === 'image/jpeg'
           const isPng = file.type === 'image/png'
           const isLt2M = file.size / 1024 / 1024 < 2
- 
+
           if (!isJPG && !isPng) {
             this.$message.error('上传图片只能是 JPG或png 格式!')
           }
@@ -354,22 +354,22 @@ export default {
           }
           return (isJPG || isPng) && isLt2M
         },
-        handleRemove(file, fileList) {
+        handleRemove (file, fileList) {
           for (const i in this.picList) {
             if (this.picList[i].key === file.uid) {
               this.picList.splice(i, 1)
             }
           }
-		  this.isEmpty=true
+		  this.isEmpty = true
         },
-        handlePictureCardPreview(file) {
+        handlePictureCardPreview (file) {
           this.dialogImageUrl = file.url
           this.dialogVisible = true
         },
         /**
          * 清空上传组件
          */
-        emptyUpload() {
+        emptyUpload () {
           const mainImg = this.$refs.upload
           if (mainImg) {
             if (mainImg.length) {
@@ -389,21 +389,21 @@ export default {
     submitInfo (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-			list.avatar=this.picList[this.picList-1]
-			let params=new URLSearchParams()
-		params.append("id",this.$store.state.user.userInfo.id)
-		params.append("userInfo",list)
+			list.avatar = this.picList[this.picList - 1]
+			let params = new URLSearchParams()
+		params.append('id', this.$store.state.user.userInfo.id)
+		params.append('userInfo', list)
 
 				editResume(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-			this.resumeList=info
+			this.resumeList = info
 			this.$notify({
             title: '成功',
             message: '修改成功',
             type: 'success',
             offset: 100
           })
-        }else{
+        } else {
 			this.$notify({
             title: '失败',
             message: '修改信息失败',
@@ -418,7 +418,10 @@ export default {
           console.log('error submit!!')
         }
       })
-    },
+    }
+  },
+  created(){
+    console.log(this.list)
   }
 }
 </script>

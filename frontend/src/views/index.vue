@@ -50,7 +50,7 @@
           <ul>
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(item.user_id)">{{
+              <a href="javascript:void(0);" @click="goToAuthor(item.id)">{{
                 item.name
               }}</a>
             </li>
@@ -149,8 +149,8 @@ export default {
   },
   data () {
     return {
-		urlData: [],
-		ids:[],
+      urlData: [],
+      ids: [],
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
@@ -171,32 +171,7 @@ export default {
     this.loading = false
   },
   created () {
-    var secondParams = new URLSearchParams()
-    secondParams.append('level', 2)
-    // 是否排序
-    secondParams.append('useSort', 1)
-    getBlogByLevel(secondParams)
-      .then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        for (let i = 0; i < 2; ++i) {
-          this.secondData.push({
-            title: 'Alibaba',
-            labels: '技术',
-            photoList: ['../../static/images/banner.png']
-          })
-        }
-      })
-    // 获取最新博客
     this.newBlogList()
-    // var params = new URLSearchParams()
-    // params.append('pageName', 'INDEX')
-    // recorderVisitPage(params).then(response => {
-    // })
     this.getUserAvatars()
   },
   methods: {
@@ -235,37 +210,38 @@ export default {
       //   window.open(blog.outsideLink, '_blank')
       // }
     },
-	getUserAvatars(){
-		let that=this
-		let params = new URLSearchParams()
-    	params.append('id',  this.$store.state.user.userInfo.id)
-		getAvatarsByUserID(params).then(response => {
-		if (response.data.code === this.$ECode.SUCCESS) {
-			for(var i=0;i<len(response.data.ids);++i){
-				that.urlData.push( {"src":"http://121.196.111.9:5678/display/img/"+response.data.ids[i]+"-a.png","id":response.data.ids[i]})
-			}
-			console.log(that.urlData)
-			that.loadingInstance.close()
-		} else {
-			that.urlData=[
-				{"src":"http://121.196.111.9:5678/display/img/test.png","id":"1"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png","id":"2"},
-				{"src":"http://121.196.111.9:5678/display/img/test.png","id":"3"},
-			]
-			that.ids=["test"]
-			that.loadingInstance.close()
-		}
-		}).catch(error => {
-			that.urlData=[
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc","id":"1"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc","id":"2"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc","id":"3"},
-			]
-			that.ids=["test"]
-			console.log(this.urlData)
-			that.loadingInstance.close()
-		})
-	},
+    getUserAvatars () {
+      let that = this
+      let params = new URLSearchParams()
+      console.log("id is "+this.$store.state.user.userInfo.id)
+    	params.append('id',this.$store.state.user.userInfo.id)
+      getAvatarsByUserID(params).then(response => {
+        if (response.data.code === this.$ECode.SUCCESS) {
+          for (var i = 0; i < len(response.data.ids); ++i) {
+            that.urlData.push({'src': 'http://121.196.111.9:5678/display/img/' + response.data.ids[i] + '-a.png', 'id': response.data.ids[i]})
+          }
+          console.log(that.urlData)
+          that.loadingInstance.close()
+        } else {
+          that.urlData = [
+            {'src': 'http://121.196.111.9:5678/display/img/test.png', 'id': '1'},
+            {'src': 'http://121.196.111.9:5678/display/img/test.png', 'id': '2'},
+            {'src': 'http://121.196.111.9:5678/display/img/test.png', 'id': '3'}
+          ]
+          that.ids = ['test']
+          that.loadingInstance.close()
+        }
+      }).catch(error => {
+        that.urlData = [
+          {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc', 'id': '1'},
+          {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc', 'id': '2'},
+          {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc', 'id': '3'}
+        ]
+        that.ids = ['test']
+        console.log(this.urlData)
+        that.loadingInstance.close()
+      })
+    },
     // 跳转到搜索详情页
     goToList (uid) {
       this.$router.push({
@@ -321,12 +297,12 @@ export default {
         })
     },
 
-    loadContent: function() {
-      var that = this;
-      that.loading = false;
-      var params = new URLSearchParams();
-      params.append("currentPage", that.currentPage);
-      params.append("pageSize", that.pageSize);
+    loadContent: function () {
+      var that = this
+      that.loading = false
+      var params = new URLSearchParams()
+      params.append('currentPage', that.currentPage)
+      params.append('pageSize', that.pageSize)
       getNewBlog(params).then(response => {
         if (
           response.data.code === this.$ECode.SUCCESS &&

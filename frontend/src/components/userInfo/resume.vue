@@ -360,7 +360,7 @@
 </style>
 
 <script>/* eslint-disable indent */
-import { editResume} from "@/api/user";
+import { editResume} from '@/api/user'
 export default {
   data () {
     var checkname = (rule, value, callback) => {
@@ -447,9 +447,9 @@ export default {
       dialogFormVisible: false,
       resumeFormVisible: true,
       resumeList: {
-        // id:'',
+        id: '',
         // userId: sessionStorage.getItem('userId'),
-		avatar:'',
+		avatar: '',
         city: '',
         name: '',
         sex: '',
@@ -461,7 +461,7 @@ export default {
         email: '',
         birthDate: '',
         idealType: '',
-        phone: '',
+        phone: ''
         // school: '',
         // skills: [
         //   {
@@ -506,26 +506,26 @@ export default {
         // school: [{validator: checkschool, trigger: 'blur'}],
         // age: [{validator: checkage, trigger: 'blur'}],
         email: [{validator: checkemail, trigger: 'blur'}],
-        idealType: [{validator: checkideal, trigger: 'blur'}],
+        idealType: [{validator: checkideal, trigger: 'blur'}]
         // awards: [{validator: checkaward, trigger: 'blur'}]
       }
     }
   },
-  created(){
-	  this.resumeList.city=this.$store.state.user.userInfo.city
-	   this.resumeList.name=this.$store.state.user.userInfo.name
-	    this.resumeList.sex=this.$store.state.user.userInfo.sex
-		 this.resumeList.emotion=this.$store.state.user.userInfo.emotion
-		  this.resumeList.career=this.$store.state.user.userInfo.career
-		   this.resumeList.email=this.$store.state.user.userInfo.email
-		    this.resumeList.birthDate=this.$store.state.user.userInfo.birthDate
-			 this.resumeList.idealType=this.$store.state.user.userInfo.idealType
-			 this.resumeList.avatar=this.$store.state.user.userInfo.avatar
+  created () {
+   
+      this.resumeList.id = this.$store.state.user.userInfo.id
+	    this.resumeList.city = this.$store.state.user.userInfo.city
+	    this.resumeList.name = this.$store.state.user.userInfo.name
+	    this.resumeList.sex = this.$store.state.user.userInfo.sex
+		  this.resumeList.emotion = this.$store.state.user.userInfo.emotion
+		  this.resumeList.career = this.$store.state.user.userInfo.career
+		  this.resumeList.email = this.$store.state.user.userInfo.email
+		  this.resumeList.birthDate = this.$store.state.user.userInfo.birthDate
+			this.resumeList.idealType = this.$store.state.user.userInfo.idealType
+			this.resumeList.avatar = this.$store.state.user.userInfo.avatar
+       console.log(this.resumeList.id)
   },
   watch: {
-    tip() {
-      location.reload()
-    }
   },
   methods: {
     cancelChange () {
@@ -537,20 +537,20 @@ export default {
     deleteItem (key) {
       this.resumeList.skills.splice(key, 1)
     },
-	changeResume(info){
-		let params=new URLSearchParams()
-		params.append("id",this.$store.state.user.userInfo.id)
-		params.append("userInfo",info)
+	changeResume (info) {
+		let params = new URLSearchParams()
+		params.append('id', this.$store.state.user.userInfo.id)
+		params.append('userInfo', info)
 		editResume(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-			this.resumeList=info
+			this.resumeList = info
 			this.$notify({
             title: '成功',
             message: '修改成功',
             type: 'success',
             offset: 100
           })
-        }else{
+        } else {
 			this.$notify({
             title: '失败',
             message: '修改信息失败',
@@ -570,7 +570,7 @@ export default {
         resumeId: 0
       }
       this.resumeList.skills.push(newskills)
-    },
+    }
 	// getResume(){
 	// 	let params = new URLSearchParams()
     // 	params.append('id',  this.$store.state.user.userInfo.id)

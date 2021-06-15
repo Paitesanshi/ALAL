@@ -91,7 +91,7 @@ export default {
       activeIndex2: '1',
       btnText: '取消',
       list: {
-		avatar:'',
+		  avatar: '',
         nickName: '',
         sex: '',
         address: '',
@@ -102,34 +102,25 @@ export default {
         intentionCompany: '',
         intentionJob: '',
         photoUrl: '',
-        phone:''
+        phone: ''
       },
       photoUrl: '',
       head: {},
       refresh: 0
     }
   },
-  created(){
-		this.list.city=this.$store.state.user.userInfo.city
-	   this.list.name=this.$store.state.user.userInfo.name
-	    this.list.sex=this.$store.state.user.userInfo.sex
-		 this.list.emotion=this.$store.state.user.userInfo.emotion
-		  this.list.career=this.$store.state.user.userInfo.career
-		   this.list.email=this.$store.state.user.userInfo.email
-		    this.list.birthDate=this.$store.state.user.userInfo.birthDate
-			 this.list.idealType=this.$store.state.user.userInfo.idealType
-			 this.list.avatar=this.$store.state.user.userInfo.avatar	
-			 //this.list.avatar="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
-  },
-  computed: {
-    setDefault () {
-      return this.list.photoUrl === ''?"./static/default_photo.png":this.list.photoUrl
-    }
-  },
-  watch: {
-    refresh () {
-      location.reload()
-    }
+  created () {
+    this.list.id = this.$store.state.user.userInfo.id
+		this.list.city = this.$store.state.user.userInfo.city
+	  this.list.name = this.$store.state.user.userInfo.name
+	  this.list.sex = this.$store.state.user.userInfo.sex
+		this.list.emotion = this.$store.state.user.userInfo.emotional_state
+		this.list.email = this.$store.state.user.userInfo.email
+		this.list.birthDate = this.$store.state.user.userInfo.birth
+	  this.list.idealType = this.$store.state.user.userInfo.idealType
+		this.list.avatar = this.$store.state.user.userInfo.avatar
+    this.list.job = this.$store.state.user.userInfo.job
+			 // this.list.avatar="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
   },
   components: {
     user: Info,
