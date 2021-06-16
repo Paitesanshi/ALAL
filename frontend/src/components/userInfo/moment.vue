@@ -3,15 +3,15 @@
     <div class="blogsbox">
       <div
         v-for="item in newBlogData"
-        :key="item.blog_id"
+        :key="item.moment_id"
         class="blogs"
         data-scroll-reveal="enter bottom over 1s"
       >
-        <h3 class="blogtitle">
+        <!-- <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{
               item.title
             }}</a>
-        </h3>
+        </h3> -->
 
         <!--        <span class="blogpic">-->
         <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
@@ -19,7 +19,7 @@
         <!--          </a>-->
         <!--        </span>-->
 
-        <p class="blogtext">{{ item.summary }}</p>
+        <div class="blogtext">{{ item.content }}</div>
         <div class="bloginfo">
           <ul>
             <li class="author">
@@ -28,16 +28,16 @@
                   item.name
                 }}</a>
             </li>
-            <li class="lmname" v-if="item.labels">
+            <!-- <li class="lmname" v-if="item.labels">
               <span class="iconfont">&#xe603;</span>
               <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
                   item.labels[0]
                 }}</a>
-            </li>
-            <li class="view">
+            </li> -->
+            <!-- <li class="view">
               <span class="iconfont">&#xe8c7;</span>
               <span>{{ item.clickCount }}</span>
-            </li>
+            </li> -->
             <li class="like">
               <span class="iconfont">&#xe663;</span>
               {{ item.likeCount }}
@@ -91,22 +91,22 @@
 </template>
 
 <script>
-import FirstRecommend from "../FirstRecommend";
-import VideoPlayer from "../VideoPlayer";
-import ThirdRecommend from "../ThirdRecommend";
-import FourthRecommend from "../FourthRecommend";
-import TagCloud from "../TagCloud";
-import HotBlog from "../HotBlog";
-import FollowUs from "../FollowUs";
-import Link from "../Link";
-import { getBlogByLevel, getNewBlog } from "../../api/index";
-import { Loading } from "element-ui";
-import CameraCapture from "../CameraCapture";
-import Camera from "../Camera";
-import PhotoWall from "../PhotoWall";
+import FirstRecommend from '../FirstRecommend'
+import VideoPlayer from '../VideoPlayer'
+import ThirdRecommend from '../ThirdRecommend'
+import FourthRecommend from '../FourthRecommend'
+import TagCloud from '../TagCloud'
+import HotBlog from '../HotBlog'
+import FollowUs from '../FollowUs'
+import Link from '../Link'
+import { getBlogByLevel, getNewBlog,getBlogsByUid } from '../../api/index'
+import { Loading } from 'element-ui'
+import CameraCapture from '../CameraCapture'
+import Camera from '../Camera'
+import PhotoWall from '../PhotoWall'
 
 export default {
-  name: "moment",
+  name: 'moment',
   components: {
     // 注册组件
     FirstRecommend,
@@ -121,7 +121,7 @@ export default {
     Camera,
     PhotoWall
   },
-  data() {
+  data () {
     return {
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
@@ -129,18 +129,18 @@ export default {
       secondData: [], // ；二级级推荐数据
       newBlogData: [
         {
-          title: "test",
-          author: "ptss",
-          labels: ["技术", "数据库"],
-          summary: "略略略",
+          title: 'test',
+          author: 'ptss',
+          labels: ['技术', '数据库'],
+          summary: '略略略',
           clickCount: 100,
           likeCount: 200,
-          time: "2020-12-2"
+          time: '2020-12-2'
         }
       ], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
-      keyword: "",
+      keyword: '',
       currentPage: 1,
       pageSize: 15,
       total: 0, // 总数量
@@ -148,13 +148,13 @@ export default {
       loading: false // 是否正在加载
     }
   },
-  mounted() {
+  mounted () {
     // 注册scroll事件并监听
-    this.loading = false;
+    this.loading = false
   },
-  created() {  
+  created () {
     // 获取最新博客
-    this.newBlogList();
+    this.newBlogList()
     // alert();
     // var params = new URLSearchParams()
     // params.append('pageName', 'INDEX')
@@ -163,23 +163,23 @@ export default {
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo(blog) {
+    goToInfo (blog) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
       ) {
         this.$notify.error({
-          title: "警告",
-          message: "宁信誉积分太低，宁不配",
+          title: '警告',
+          message: '宁信誉积分太低，宁不配',
           offset: 100
-        });
+        })
       } else {
         let routeData = this.$router.resolve({
-          path: "/info",
+          path: '/info',
           query: { blogUid: blog.blog_id }
-        });
-        console.log(blog.id);
-        window.open(routeData.href, "_blank");
+        })
+        console.log(blog.id)
+        window.open(routeData.href, '_blank')
       }
 
       // if (blog.type === '0') {
@@ -198,103 +198,105 @@ export default {
       // }
     },
     // 跳转到搜索详情页
-    goToList(uid) {
+    goToList (uid) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { sortUid: uid }
-      });
+      })
     },
 
     // 跳转到搜索详情页
-    goToAuthor(author) {
+    goToAuthor (author) {
       this.$router.push({
-        path: "/list",
+        path: '/list',
         query: { author: author }
-      });
+      })
     },
 
     // 最新博客列表
-    newBlogList() {
-      var that = this;
+    newBlogList () {
+      var that = this
       that.loadingInstance = Loading.service({
         lock: true,
-        text: "正在努力加载中……",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
+        text: '正在努力加载中……',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
 
-      var params = new URLSearchParams();
-      params.append("currentPage", this.currentPage);
-      params.append("pageSize", this.pageSize);
-      getNewBlog(params)
+      var params = new URLSearchParams()
+      // params.append('currentPage', this.currentPage)
+      // params.append('pageSize', this.pageSize)
+      params.append('id', this.$store.state.user.userInfo.id)
+      getBlogsByUid(params)
         .then(response => {
-          // if (response.data.code === this.$ECode.SUCCESS) {
-          //   that.newBlogData = response.data.records;
-          //   that.total = response.data.total;
-          //   that.pageSize = response.data.size;
-          //   that.currentPage = response.data.currentPage;
-          // }
-          that.loadingInstance.close();
-          // eslint-disable-next-line handle-callback-err
-          for (let i = 0; i < 5; ++i) {
-            console.log("error!!!")
-            this.newBlogData.push({
-              title: "test",
-              author: "ptss",
-              labels: ["技术", "数据库"],
-              summary: "略略略",
-              clickCount: 100,
-              likeCount: 200,
-              time: "2020-12-2"
-            });
+          if (response.data.code === this.$ECode.SUCCESS) {
+            that.newBlogData = response.data.records;
+            that.total = response.data.total;
+            that.pageSize = response.data.size;
+            that.currentPage = response.data.currentPage;
+             that.loadingInstance.close()
           }
+         
+          // eslint-disable-next-line handle-callback-err
+          // for (let i = 0; i < 5; ++i) {
+          //   console.log('error!!!')
+          //   this.newBlogData.push({
+          //     title: 'test',
+          //     author: 'ptss',
+          //     labels: ['技术', '数据库'],
+          //     summary: '略略略',
+          //     clickCount: 100,
+          //     likeCount: 200,
+          //     time: '2020-12-2'
+          //   })
+          // }
         })
         .catch(error => {
           for (let i = 0; i < 5; ++i) {
-            console.log("error!!!")
+            console.log('error!!!')
             this.newBlogData.push({
-              title: "test",
-              author: "ptss",
-              labels: ["技术", "数据库"],
-              summary: "略略略",
+              title: 'test',
+              author: 'ptss',
+              labels: ['技术', '数据库'],
+              summary: '略略略',
               clickCount: 100,
               likeCount: 200,
-              time: "2020-12-2"
-            });
+              time: '2020-12-2'
+            })
           }
-          that.loadingInstance.close();
-        });
+          that.loadingInstance.close()
+        })
     },
 
-    loadContent: function() {
-      var that = this;
-      that.loading = false;
-      that.currentPage = that.currentPage + 1;
-      var params = new URLSearchParams();
-      params.append("currentPage", that.currentPage);
-      params.append("pageSize", that.pageSize);
+    loadContent: function () {
+      var that = this
+      that.loading = false
+      that.currentPage = that.currentPage + 1
+      var params = new URLSearchParams()
+      params.append('currentPage', that.currentPage)
+      params.append('pageSize', that.pageSize)
       getNewBlog(params).then(response => {
         if (
           response.data.code === this.$ECode.SUCCESS &&
           response.data.records.length > 0
         ) {
-          that.isEnd = false;
-          var newData = that.newBlogData.concat(response.data.records);
-          that.newBlogData = newData;
-          that.total = response.data.total;
-          that.pageSize = response.data.size;
-          that.currentPage = response.data.current;
+          that.isEnd = false
+          var newData = that.newBlogData.concat(response.data.records)
+          that.newBlogData = newData
+          that.total = response.data.total
+          that.pageSize = response.data.size
+          that.currentPage = response.data.current
           // 全部加载完毕
           if (newData.length < that.pageSize) {
-            that.isEnd = true;
+            that.isEnd = true
           }
         } else {
-          that.isEnd = true;
+          that.isEnd = true
         }
-        that.loading = false;
-      });
+        that.loading = false
+      })
     }
   }
-};
+}
 </script>
 
 <style>

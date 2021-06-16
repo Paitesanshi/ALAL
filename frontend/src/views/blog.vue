@@ -5,18 +5,18 @@
       :title="title"
       :visible.sync="dialogFormVisible"
       :before-close="closeDialog"
-      fullscreen
+
     >
       <el-form ref="form" :model="form" :rules="rules">
         <el-row>
-          <el-col >
+          <!-- <el-col >
             <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
               <el-input v-model="form.title" auto-complete="off" @input="contentChange"/>
             </el-form-item>
             <el-form-item :label-width="formLabelWidth" label="简介">
               <el-input v-model="form.summary" auto-complete="off" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
 <!--          <el-col :span="8">-->
 <!--            <el-form-item :label-width="formLabelWidth" label="标题图">-->
@@ -134,10 +134,13 @@
 <!--            </el-form-item>-->
 <!--          </el-col>-->
 <!--        </el-row>-->
+            <!-- <el-form-item :label-width="formLabelWidth" label="简介">
 
+            </el-form-item> -->
         <el-form-item :label-width="formLabelWidth" label="内容" prop="content">
-          <ckeditor v-if="systemConfig.editorModel == '0'" ref="editor" v-model="form.content" :height="360"/>
-          <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/>
+          <!-- <ckeditor v-if="systemConfig.editorModel == '0'" ref="editor" v-model="form.content" :height="360"/>
+          <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/> -->
+           <el-input v-model="form.content" auto-complete="off" />
         </el-form-item>
 
 			<el-form-item label="上传图片" prop="picture" style="width: 800px;">
@@ -156,7 +159,7 @@
                  <img width="100%" :src="dialogImageUrl" alt="">
                </el-dialog>
             </el-form-item>
-		<el-form-item style="float: right; margin-right: 20px;">
+		    <el-form-item style="margin-left:300px">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
           <el-button type="primary" @click="submitForm">确 定</el-button>
         </el-form-item>
@@ -205,7 +208,7 @@ export default {
       tagValue: [], // 保存选中标签id(编辑时)
       // blogNotSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}, {uid: 3, name: '仅自己与对象可见'}],
       blogSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}],
-      title: '增加博客',
+      title: '发布动态',
       dialogFormVisible: true, // 控制弹出框
       subjectVisible: false, // 是否显示专题
       isFirstSubjectVisible: true, // 专题选择器是否首次显示【用于懒加载】
@@ -247,7 +250,7 @@ export default {
         articlesPart: '', // 文章出处
         need_credit: '',
         id: '',
-        read_limit:' ',
+        read_limit: ' '
       },
       rules: {
         title: [
@@ -284,10 +287,10 @@ export default {
   },
   created () {
     console.log('-----------------------------------------')
-    this.title = '增加博客'
-    if(this.$store.state.user.isSingle == true){
+    this.title = '发布动态'
+    if (this.$store.state.user.isSingle == true) {
       // alert()
-      this.blogSingleData=[{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己与对象可见'}, {uid: 3, name: '仅自己可见'}]
+      this.blogSingleData = [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己与对象可见'}, {uid: 3, name: '仅自己可见'}]
     }
     //  const that = this
     // // const tempForm = JSON.parse(getCookie('form'))
@@ -559,7 +562,7 @@ export default {
             })
           } else {
             let that = this
-            this.form.id=this.$store.state.user.userInfo.id
+            this.form.id = this.$store.state.user.userInfo.id
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
@@ -567,9 +570,9 @@ export default {
                 // delCookie('form')
                 // 清空触发器
                 let momentid = response.data.moment_id
-                let para ={}
-                para.moment_id= momentid
-                para.picList= that.picList
+                let para = {}
+                para.moment_id = momentid
+                para.picList = that.picList
                 uploadMomentPhotos(para).then((res) => {
                   console.log(res)
                 })

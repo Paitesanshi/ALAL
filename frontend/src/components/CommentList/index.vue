@@ -2,7 +2,7 @@
   <div>
     <div v-for="item in comments" :key="item.uid">
       <div class="commentList">
-        <span class="left p1">
+        <span class="left p1" 	@click="goToUser(id)">
           <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" />
           <img v-else src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" />
           <FollowBtn :uid="item.user.id"></FollowBtn>
@@ -99,6 +99,10 @@ export default {
       //   }
       // })
     },
+    goToUser (uid) {
+      console.log('组件中methods方法')
+      this.$router.push({path: '/click_userInfo', query: {id: uid}})// 取参 this.$route.query.id
+    	},
     replyTo: function (item) {
       if (!this.validLogin()) {
         this.$notify.error({

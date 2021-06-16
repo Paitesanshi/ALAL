@@ -46,7 +46,7 @@
         <!--          </a>-->
         <!--        </span>-->
 
-        <p class="blogtext">{{ item.content }}</p>
+        <div class="blogtext">{{ item.content }}</div>
         <div class="bloginfo">
           <ul>
             <li class="author">
@@ -172,7 +172,7 @@ export default {
     this.loading = false
   },
   created () {
-    //this.newBlogList()
+    this.newBlogList()
     // this.getUserAvatars()
   },
   methods: {
