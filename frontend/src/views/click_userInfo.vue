@@ -20,7 +20,7 @@
           </tr>
           <tr>
             <td>理想型：</td>
-            <td>{{this.UserList.idealType}}</td>
+            <td>{{this.UserList.ideal_type}}</td>
           </tr>
           <br>
           <button @click="goToAnswer">填写问卷</button>
@@ -172,7 +172,7 @@ export default {
         career: '',
         email: '',
         birthDate: '',
-        idealType: ''
+        ideal_type: ''
       }
     }
   },
@@ -280,7 +280,7 @@ export default {
         career: 'coder',
         email: '1',
         birthDate: '1',
-        idealType: '1'
+        ideal_type: '1'
       }
         })
     },	

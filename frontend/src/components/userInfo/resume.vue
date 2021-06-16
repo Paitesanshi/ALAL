@@ -56,7 +56,7 @@
 <!--          </tr>-->
 <!--          <tr>-->
 <!--            <td>理想型：</td>-->
-<!--            <td>{{this.$store.state.user.userInfo.idealType}}</td>-->
+<!--            <td>{{this.$store.state.user.userInfo.ideal_type}}</td>-->
 <!--          </tr>-->
 <!--&lt;!&ndash;          <tr>&ndash;&gt;-->
 <!--&lt;!&ndash;            <td>技术栈：</td>&ndash;&gt;-->
@@ -146,8 +146,8 @@
 <!--            <el-option label="非单身" :value="2"></el-option>-->
 <!--          </el-select>-->
 <!--        </el-form-item>-->
-<!--        <el-form-item label="理想型" prop="idealType">-->
-<!--          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.idealType "></el-input>-->
+<!--        <el-form-item label="理想型" prop="ideal_type">-->
+<!--          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.ideal_type "></el-input>-->
 <!--        </el-form-item>-->
 <!--        <el-form-item>-->
 <!--          <el-button @click="cancelChange">取消</el-button>-->
@@ -257,8 +257,8 @@
 <!--            </div>-->
 <!--          </div>-->
 <!--        </el-form-item>-->
-        <el-form-item label="理想型" prop="idealType">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.idealType "></el-input>
+        <el-form-item label="理想型" prop="ideal_type">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.ideal_type "></el-input>
         </el-form-item>
 <!--        <el-form-item label="获奖经历" prop="awards">-->
 <!--          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.awards"></el-input>-->
@@ -460,7 +460,7 @@ export default {
         // awards: '',
         email: '',
         birthDate: '',
-        idealType: '',
+        ideal_type: '',
         phone: ''
         // school: '',
         // skills: [
@@ -506,7 +506,7 @@ export default {
         // school: [{validator: checkschool, trigger: 'blur'}],
         // age: [{validator: checkage, trigger: 'blur'}],
         email: [{validator: checkemail, trigger: 'blur'}],
-        idealType: [{validator: checkideal, trigger: 'blur'}]
+        ideal_type: [{validator: checkideal, trigger: 'blur'}]
         // awards: [{validator: checkaward, trigger: 'blur'}]
       }
     }
@@ -521,7 +521,7 @@ export default {
 		  this.resumeList.career = this.$store.state.user.userInfo.career
 		  this.resumeList.email = this.$store.state.user.userInfo.email
 		  this.resumeList.birthDate = this.$store.state.user.userInfo.birthDate
-			this.resumeList.idealType = this.$store.state.user.userInfo.idealType
+			this.resumeList.ideal_type = this.$store.state.user.userInfo.ideal_type
 			this.resumeList.avatar = this.$store.state.user.userInfo.avatar
        console.log(this.resumeList.id)
   },

@@ -43,47 +43,54 @@
 
         <el-row>
           <el-col :span="6.5">
-            <el-form-item :label-width="formLabelWidth" label="活动" prop="blogSortUid">
+            <el-form-item :label-width="formLabelWidth" label="选择可见范围" prop="blogSortUid">
               <el-select
-                v-model="form.blogSortUid"
+                v-model="form.read_limit"
                 size="small"
                 placeholder="请选择"
                 style="width:150px"
               >
                 <el-option
-                  v-for="item in blogSortData"
+                  v-for="item in blogSingleData"
                   :key="item.uid"
                   :label="item.name"
                   :value="item.uid"
                 />
+<!--                <el-option-->
+<!--                  v-if="this.$store.state.user.isSingle == false"-->
+<!--                  v-for="item in blogNotSingleData"-->
+<!--                  :key="item.uid"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.uid"-->
+<!--                />-->
               </el-select>
             </el-form-item>
           </el-col>
 
-          <el-col :span="6.5">
-            <el-form-item label="标签" label-width="80px">
-              <el-select
-                v-model="tagValue"
-                multiple
-                size="small"
-                placeholder="请选择"
-                style="width:210px"
-                filterable
-              >
-                <el-option
-                  v-for="item in tagData"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6.5">
-            <el-form-item label="所需积分" label-width="80px">
-              <el-input v-model="form.need_credit" auto-complete="off" @input="contentChange"/>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="标签" label-width="80px">-->
+<!--              <el-select-->
+<!--                v-model="tagValue"-->
+<!--                multiple-->
+<!--                size="small"-->
+<!--                placeholder="请选择"-->
+<!--                style="width:210px"-->
+<!--                filterable-->
+<!--              >-->
+<!--                <el-option-->
+<!--                  v-for="item in tagData"-->
+<!--                  :key="item.id"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.id"-->
+<!--                />-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="所需积分" label-width="80px">-->
+<!--              <el-input v-model="form.need_credit" auto-complete="off" @input="contentChange"/>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
 <!--          <el-col :span="6.5">-->
 <!--            <el-form-item :label-width="maxLineLabelWidth" label="推荐等级" prop="level">-->
 <!--              <el-select v-model="form.level" size="small" placeholder="请选择" style="width:210px">-->
@@ -196,7 +203,8 @@ export default {
       tableData: [], // 博客数据
       tagData: [], // 标签数据
       tagValue: [], // 保存选中标签id(编辑时)
-      blogSortData: [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}],
+      // blogNotSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}, {uid: 3, name: '仅自己与对象可见'}],
+      blogSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}],
       title: '增加博客',
       dialogFormVisible: true, // 控制弹出框
       subjectVisible: false, // 是否显示专题
@@ -238,31 +246,32 @@ export default {
         clickCount: 0,
         articlesPart: '', // 文章出处
         need_credit: '',
-        id: ''
+        id: '',
+        read_limit:' ',
       },
       rules: {
         title: [
           { required: true, message: '标题不能为空', trigger: 'blur' }
         ],
-        blogSortUid: [
-          { required: true, message: '分类不能为空', trigger: 'blur' }
-        ],
-        level: [
-          { required: true, message: '推荐等级不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '推荐等级只能为自然数' }
-        ],
-        isPublish: [
-          { required: true, message: '发布字段不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '发布字段只能为自然数' }
-        ],
-        isOriginal: [
-          { required: true, message: '原创字段不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '原创字段只能为自然数' }
-        ],
-        openComment: [
-          { required: true, message: '网站评论不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '网站评论只能为自然数' }
-        ],
+        // blogSortUid: [
+        //   { required: true, message: '分类不能为空', trigger: 'blur' }
+        // ],
+        // level: [
+        //   { required: true, message: '推荐等级不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '推荐等级只能为自然数' }
+        // ],
+        // isPublish: [
+        //   { required: true, message: '发布字段不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '发布字段只能为自然数' }
+        // ],
+        // isOriginal: [
+        //   { required: true, message: '原创字段不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '原创字段只能为自然数' }
+        // ],
+        // openComment: [
+        //   { required: true, message: '网站评论不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '网站评论只能为自然数' }
+        // ],
         content: [
           { required: true, message: '内容不能为空', trigger: 'blur' }
         ],
@@ -276,6 +285,10 @@ export default {
   created () {
     console.log('-----------------------------------------')
     this.title = '增加博客'
+    if(this.$store.state.user.isSingle == true){
+      // alert()
+      this.blogSingleData=[{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己与对象可见'}, {uid: 3, name: '仅自己可见'}]
+    }
     //  const that = this
     // // const tempForm = JSON.parse(getCookie('form'))
     //  const tempForm=null
@@ -363,10 +376,9 @@ export default {
       const formData = new FormData()
       formData.append('file', item.file)
 		  formData.append('avatar', true)
-      const uid = item.file.uid
       uploadPhoto(formData).then(res => {
 			  console.log(res)
-        this.picList.push({ key: uid, value: res.data.url })
+        this.picList.push(res.data.uid)
         this.emptyUpload()
       }).catch(() => {
         this.$message.error('上传失败，请重新上传')
@@ -529,10 +541,6 @@ export default {
       this.blogList()
     },
     submitForm: function () {
-      if (this.tagValue.length <= 0) {
-        this.$commonUtil.message.error('标签不能为空!')
-        return
-      }
       this.$refs.form.validate((valid) => {
         if (!valid) {
         } else {
@@ -551,23 +559,23 @@ export default {
             })
           } else {
             let that = this
-            
+            this.form.id=this.$store.state.user.userInfo.id
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 // 清空cookie中的内容
                 // delCookie('form')
                 // 清空触发器
-                let momentid = res.data.id
-                let para = new URLSearchParams()
-                para.append('moment_id', momentid)
-                para.append('picList', that.picList)
+                let momentid = response.data.moment_id
+                let para ={}
+                para.moment_id= momentid
+                para.picList= that.picList
                 uploadMomentPhotos(para).then((res) => {
                   console.log(res)
                 })
                 clearInterval(this.interval)
                 this.dialogFormVisible = false
-                location.href = this.vueMoguWebUrl + '/#/'
+                this.$router.push({ path: '/' })
               } else {
                 this.$commonUtil.message.error(response.message)
               }

@@ -210,90 +210,6 @@ export default {
 	ImageList
   },
   mounted () {
-    var that = this
-    var params = new URLSearchParams()
-    // if (this.blogUid) {
-    //   params.append('uid', this.blogUid)
-    // }
-    // if (this.blogOid) {
-    //   params.append('oid', this.blogOid)
-    // }
-    params.append('blog_id', this.blogUid)
-    getBlogByUid(params).then(response => {
-      if (response.data.code === this.$ECode.SUCCESS) {
-        this.blogData = response.data
-        console.log(this.blogData)
-        // this.blogUid = response.data.uid
-        // this.blogOid = response.data.oid\
-        this.getCommentDataList()
-      } else {
-
-      }
-      setTimeout(() => {
-        that.blogContent = response.data.content
-        that.loadingInstance.close()
-      }, 20)
-    }).catch(error => {
-      console.log(error)
-      this.blogData.labels = ['技术', '大数据']
-      this.blogData.blogSort = '技术'
-      this.blogContent = 'This is a test'
-      this.blogData.title = 'test'
-      this.blogData.author = 'ptss'
-      this.blogData.summary = '概括'
-      this.blogData.clickCount = 100
-      this.blogData.likeCount = 200
-      this.blogData.time = '2020-12-2'
-      this.blogData.need = 1
-      this.getCommentDataList()
-      that.loadingInstance.close()
-    })
-	params = new URLSearchParams()
-    // if (this.blogUid) {
-    //   params.append('uid', this.blogUid)
-    // }
-    // if (this.blogOid) {
-    //   params.append('oid', this.blogOid)
-    // }
-    params.append('moment_id', this.blogUid)
-    getBlogPicByUid(params).then(response => {
-      if (response.data.code === this.$ECode.SUCCESS) {
-        this.urlData = response.data.urls
-        console.log(this.urlData)
-        // this.blogUid = response.data.uid
-        // this.blogOid = response.data.oid\
-        this.getCommentDataList()
-      } else {
-		that.urlData=[
-        	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-      ]
-      }
-      setTimeout(() => {
-        that.blogContent = response.data.content
-        that.loadingInstance.close()
-      }, 20)
-    }).catch(error => {
-      console.log(error)
-      this.blogData.labels = ['技术', '大数据']
-      this.blogData.blogSort = '技术'
-      this.blogContent = 'This is a test'
-      this.blogData.title = 'test'
-      this.blogData.author = 'ptss'
-      this.blogData.summary = '概括'
-      this.blogData.clickCount = 100
-      this.blogData.likeCount = 200
-      this.blogData.time = '2020-12-2'
-      this.blogData.need = 1
-      this.getCommentDataList()
-	  that.urlData=[
-       	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-      ]
-      that.loadingInstance.close()
-    })
     var after = 0
     var offset = 110
     // eslint-disable-next-line no-undef
@@ -360,6 +276,79 @@ export default {
     })
     this.blogUid = this.$route.query.blogUid
     console.log(this.$route.query.blogUid)
+     var that = this
+    var params = new URLSearchParams()
+    params.append('moment_id', this.blogUid)
+    getBlogByUid(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.blogData = response.data
+        console.log(this.blogData)
+        // this.blogUid = response.data.uid
+        // this.blogOid = response.data.oid\
+        this.getCommentDataList()
+         that.loadingInstance.close()
+      } 
+    }).catch(error => {
+      console.log(error)
+      this.blogData.labels = ['技术', '大数据']
+      this.blogData.blogSort = '技术'
+      this.blogContent = 'This is a test'
+      this.blogData.title = 'test'
+      this.blogData.author = 'ptss'
+      this.blogData.summary = '概括'
+      this.blogData.clickCount = 100
+      this.blogData.likeCount = 200
+      this.blogData.time = '2020-12-2'
+      this.blogData.need = 1
+      this.getCommentDataList()
+      that.loadingInstance.close()
+    })
+	// params = new URLSearchParams()
+  //   // if (this.blogUid) {
+  //   //   params.append('uid', this.blogUid)
+  //   // }
+  //   // if (this.blogOid) {
+  //   //   params.append('oid', this.blogOid)
+  //   // }
+  //   params.append('moment_id', this.blogUid)
+    getBlogPicByUid(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.urlData = response.data.urls
+        console.log(this.urlData)
+        // this.blogUid = response.data.uid
+        // this.blogOid = response.data.oid\
+        this.getCommentDataList()
+      } else {
+		that.urlData=[
+        	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+      ]
+      }
+      setTimeout(() => {
+        that.blogContent = response.data.content
+        that.loadingInstance.close()
+      }, 20)
+    }).catch(error => {
+      console.log(error)
+      this.blogData.labels = ['技术', '大数据']
+      this.blogData.blogSort = '技术'
+      this.blogContent = 'This is a test'
+      this.blogData.title = 'test'
+      this.blogData.author = 'ptss'
+      this.blogData.summary = '概括'
+      this.blogData.clickCount = 100
+      this.blogData.likeCount = 200
+      this.blogData.time = '2020-12-2'
+      this.blogData.need = 1
+      this.getCommentDataList()
+	  that.urlData=[
+       	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+      ]
+      that.loadingInstance.close()
+    })
     // var that = this
     // var params = new URLSearchParams()
     // // if (this.blogUid) {

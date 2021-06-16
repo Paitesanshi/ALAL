@@ -52,7 +52,7 @@ user_info = {
 #大志修改2021.6.4
 def updateUserInfo():
     sql = 'SELECT name,password,head_portrait,email,role,emotional_state,couple,sex,birth,job,city,ideal_type,question FROM user WHERE user_id="%s"' % user_info[
-        'user_id']
+        'id']
     cursor.execute(sql)
     row = cursor.fetchone()
     if row != None:
@@ -69,9 +69,9 @@ def updateUserInfo():
         user_info['city'] = row[10]
         user_info['ideal_type'] = row[11]
         user_info['question'] = row[12]
-        file_object = open("user_info.txt", "w")
-        json.dump(user_info, file_object)
-        file_object.close()
+        # file_object = open("user_info.txt", "w")
+        # json.dump(user_info, file_object)
+        # file_object.close()
 
 
 # 1.index
@@ -89,6 +89,7 @@ def getNewBlog():
     data['currentPage'] = currentPage + 1
     records = []
     sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
+
     cursor.execute(sql)
     row = cursor.fetchone()
     start = (currentPage - 1) * pageSize
@@ -100,10 +101,11 @@ def getNewBlog():
             size += 1
             record = {}
             record['moment_id'] = row[0]
-            record['user_id'] = row[1]
+            record['id'] = row[1]
             record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
             record['content'] = row[3]
             record['like_num'] = row[4]
+         #   record['name'] = row[5]
             records.append(record)
             i += 1
             if i >= end:
@@ -131,9 +133,9 @@ def getHotTag():
 
 #大志_更改完成
 
-@app.route('/api/getBlogByUid', methods=['GET'])
-def getBlogByUid():
-    blog_id = int(request.values.get("moment_id"))
+@app.route('/api/getBlogByUid/moment_id=<blog_id>', methods=['GET'])
+def getBlogByUid(blog_id):
+    print("blog_id:"+blog_id)
     sql = 'SELECT moment_id,moment.user_id,publish_time,content,picture,read_limit,like_num FROM moment where moment_id ="%s"' \
           %str(blog_id)
     cursor.execute(sql)
@@ -141,7 +143,6 @@ def getBlogByUid():
     sql = 'SELECT name FROM user where user_id="%s"' %blog[1]
     cursor.execute(sql)
     user_name = cursor.fetchone()
-    print(blog_id)
     result = {}
     result['author'] = user_name[0]
     result['time'] = blog[2].strftime("%Y-%m-%d %H:%M:%S")
@@ -248,7 +249,7 @@ def getUserInfo():
 @app.route('/logout/logout', methods=['GET'])
 def logout():
     data={}
-    data['code'] = '200'
+    data['code'] = 'success'
     data['message'] = '退出成功'
     return data
 
@@ -626,7 +627,7 @@ def getBlogSortList():
     records.append(activity)
 
     data['records'] = records
-    data['code'] = '200'
+    data['code'] = 'success'
     return data
 
 # 大志_添加博客
@@ -635,6 +636,7 @@ def addBlog():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     form = data_json
+    print(form)
     sql = "SELECT MAX(moment_id) FROM moment"
     cursor.execute(sql)
     max_id = cursor.fetchone()
@@ -645,16 +647,17 @@ def addBlog():
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     label_num = form.get("tagUid")
     activityid = str(form.get("blogSortUid"))
-    sql = "INSERT INTO momemt VALUES (" + str(blog_id) + ",\"" + form.get("user_id") + \
-          "\",\"" + time + "\",\"" + form.get("content") + "\",\"" + form.get("picture") + "\",\"" + \
-          form.get("read_limit") + "\",0"
-    cursor.execute(sql)
+    nnum = 0
+    sql1 = "INSERT INTO `ALAL`.`moment` (`moment_id`, `user_id`, `publish_time`, `content`, `picture`, `read_limit`, `like_num`) VALUES ('%d', '%d', '%s', '%s', '%s', '%d', '%d');" % (
+    blog_id, form.get("id"), time, form.get("content"), form.get("picture"), form.get("read_limit"), nnum)
+    cursor.execute(sql1)
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     updateUserInfo()
     data = {}
     data['code'] = '200'
     data['message'] = '发布博客成功'
+    data['moment_id']=blog_id
     return data
 
 
@@ -1019,12 +1022,23 @@ def GetCommentList():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = int(data_json.get('blogUid'))
+    data = {}
+    data['code'] = 'success'
     records = []
     sql = "SELECT * FROM comment WHERE moment_id='%d'" % id
     #   try:
     # 执行SQL语句
-    cursor.execute(sql)
-    comment = cursor.fetchall()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        comment = cursor.fetchall()
+    except:
+        print('error')
+        data['code'] = 'error'
+        db.rollback()
+    if len(comment)== 0 :
+        data['code'] = 'success'
+        data['records']= []
     for i in range(0, min(9, len(comment))):
         record = {}
         record['uid'] = int(i)
@@ -1039,8 +1053,7 @@ def GetCommentList():
         record['user'] = user
         record['content'] = comment[i][4]
         records.append(record)
-    data = {}
-    data['code'] = 'success'
+
     data['records'] = records
     return data
 
@@ -1056,20 +1069,29 @@ def upload():
         upload_path = os.path.join(base_path, 'static\\uploads\\') + "%s.jpg" % dt
         print(upload_path)
         f.save(upload_path)
-        return "文件上传成功!!"
+        data={}
+        data['code']='success'
+        data['uid']="%s.jpg" % dt
+        return data
 
 @app.route('/uploadMomentPhotos', methods=['POST'])
 def uploadMomentPhoto():
+    print("uploadmoment")
+    print(request.data)
     datastr = str(request.data, 'utf-8')
+    print(datastr)
     data_json = json.loads(datastr)
     moment_id = data_json.get("moment_id")
     pics = []
+    print(data_json)
+    print(data_json.get("picList"))
     pics = data_json.get("picList")
     uurl = ""
     for pic in pics:
         uurl = uurl + "," + pic
     data = {}
-    sql = "Update 'moment' SET 'picture'='%s' WHERE (moment_id='%d');" %(uurl,moment_id)
+    sql = "Update moment SET picture ='%s' WHERE (moment_id=%d);" %(uurl,moment_id)
+    print(sql)
     data ['code'] = 'success'
     try:
         # 执行SQL语句
@@ -1114,11 +1136,12 @@ def welcome():
 
 
 
-@app.route('/api/getBlogPicByUid', methods=['GET'])
-def getBlogPicByUid():
-    moment_id=request.values.get("moment_id")
+@app.route('/api/getBlogPicByUid/moment_id=<moment_id>', methods=['GET'])
+def getBlogPicByUid(moment_id):
+    # moment_id= request.args.get("moment_id")
+    print("picblog:"+moment_id)
     data = {}
-    data['code'] = 200
+    data['code'] = 'success'
     sql = 'SELECT picture FROM moment WHERE moment_id="%s"' % moment_id
     cursor.execute(sql)
     row=cursor.fetchone()
@@ -1133,7 +1156,7 @@ def getAvatarsByUserID():
     id=request.values.get("id")
     print(id)
     data = {}
-    data['code'] = 200
+    data['code'] = 'success'
     data['urls']=[]
 
     sql='SELECT sex FROM user WHERE user_id="%s"'%id
@@ -1146,15 +1169,23 @@ def getAvatarsByUserID():
         sql = 'SELECT head_portrait FROM user WHERE sex="m" and emotional_state=0'
     else:
         sql = 'SELECT head_portrait FROM user WHERE sex="f" and emotional_state=0'
-    cursor.execute(sql)
-    row=cursor.fetchone()
+    try :
+       cursor.execute(sql)
+       row=cursor.fetchone()
+    except :
+        print("error")
+        db.rollback()
     i=0
     while row:
         data['urls'].append(row[0])
         i+=1
-        if i==9:
+        if i == 9:
             break
-        row=cursor.fetchone()
+        try :
+            row = cursor.fetchone()
+        except :
+            print("error")
+            db.rollback()
 
     return data
 
@@ -1166,9 +1197,13 @@ def editQuestion():
     questions=str(data_json.get("questionData"),'utf-8') 
     user_id=request['id']
     sql = 'UPDATE user SET question="%s" WHERE user_id="%s"' % (questions,user_id)
-    cursor.execute(sql)
+    try :
+        cursor.execute(sql)
+    except :
+        print("error")
+        db.rollback()
     data = {}
-    data['code'] = 200
+    data['code'] = 'success'
     return data
 
 # 大志_登录函数
@@ -1254,20 +1289,23 @@ def editInformation():
 
 @app.route('/user/getFriendsRequestList', methods=['GET'])
 def getFriendRequest():
-    datastr = str(request.data, 'utf-8')
-    data_json = json.loads(datastr)
-    id = data_json.get("id")
+    # datastr = str(request.data, 'utf-8')
+    # data_json = json.loads(datastr)
+    # id = data_json.get("id")
+    id =request.args.get("id")
+    print("friendrequest "+id)
     data = {}
     data['code'] = 'success'
-    sql = "SELECT * FROM 'friend_apply' WHERE ('state'='0' and 'respondent_id'='%s')" %(id)
+    sql = "SELECT * FROM friend_apply WHERE (state=0 and respondent_id='%s')" %(id)
+    results=None
     try:
         # 执行SQL语句
         cursor.execute(sql)
         # 向数据库提交
         results = cursor.fetchall()
-    except:
+    except Exception as e:
         # 发生错误时回滚
-        print('error')
+        print('error'+str(e))
         db.rollback()
     if len(results) == 0:
         data['code'] = 'error'

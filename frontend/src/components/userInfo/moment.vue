@@ -152,28 +152,7 @@ export default {
     // 注册scroll事件并监听
     this.loading = false;
   },
-  created() {
-    console.log("hhhhhhhhhhhhh")
-    var secondParams = new URLSearchParams();
-    secondParams.append("level", 2);
-    // 是否排序
-    secondParams.append("useSort", 1);
-    getBlogByLevel(secondParams)
-      .then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records;
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        for (let i = 0; i < 2; ++i) {
-          this.secondData.push({
-            title: "Alibaba",
-            labels: "技术",
-            photoList: ["../../static/images/banner.png"]
-          });
-        }
-      });
+  created() {  
     // 获取最新博客
     this.newBlogList();
     // alert();
@@ -254,7 +233,7 @@ export default {
           //   that.pageSize = response.data.size;
           //   that.currentPage = response.data.currentPage;
           // }
-          // that.loadingInstance.close();
+          that.loadingInstance.close();
           // eslint-disable-next-line handle-callback-err
           for (let i = 0; i < 5; ++i) {
             console.log("error!!!")
