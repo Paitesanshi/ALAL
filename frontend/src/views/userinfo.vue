@@ -5,6 +5,8 @@
         <el-tab-pane>
           <span slot="label">个人信息</span>
           <user :list="list" :photoUrl="list.avatar" class="user"></user>
+          <br>
+          <setting :phone="list.phone"></setting>
         </el-tab-pane>
 <!--        <el-tab-pane>-->
 <!--          <span slot="label">我的简历</span>-->
@@ -18,10 +20,7 @@
           <span slot="label">我的圈子</span>
           <moment></moment>
         </el-tab-pane>
-        <el-tab-pane>
-          <span slot="label">设置账号</span>
-          <setting :phone="list.phone"></setting>
-        </el-tab-pane>
+        
       </el-tabs>
     </div>
   </div>

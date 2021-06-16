@@ -160,7 +160,7 @@ export default {
     changePhone(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-			
+
         } else {
           console.log("error submit!!");
         }

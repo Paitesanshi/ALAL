@@ -6,40 +6,40 @@
           :src="this.list.avatar">
         </el-image>
       </div>
+    <div align="center">
+      <td><b>ID：</b></td>
+      <td>{{list.ID}}</td>
+      <br>
+    </div>
       <!-- <td>头像：</td>
       <td><img style="" src="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"></td> -->
-    <table style="width: 400px">
+    <table style="width: 600px">
 <!--      <th> 个人信息</th>-->
-
-      <tr>
-        <td>ID：</td>
-        <td>{{list.ID}}</td>
-      </tr>
       <tr>
         <td>姓名：</td>
-        <td>{{list.name}}</td>
+        <th>{{list.name}}</th>
       </tr>
       <tr>
         <td>性别：</td>
-        <td v-if="list.sex==2">女</td>
-        <td v-if="list.sex==1">男</td>
+        <th v-if="list.sex==2">女</th>
+        <th v-if="list.sex==1">男</th>
       </tr>
       <tr>
         <td>城市：</td>
-        <td>{{list.city}}</td>
+        <th>{{list.city}}</th>
       </tr>
       <tr>
         <td>职业：</td>
-        <td>{{list.job}}</td>
+        <th>{{list.job}}</th>
       </tr>
       <tr>
         <td>情感状况：</td>
-        <td v-if="list.emotion==2">非单身</td>
-        <td v-if="list.emotion==1">单身</td>
+        <th v-if="list.emotion==2">非单身</th>
+        <th v-if="list.emotion==1">单身</th>
       </tr>
       <tr>
         <td>出生日期：</td>
-        <td>{{list.birthDate}}</td>
+        <th>{{list.birthDate}}</th>
       </tr>
       <tr>
 <!--      <tr>-->
@@ -51,11 +51,11 @@
 <!--      </tr>-->
 
         <td>理想型：</td>
-        <td>{{list.idealType}}</td>
+        <th>{{list.idealType}}</th>
       </tr>
 
     </table>
-    <el-button class="edit" @click="changeEdit" style="margin-left: 350px">编辑</el-button>
+    <el-button class="edit" @click="changeEdit" style="margin-left: 390px">编辑</el-button>
 <!--    <el-button style="margin-left: 350px" @click="">编辑</el-button>-->
 <!--    <el-dialog class="myDialog">-->
 <!--      <el-form  :model="list" status-icon :rules="rules2" ref="list" label-width="100px" class="formWrap"-->
@@ -204,7 +204,14 @@ table {
   width: 1500px;
 }
 table tr td {
-  text-align: center;
+  height: 40px;
+  width: 180px;
+  text-align: right;
+  font-weight: bold;
+}
+table th{
+  padding-left: 60px;
+  text-align: left;
 }
 .formWrap {
   width: 500px;
