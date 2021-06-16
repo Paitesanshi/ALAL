@@ -5,6 +5,8 @@
         <el-tab-pane>
           <span slot="label">个人信息</span>
           <user :list="list" :photoUrl="list.avatar" class="user"></user>
+          <br>
+          <setting :phone="list.phone"></setting>
         </el-tab-pane>
 <!--        <el-tab-pane>-->
 <!--          <span slot="label">我的简历</span>-->
@@ -18,10 +20,7 @@
           <span slot="label">我的圈子</span>
           <moment></moment>
         </el-tab-pane>
-        <el-tab-pane>
-          <span slot="label">设置账号</span>
-          <setting :phone="list.phone"></setting>
-        </el-tab-pane>
+        
       </el-tabs>
     </div>
   </div>
@@ -117,7 +116,7 @@ export default {
 		this.list.emotion = this.$store.state.user.userInfo.emotional_state
 		this.list.email = this.$store.state.user.userInfo.email
 		this.list.birthDate = this.$store.state.user.userInfo.birth
-	  this.list.ideal_type = this.$store.state.user.userInfo.ideal_type
+	  this.list.idealType = this.$store.state.user.userInfo.idealType
 		this.list.avatar = this.$store.state.user.userInfo.avatar
     this.list.job = this.$store.state.user.userInfo.job
 			 // this.list.avatar="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
