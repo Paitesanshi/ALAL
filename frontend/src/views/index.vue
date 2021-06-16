@@ -172,7 +172,7 @@ export default {
     this.loading = false
   },
   created () {
-    this.newBlogList()
+    //this.newBlogList()
     // this.getUserAvatars()
   },
   methods: {

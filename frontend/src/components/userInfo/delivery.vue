@@ -43,7 +43,7 @@
 </style>
 
 <script>
-import { getFriendsRequestList} from "@/api/user";
+import { getFriendsRequestList} from '@/api/user'
 export default {
   data () {
     return {
@@ -51,37 +51,41 @@ export default {
       show: true
     }
   },
-  created(){
-let that =this
-	    let params=new URLSearchParams()
-		params.append("id",this.$store.state.user.userInfo.id)
-		getFriendsRequestList(params).then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-			this.list=response.data.list
-        }else{
-			this.$notify({
-            title: '失败',
-            message: '获取申请信息失败',
-            type: 'error',
-            offset: 100
-          })
-		}
-      }).catch(error => {
-        console.log(error)
-		 that.list= [
+  created () {
+    let that = this
+	  let params = new URLSearchParams()
+    console.log("userinfo is ")
+    console.log(this.$store.state.user.userInfo)
+    params.append('id', this.$store.state.user.userInfo.id)
+    getFriendsRequestList(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.list = response.data.list
+      } else {
+        that.show = false
+
+        // this.$notify({
+      //       title: '失败',
+      //       message: '还没有申请信息',
+      //       type: 'error',
+      //       offset: 100
+      //     })
+      }
+    }).catch(error => {
+      console.log(error)
+		  this.list = [
         {
-			id:1,
+          id: 1,
           applicant: 'wl',
           createdTime: '2021.05.13'
         }
       ]
-      })
+    })
   },
   methods: {
-    checkDetail(uid) {
-      this.$router.push({path: '/questionsDisabled',query: {id:uid}})
-    },
+    checkDetail (uid) {
+      this.$router.push({path: '/questionsDisabled', query: {id: uid}})
+    }
 
-  },
+  }
 }
 </script>

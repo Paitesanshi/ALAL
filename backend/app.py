@@ -89,6 +89,7 @@ def getNewBlog():
     data['currentPage'] = currentPage + 1
     records = []
     sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
+
     cursor.execute(sql)
     row = cursor.fetchone()
     start = (currentPage - 1) * pageSize
@@ -132,9 +133,8 @@ def getHotTag():
 
 #大志_更改完成
 
-@app.route('/api/getBlogByUid', methods=['GET'])
-def getBlogByUid():
-    blog_id=request.args.get("moment_id")
+@app.route('/api/getBlogByUid/moment_id=<blog_id>', methods=['GET'])
+def getBlogByUid(blog_id):
     print("blog_id:"+blog_id)
     sql = 'SELECT moment_id,moment.user_id,publish_time,content,picture,read_limit,like_num FROM moment where moment_id ="%s"' \
           %str(blog_id)
@@ -1136,9 +1136,9 @@ def welcome():
 
 
 
-@app.route('/api/getBlogPicByUid', methods=['GET'])
-def getBlogPicByUid():
-    moment_id= request.args.get("moment_id")
+@app.route('/api/getBlogPicByUid/moment_id=<moment_id>', methods=['GET'])
+def getBlogPicByUid(moment_id):
+    # moment_id= request.args.get("moment_id")
     print("picblog:"+moment_id)
     data = {}
     data['code'] = 'success'
@@ -1289,20 +1289,23 @@ def editInformation():
 
 @app.route('/user/getFriendsRequestList', methods=['GET'])
 def getFriendRequest():
-    datastr = str(request.data, 'utf-8')
-    data_json = json.loads(datastr)
-    id = data_json.get("id")
+    # datastr = str(request.data, 'utf-8')
+    # data_json = json.loads(datastr)
+    # id = data_json.get("id")
+    id =request.args.get("id")
+    print("friendrequest "+id)
     data = {}
     data['code'] = 'success'
-    sql = "SELECT * FROM 'friend_apply' WHERE ('state'='0' and 'respondent_id'='%s')" %(id)
+    sql = "SELECT * FROM friend_apply WHERE (state=0 and respondent_id='%s')" %(id)
+    results=None
     try:
         # 执行SQL语句
         cursor.execute(sql)
         # 向数据库提交
         results = cursor.fetchall()
-    except:
+    except Exception as e:
         # 发生错误时回滚
-        print('error')
+        print('error'+str(e))
         db.rollback()
     if len(results) == 0:
         data['code'] = 'error'

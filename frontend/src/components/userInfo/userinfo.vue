@@ -51,7 +51,7 @@
 <!--      </tr>-->
 
         <td>理想型：</td>
-        <td>{{list.idealType}}</td>
+        <td>{{list.ideal_type}}</td>
       </tr>
 
     </table>
@@ -178,8 +178,8 @@
         <!--            </div>-->
         <!--          </div>-->
         <!--        </el-form-item>-->
-        <el-form-item label="理想型" prop="idealType">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="list.idealType "></el-input>
+        <el-form-item label="理想型" prop="ideal_type">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="list.ideal_type "></el-input>
         </el-form-item>
         <!--        <el-form-item label="获奖经历" prop="awards">-->
         <!--          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="resumeList.awards"></el-input>-->
