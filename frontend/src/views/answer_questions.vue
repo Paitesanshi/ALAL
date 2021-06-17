@@ -1,7 +1,8 @@
 <template>
   <div class="survey">
     <div class="top">
-      <el-button><a href="click_userInfo.vue>">返回</a></el-button>
+      <el-button style="margin-left: 300px"><a href="click_userInfo.vue>">返回</a></el-button>
+      <div><h1 align="center">填写问卷以添加好友</h1></div>
     </div>
     <div v-for="(item, index) in questionData" class="question">
       <div class="num">{{ index + 1 }}</div>
@@ -85,34 +86,34 @@ export default {
        that.questionData= [
         {
           id: 1,
-          title: '姓名',
+          title: '你看重另一半的颜值吗？',
           type: 'textarea',
-          data: '111'
+          data: '不是很看重，性格第一位'
         },
         {
           id: 2,
-          title: '性别',
+          title: '你有什么爱好？',
           type: 'textarea',
-          data: '1'
+          data: '我喜欢健身，爬山以及美食'
         },
         {
           id: 3,
-          title: '城市',
+          title: '你喜欢看什么电影？',
           type: 'textarea',
-          data: '2'
+          data: '《星球大战》等科幻电影是我的最爱'
         },
         {
           id: 4,
-          title: '二刺螈？',
+          title: '你喜欢听什么音乐？',
           type: 'textarea',
-          data: '3'
+          data: 'Justin Bieber的音乐永不过时'
         },
         {
           id: 5,
-          title: '为什么填',
+          title: '你经常出去旅游吗？',
           type: 'textarea',
-          data: '4'
-        },
+          data: '每年国庆、春节有空都会去附近的旅游城市游玩'
+        }
       ]
         that.loadingInstance.close()
       })
@@ -176,7 +177,7 @@ export default {
             type: 'success',
             offset: 100
 		  })
-        } 
+        }
       }).catch(error => {
         console.log(error)
 		 this.$notify({

@@ -11,7 +11,7 @@
 			:src="this.UserList.avatar">
           </el-image>
         </td>
-        <div class="myInfo">
+        <div class="myInfo" style="font-weight: bold">
           <td>姓名：</td>
           <td>{{this.UserList.name}}</td>
           <tr>
@@ -23,13 +23,13 @@
             <td>{{this.UserList.idealType}}</td>
           </tr>
           <br>
-          <button @click="goToAnswer">填写问卷</button>
+          <button @click="goToAnswer">添加好友</button>
         </div>
       </div>
     </div>
-    <div class="main">
+    <div>
       <br>
-      <div class="left">
+      <div class="left" style="width: 250px;float: left">
         <tr>
           <td>性别：</td>
           <td>{{this.UserList.sex}}</td>
@@ -51,17 +51,18 @@
         <!--            <td>{{this.$store.state.user.userInfo.school}}</td>-->
         <!--          </tr>-->
         <tr>
-          <td>出生日期：</td>
-          <td>{{this.UserList.birthDate}}</td>
+          <td>理想型：</td>
+          <td>{{this.UserList.ideal_type}}</td>
         </tr>
       </div>
-    <div class="blogsbox">
+    <div style="float: right">
       <div
         v-for="item in newBlogData"
         :key="item.moment_id"
         class="blogs"
          @click="goToInfo(item)"
         data-scroll-reveal="enter bottom over 1s"
+        style="width:600px"
       >
 
         <p class="blogtext">{{ item.content }}</p>
@@ -77,11 +78,11 @@
          
             <li class="like">
               <span class="iconfont">&#xe663;</span>
-              {{ item.likeCount }}
+              {{ item.like_num }}
             </li>
             <li class="createTime">
               <span class="iconfont">&#xe606;</span>
-              {{ item.time }}
+              {{ item.publish_time }}
             </li>
           </ul>
         </div>
@@ -235,17 +236,42 @@ export default {
           that.loadingInstance.close()
         })
         .catch(error => {
-          for (let i = 0; i < 5; ++i) {
-            this.newBlogData.push({
-              title: 'test',
-              author: 'ptss',
-              labels: ['技术', '数据库'],
-              summary: '略略略',
-              clickCount: 100,
-              likeCount: 200,
-              time: '2020-12-2'
+          // for (let i = 0; i < 5; ++i) {
+          //   this.newBlogData.push({
+          //     title: 'test',
+          //     author: 'ptss',
+          //     labels: ['技术', '数据库'],
+          //     summary: '略略略',
+          //     clickCount: 100,
+          //     likeCount: 200,
+          //     time: '2020-12-2'
+          //   })
+          // }
+          this.newBlogData.push(
+            {
+              moment_id: '7',
+              name: '桑随远',
+              content: '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！',
+              id: '7',
+              like_num: '5',
+              publish_time: '2021-6-16 19:26:43'
+            },
+            {
+              moment_id: '8',
+              name: '桑随远',
+              content: '今晚的夕阳格外美丽~~',
+              id: '7',
+              like_num: '4',
+              publish_time: '2021-6-16 20:24:55'
+            },
+            {
+              moment_id: '9',
+              name: '桑随远',
+              content: '马上就要周末啦！太开心了！！',
+              id: '7',
+              like_num: '12',
+              publish_time: '2021-6-16 23:22:23'
             })
-          }
           that.loadingInstance.close()
         })
     },
@@ -284,18 +310,18 @@ export default {
         })
         .catch(error => {
           that.UserList= {
-		avatar:'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc',
-        city: 'bj',
-        name: 'wl',
-        sex: 'm',
-        emotion: 'c',
-        career: 'coder',
-        email: '1',
-        birthDate: '1',
-        ideal_type: '1'
+		avatar:'http://images.zastatic.com/app/seo/randomuser/2_11.jpg',
+        city: '北京',
+        name: '桑随远',
+        sex: '女',
+        emotion: '单身',
+        career: '教师',
+        email: '18301111@bjtu.edu.cn',
+        birthDate: '1985-09-02',
+        ideal_type: '性格好，热爱运动'
       }
         })
-    },	
+    },
     loadContent: function () {
       var that = this
       that.loading = false
@@ -344,7 +370,7 @@ button{
   border-radius:15px;
 }
 .myInfo{
-  color: white;
+  color: #000000;
   /* 表格边框颜色 */
   border: 0.5px;
 }

@@ -17,7 +17,7 @@ export default {
   data () {
     return {
       liked: false,
-      content: '',
+      content: '关注',
       bg_color: '#fef0f0',
       ft_color: '#f56c6c',
       id: this.uid

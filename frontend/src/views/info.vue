@@ -58,14 +58,7 @@
           </div> -->
           <div class="news_con momentContent">{{blogData.content}}</div>
 		   <div>
-		<ImageList  style="margin:10px auto;" :imgs="this.urlData"></ImageList>	
-		<!-- <img
-		v-for="(item, index) in urlData"
-		:key="index"
-		:src="item"
-		style="width:30%"
-		@click="showImg(index)"
-		/> -->
+		<ImageList  style="margin:10px auto;" :imgs="this.urlData"></ImageList>
   </div>
 
       </div>
@@ -246,7 +239,7 @@ export default {
           }
         }).catch(error => {
           console.log(error)
-          this.comments = [{creatTime: '2020-12-6', user: {nickName: 'ptss'}, content: '我怀疑你在ghs'}]
+          this.comments = [{creatTime: '2021-6-17', user: {nickName: '快乐小虎'}, content: '我也超喜欢这部电影的！'}]
         })
       }
     })
@@ -277,21 +270,22 @@ export default {
         // this.blogOid = response.data.oid\
        // this.getCommentDataList()
          that.loadingInstance.close()
-      } 
+      }
     }).catch(error => {
       console.log(error)
-      this.blogData.labels = ['技术', '大数据']
-      this.blogData.blogSort = '技术'
-      this.blogContent = 'This is a test'
-      this.blogData.title = 'test'
-      this.blogData.author = 'ptss'
-      this.blogData.summary = '概括'
-      this.blogData.clickCount = 100
-      this.blogData.likeCount = 200
-      this.blogData.time = '2020-12-2'
-      this.blogData.need = 1
-      this.getCommentDataList()
-      that.loadingInstance.close()
+      // this.blogData.labels = []
+      // this.blogData.blogSort = ''
+      // this.blogContent = '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！'
+      // this.blogData.title = ''
+      // this.blogData.author = 'ptss'
+      // this.blogData.summary = '概括'
+      // this.blogData.clickCount = 100
+      // this.blogData.likeCount = 200
+      // this.blogData.time = '2020-12-2'
+      // this.blogData.need = 0
+      // // this.blogData.credit=0
+      // this.getCommentDataList()
+      // that.loadingInstance.close()
     })
 	// params = new URLSearchParams()
   //   // if (this.blogUid) {
@@ -321,21 +315,19 @@ export default {
       }, 20)
     }).catch(error => {
       console.log(error)
-      this.blogData.labels = ['技术', '大数据']
-      this.blogData.blogSort = '技术'
-      this.blogContent = 'This is a test'
-      this.blogData.title = 'test'
-      this.blogData.author = 'ptss'
-      this.blogData.summary = '概括'
-      this.blogData.clickCount = 100
-      this.blogData.likeCount = 200
+      this.blogData.labels = []
+      this.blogData.blogSort = ''
+      this.blogContent = '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！'
+      this.blogData.title = ''
+      this.blogData.name = '桑随远'
+      // this.blogData.summary = '概括'
+      this.blogData.clickCount = 56
+      this.blogData.likeCount = 5
       this.blogData.time = '2020-12-2'
       this.blogData.need = 1
       this.getCommentDataList()
 	  that.urlData=[
-       	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
-				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+       	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"}
       ]
       that.loadingInstance.close()
     })
@@ -471,7 +463,7 @@ export default {
           this.total = response.data.total
         }
       }).catch(error => {
-        this.comments = [{creatTime: '2020-12-6', user: {nickName: 'ptss'}, content: '我怀疑你在ghs'}]
+        this.comments = [{creatTime: '2021-6-18', user: {nickName: '头上一颗椰'}, content: '我也超级喜欢这部电影的！'}]
       })
     },
     // 跳转到文章详情

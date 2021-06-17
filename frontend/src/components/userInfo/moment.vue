@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="blogsbox">
+    <div v-if="!show" class="nofind">
+      <p>暂时没有动态记录哦</p>
+    </div>
+    <div v-if="show" class="blogsbox">
       <div
         v-for="item in newBlogData"
         :key="item.moment_id"
@@ -41,11 +44,11 @@
             </li> -->
             <li class="like">
               <span class="iconfont">&#xe663;</span>
-              {{ item.likeCount }}
+              {{ item.like_num }}
             </li>
             <li class="createTime">
               <span class="iconfont">&#xe606;</span>
-              {{ item.time }}
+              {{ item.publish_time }}
             </li>
           </ul>
         </div>
@@ -124,20 +127,20 @@ export default {
   },
   data () {
     return {
+      show:'',
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
       secondData: [], // ；二级级推荐数据
       newBlogData: [
-        {
-          title: 'test',
-          author: 'ptss',
-          labels: ['技术', '数据库'],
-          summary: '略略略',
-          clickCount: 100,
-          likeCount: 200,
-          time: '2020-12-2'
-        }
+        // {
+        //   moment_id: '10',
+        //   name: 'Jackson',
+        //   content: '快乐健身，快乐你我！',
+        //   id: '8',
+        //   like_num: '0',
+        //   publish_time: '2021-6-17 03:51:43'
+        // }
       ], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
@@ -239,6 +242,7 @@ export default {
             that.pageSize = response.data.size
             that.currentPage = response.data.currentPage
             that.loadingInstance.close()
+            that.show=true
           }
 
           // eslint-disable-next-line handle-callback-err
@@ -256,18 +260,18 @@ export default {
           // }
         })
         .catch(error => {
-          for (let i = 0; i < 5; ++i) {
-            console.log('error!!!')
-            this.newBlogData.push({
-              title: 'test',
-              author: 'ptss',
-              labels: ['技术', '数据库'],
-              summary: '略略略',
-              clickCount: 100,
-              likeCount: 200,
-              time: '2020-12-2'
-            })
-          }
+          // for (let i = 0; i < 5; ++i) {
+          //   console.log('error!!!')
+          //   this.newBlogData.push({
+          //     title: 'test',
+          //     author: 'ptss',
+          //     labels: ['技术', '数据库'],
+          //     summary: '略略略',
+          //     clickCount: 100,
+          //     likeCount: 200,
+          //     time: '2020-12-2'
+          //   })
+          // }
           that.loadingInstance.close()
         })
     },

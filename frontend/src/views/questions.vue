@@ -124,6 +124,12 @@ export default {
     editQuestion(params2).then(response => {
       if (response.data.code === this.$ECode.SUCCESS) {
         this.blogData = response.data
+        this.$notify({
+            title: '成功',
+            message: '编辑问卷成功',
+            type: 'success',
+            offset: 100
+          })
       } else {
 
       }

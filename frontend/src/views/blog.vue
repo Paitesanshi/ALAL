@@ -5,18 +5,68 @@
       :title="title"
       :visible.sync="dialogFormVisible"
       :before-close="closeDialog"
-
     >
       <el-form ref="form" :model="form" :rules="rules">
         <el-row>
-          <!-- <el-col >
-            <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
-              <el-input v-model="form.title" auto-complete="off" @input="contentChange"/>
+        </el-row>
+
+        <el-row>
+          <el-col :span="6.5">
+            <el-form-item :label-width="formLabelWidth" label="选择可见范围" prop="blogSortUid">
+              <el-select
+                v-model="form.read_limit"
+                size="small"
+                placeholder="请选择"
+                style="width:150px"
+              >
+                <el-option
+                  v-for="item in blogSingleData"
+                  :key="item.uid"
+                  :label="item.name"
+                  :value="item.uid"
+                />
+              </el-select>
             </el-form-item>
-            <el-form-item :label-width="formLabelWidth" label="简介">
-              <el-input v-model="form.summary" auto-complete="off" />
-            </el-form-item>
-          </el-col> -->
+          </el-col>
+        </el-row>
+        <el-form-item :label-width="formLabelWidth" label="内容" prop="content">
+          <!-- <ckeditor v-if="systemConfig.editorModel == '0'" ref="editor" v-model="form.content" :height="360"/>
+          <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/> -->
+          <el-input v-model="form.content" auto-complete="off" />
+        </el-form-item>
+
+        <el-form-item label="上传图片" prop="picture" style="width: 800px;">
+          <el-upload
+            action=""
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :http-request="uploadPicture"
+            :before-upload="beforeAvatarUpload"
+            :file-list="fileList"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item style="margin-left:300px">
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
+</template>
+<!-- <el-col >
+  <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
+    <el-input v-model="form.title" auto-complete="off" @input="contentChange"/>
+  </el-form-item>
+  <el-form-item :label-width="formLabelWidth" label="简介">
+    <el-input v-model="form.summary" auto-complete="off" />
+  </el-form-item>
+</el-col> -->
 
 <!--          <el-col :span="8">-->
 <!--            <el-form-item :label-width="formLabelWidth" label="标题图">-->
@@ -39,23 +89,6 @@
 <!--              </div>-->
 <!--            </el-form-item>-->
 <!--          </el-col>-->
-        </el-row>
-
-        <el-row>
-          <el-col :span="6.5">
-            <el-form-item :label-width="formLabelWidth" label="选择可见范围" prop="blogSortUid">
-              <el-select
-                v-model="form.read_limit"
-                size="small"
-                placeholder="请选择"
-                style="width:150px"
-              >
-                <el-option
-                  v-for="item in blogSingleData"
-                  :key="item.uid"
-                  :label="item.name"
-                  :value="item.uid"
-                />
 <!--                <el-option-->
 <!--                  v-if="this.$store.state.user.isSingle == false"-->
 <!--                  v-for="item in blogNotSingleData"-->
@@ -63,9 +96,6 @@
 <!--                  :label="item.name"-->
 <!--                  :value="item.uid"-->
 <!--                />-->
-              </el-select>
-            </el-form-item>
-          </el-col>
 
 <!--          <el-col :span="6.5">-->
 <!--            <el-form-item label="标签" label-width="80px">-->
@@ -103,7 +133,6 @@
 <!--              </el-select>-->
 <!--            </el-form-item>-->
 <!--          </el-col>-->
-        </el-row>
 
 <!--        <el-row>-->
 <!--          <el-col :span="6.5">-->
@@ -137,36 +166,6 @@
             <!-- <el-form-item :label-width="formLabelWidth" label="简介">
 
             </el-form-item> -->
-        <el-form-item :label-width="formLabelWidth" label="内容" prop="content">
-          <!-- <ckeditor v-if="systemConfig.editorModel == '0'" ref="editor" v-model="form.content" :height="360"/>
-          <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/> -->
-           <el-input v-model="form.content" auto-complete="off" />
-        </el-form-item>
-
-			<el-form-item label="上传图片" prop="picture" style="width: 800px;">
-               <el-upload
-			     action=""
-                 list-type="picture-card"
-                 :on-preview="handlePictureCardPreview"
-                 :on-remove="handleRemove"
-                 :http-request="uploadPicture"
-                 :before-upload="beforeAvatarUpload"
-                 :file-list="fileList"
-               >
-                 <i class="el-icon-plus"></i>
-               </el-upload>
-               <el-dialog :visible.sync="dialogVisible">
-                 <img width="100%" :src="dialogImageUrl" alt="">
-               </el-dialog>
-            </el-form-item>
-		    <el-form-item style="margin-left:300px">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-  </div>
-</template>
 
 <script>
 import { addBlog, editBlog, uploadPhoto, uploadMomentPhotos} from '@/api/blog'
@@ -563,7 +562,6 @@ export default {
           } else {
             let that = this
             this.form.id = this.$store.state.user.userInfo.id
-            alert(this.form.id)
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
@@ -574,7 +572,6 @@ export default {
                 let para = {}
                 para.moment_id = momentid
                 para.picList = that.picList
-                alert(para.picList)
                 uploadMomentPhotos(para).then((res) => {
                   console.log(res)
                 })

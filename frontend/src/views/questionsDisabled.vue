@@ -53,34 +53,34 @@ export default {
       that.questionData = [
         {
           id: 1,
-          title: '姓名',
+          title: '你的最高学历是什么？',
           type: 'textarea',
-          data: '111'
+          data: '北交大研究生'
         },
         {
           id: 2,
-          title: '性别',
+          title: '你能接受你的另一半是强迫症吗？',
           type: 'textarea',
-          data: '1'
+          data: '可以，因为我也有一点强迫症'
         },
         {
           id: 3,
-          title: '城市',
+          title: '你打算什么时候结婚？',
           type: 'textarea',
-          data: '2'
+          data: '如果情投意合的话什么时候都可以'
         },
         {
           id: 4,
-          title: '二刺螈？',
+          title: '是否打算要孩子？',
           type: 'textarea',
-          data: '3'
+          data: '要，因为我喜欢小孩'
         },
         {
           id: 5,
-          title: '为什么填',
+          title: '打算要几个孩子？',
           type: 'textarea',
-          data: '4'
-        }
+          data: '最多两个吧'
+        },
       ]
       that.loadingInstance.close()
     })

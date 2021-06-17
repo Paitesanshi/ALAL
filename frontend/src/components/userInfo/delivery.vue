@@ -1,7 +1,7 @@
 <template>
   <div class="deliveryWrap">
     <div v-if="!show" class="nofind">
-      <p>暂时没有记录哦</p>
+      <p>暂时没有消息记录哦</p>
     </div>
     <div v-show="show" v-for="(item, index) in list" :key="index"  @click="checkDetail(item.application_id)">
       <el-card shadow="hover" class="deliverycard">
@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       list: [],
-      show: true
+      show: false
     }
   },
   created () {

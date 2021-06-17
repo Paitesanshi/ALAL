@@ -259,11 +259,26 @@ export default {
           status: '1',
           now:'封号'
         }, {
-          uid: '1',
-          uname: 'xjx',
+          uid: '2',
+          uname: 'xjx2',
           upassword: '123456',
-          uemail: '123@bjtu.edu.cn',
+          uemail: '1234@bjtu.edu.cn',
           status: '1',
+          now:'封号'
+        },
+        {
+          uid: '3',
+          uname: 'xjx3',
+          upassword: '123456',
+          uemail: '12345@bjtu.edu.cn',
+          status: '2',
+          now:'封号'
+        }, {
+          uid: '4',
+          uname: 'xjx4',
+          upassword: '123456',
+          uemail: '123456@bjtu.edu.cn',
+          status: '2',
           now:'封号'
         }]
       })
@@ -287,7 +302,22 @@ export default {
           comment_content: 'very good!',
           now: '删除',
           status: 1
-        }
+        },
+        {
+          dongtai_id: '1',
+          user_id: '1',
+          comment_time: '2020-12-7',
+          comment_content: 'very good!',
+          now: '删除',
+          status: 1
+        }, {
+          dongtai_id: '1',
+          user_id: '1',
+          comment_time: '2020-12-7',
+          comment_content: 'very good!',
+          now: '删除',
+          status: 1
+        },
         ]
       })
     },

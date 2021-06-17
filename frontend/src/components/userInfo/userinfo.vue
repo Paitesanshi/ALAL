@@ -1,20 +1,20 @@
 <template>
   <div>
-      <div align="center">
-        <el-image
-          style="width: 128px; height: 128px; border-radius: 50%;"
-          :src="this.list.avatar">
-        </el-image>
-      </div>
+    <div align="center">
+      <el-image
+        style="width: 128px; height: 128px; border-radius: 50%;"
+        :src="this.list.avatar">
+      </el-image>
+    </div>
     <div align="center">
       <td><b>ID：</b></td>
       <td>{{list.id}}</td>
       <br>
     </div>
-      <!-- <td>头像：</td>
-      <td><img style="" src="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"></td> -->
+    <!-- <td>头像：</td>
+    <td><img style="" src="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"></td> -->
     <table style="width: 600px">
-<!--      <th> 个人信息</th>-->
+      <!--      <th> 个人信息</th>-->
       <tr>
         <td>姓名：</td>
         <th>{{list.name}}</th>
@@ -42,13 +42,13 @@
         <th>{{list.birthDate}}</th>
       </tr>
       <tr>
-<!--      <tr>-->
-<!--        <td>学历：</td>-->
-<!--        <td v-if="list.education==4">大专</td>-->
-<!--        <td v-if="list.education==1">本科</td>-->
-<!--        <td v-if="list.education==2">硕士</td>-->
-<!--        <td v-if="list.education==3">博士及以上</td>-->
-<!--      </tr>-->
+        <!--      <tr>-->
+        <!--        <td>学历：</td>-->
+        <!--        <td v-if="list.education==4">大专</td>-->
+        <!--        <td v-if="list.education==1">本科</td>-->
+        <!--        <td v-if="list.education==2">硕士</td>-->
+        <!--        <td v-if="list.education==3">博士及以上</td>-->
+        <!--      </tr>-->
 
         <td>理想型：</td>
         <th>{{list.idealType}}</th>
@@ -281,12 +281,12 @@ table {
 }
 table tr td {
   height: 40px;
-  width: 180px;
+  width: 260px;
   text-align: right;
   font-weight: bold;
 }
 table th{
-  padding-left: 60px;
+  padding-left: 80px;
   text-align: left;
 }
 .formWrap {
@@ -373,7 +373,7 @@ export default {
       jobOptions: [],
       intentionCompany: [],
       intentionJob: [],
-	  picList: []
+      picList: []
     }
   },
   methods: {
@@ -396,41 +396,41 @@ export default {
           const isPng = file.type === 'image/png'
           const isLt2M = file.size / 1024 / 1024 < 2
 
-          if (!isJPG && !isPng) {
-            this.$message.error('上传图片只能是 JPG或png 格式!')
-          }
-          if (!isLt2M) {
-            this.$message.error('上传图片大小不能超过 2MB!')
-          }
-          return (isJPG || isPng) && isLt2M
-        },
-        handleRemove (file, fileList) {
-          for (const i in this.picList) {
-            if (this.picList[i].key === file.uid) {
-              this.picList.splice(i, 1)
-            }
-          }
-		  this.isEmpty = true
-        },
-        handlePictureCardPreview (file) {
-          this.dialogImageUrl = file.url
-          this.dialogVisible = true
-        },
-        /**
-         * 清空上传组件
-         */
-        emptyUpload () {
-          const mainImg = this.$refs.upload
-          if (mainImg) {
-            if (mainImg.length) {
-              mainImg.forEach(item => {
-                item.clearFiles()
-              })
-            } else {
-              this.$refs.upload.clearFiles()
-            }
-          }
-        },
+      if (!isJPG && !isPng) {
+        this.$message.error('上传图片只能是 JPG或png 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return (isJPG || isPng) && isLt2M
+    },
+    handleRemove (file, fileList) {
+      for (const i in this.picList) {
+        if (this.picList[i].key === file.uid) {
+          this.picList.splice(i, 1)
+        }
+      }
+      this.isEmpty = true
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    /**
+     * 清空上传组件
+     */
+    emptyUpload () {
+      const mainImg = this.$refs.upload
+      if (mainImg) {
+        if (mainImg.length) {
+          mainImg.forEach(item => {
+            item.clearFiles()
+          })
+        } else {
+          this.$refs.upload.clearFiles()
+        }
+      }
+    },
     changeEdit () {
       this.isEdit = !this.isEdit
     },
@@ -479,7 +479,7 @@ export default {
 		this.list.emotional_state = this.$store.state.user.userInfo.emotional_state
 		this.list.email = this.$store.state.user.userInfo.email
 		this.list.birthDate = this.$store.state.user.userInfo.birth
-	  this.list.idealType = this.$store.state.user.userInfo.idealType
+	  this.list.idealType = this.$store.state.user.userInfo.ideal_type
 		this.list.avatar = this.$store.state.user.userInfo.head_portrait
     this.list.job = this.$store.state.user.userInfo.job
     this.mylist = this.list

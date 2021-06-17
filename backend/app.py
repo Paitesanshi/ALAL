@@ -1230,13 +1230,15 @@ def GetCommentList():
         record = {}
         record['uid'] = int(i)
         record['createTime'] = comment[i][2]
-        sql = "SELECT name FROM user WHERE user_id = '%s'" % comment[i][1]
+        sql = "SELECT name,head_portrait FROM user WHERE user_id = '%s'" % comment[i][1]
         cursor.execute(sql)
         nname = cursor.fetchall()
         name = nname[0][0]
+        head=nname[0][1]
         user = {}
         user['id'] = comment[i][1]
         user['name'] = name
+        user['head_portrait']=head
         record['user'] = user
         record['content'] = comment[i][3]
         records.append(record)
