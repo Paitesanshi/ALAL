@@ -4,9 +4,20 @@ const app = {
     // 全局状态
     state: {
         // 用户信息
-        userInfo: {},
-        isLogin: false,
-        isSingle: false
+        userInfo: {
+          avatar: 'http://images.zastatic.com/app/seo/randomuser/2_9.jpg',
+          name: 'Jackson',
+          id:"8",
+          sex: '1',
+          address: '北下关街道',
+          city:'北京',
+          job:'程序员',
+          birthDate:'1980-09-17',
+          emotion:'1',
+          ideal_type:'热爱生活，温柔贤惠'
+        },
+        isLogin: true,
+        isSingle: true
     },
     // getters是对数据的包装，例如对数据进行拼接，或者过滤
     getters: {
@@ -16,7 +27,8 @@ const app = {
                 if (state.userInfo.photoUrl) {
                     return state.userInfo.photoUrl
                 } else {
-                    return 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+                  // alert()
+                    return 'http://images.zastatic.com/app/seo/randomuser/2_9.jpg'
                 }
             } else {
                 return '../../static/images/defaultAvatar.png'

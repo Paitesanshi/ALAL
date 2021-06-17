@@ -1,92 +1,121 @@
 <template>
   <div>
-    <div class="blogsbox">
-      <div
-        v-for="item in newBlogData"
-        :key="item.blog_id"
-        class="blogs"
-        data-scroll-reveal="enter bottom over 1s"
-      >
-        <h3 class="blogtitle">
-          <a href="javascript:void(0);" @click="goToInfo(item)">{{
-            item.title
-          }}</a>
-        </h3>
 
-        <!--        <span class="blogpic">-->
-        <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
-        <!--            <img v-if="item.photoList" :src="item.photoList[0]" alt>-->
-        <!--          </a>-->
-        <!--        </span>-->
-
-        <p class="blogtext">{{ item.summary }}</p>
-        <div class="bloginfo">
-          <ul>
-            <li class="author">
-              <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(item.id)">{{
-                item.name
+    <div>
+      <div>
+        <br>
+        <br>
+        <br>
+        <router-link to="/blog">
+          <el-button href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']" style="width: 100px;position:fixed;left: 1350px" @click="handleSubmit" class="surveyBtn">发布爱</el-button>
+          <!--          <a >发布爱</a>-->
+        </router-link></div>
+      <!--    <div style="float:right;width: 100px">-->
+      <!--      <br>-->
+      <!--      <br>-->
+      <!--      <br>-->
+      <!--    </div>-->
+      <!--    <div class="blogsbox">-->
+      <div style="width:1000px;float:left;margin-left: 300px">
+        <!--      <br>-->
+        <!--      <br>-->
+        <!--      <br>-->
+        <div>
+          <div
+            v-for="item in newBlogData"
+            :key="item.moment_id"
+            class="blogs"
+            data-scroll-reveal="enter bottom over 1s"
+            @click="goToInfo(item)"
+          >
+            <!-- <h3 class="blogtitle">
+              <a href="javascript:void(0);" @click="goToInfo(item)">{{
+                item.title
               }}</a>
-            </li>
-            <li class="lmname" v-if="item.labels">
-              <span class="iconfont">&#xe603;</span>
-              <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
-                item.labels[0]
-              }}</a>
-            </li>
-            <li class="view">
-              <span class="iconfont">&#xe8c7;</span>
-              <span>{{ item.clickCount }}</span>
-            </li>
-            <li class="like">
-              <span class="iconfont">&#xe663;</span>
-              {{ item.likeCount }}
-            </li>
-            <li class="createTime">
-              <span class="iconfont">&#xe606;</span>
-              {{ item.time }}
-            </li>
-          </ul>
-        </div>
-      </div>
+            </h3> -->
 
-      <div class="isEnd">
-        <!-- <span v-if="!isEnd">正在加载中~</span> -->
+            <!--        <span class="blogpic">-->
+            <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
+            <!--            <img v-if="item.photoList" :src="item.photoList[0]" alt>-->
+            <!--          </a>-->
+            <!--        </span>-->
 
-        <div class="loadContent" @click="loadContent" v-if="!isEnd && !loading">
-          点击加载更多
-        </div>
+            <div class="blogtext">{{ item.content }}</div>
+            <div class="bloginfo">
+              <ul>
+                <li class="author">
+                  <span class="iconfont">&#xe60f;</span>
+                  <a href="javascript:void(0);" @click="goToAuthor(item.id)">{{
+                      item.name
+                    }}</a>
+                </li>
+                <!-- <li class="lmname" v-if="item.labels">
+                  <span class="iconfont">&#xe603;</span>
+                  <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
+                    item.labels[0]
+                  }}</a>
+                </li> -->
+                <!-- <li class="view">
+                  <span class="iconfont">&#xe8c7;</span>
+                  <span>{{ item.clickCount }}</span>
+                </li> -->
+                <li class="like">
+                  <span class="iconfont">&#xe663;</span>
+                  {{ item.like_num }}
+                </li>
+                <li class="createTime">
+                  <span class="iconfont">&#xe606;</span>
+                  {{ item.publish_time }}
+                </li>
+              </ul>
+            </div>
+          </div>
 
-        <div class="lds-css ng-scope" v-if="!isEnd && loading">
-          <div style="width:100%;height:100%" class="lds-facebook">
-            <div></div>
-            <div></div>
-            <div></div>
+          <div class="isEnd">
+            <!-- <span v-if="!isEnd">正在加载中~</span> -->
+
+            <div class="loadContent" @click="loadContent" v-if="!isEnd && !loading">
+              点击加载更多
+            </div>
+
+            <div class="lds-css ng-scope" v-if="!isEnd && loading">
+              <div style="width:100%;height:100%" class="lds-facebook">
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+
+            <span v-if="isEnd">我也是有底线的~</span>
           </div>
         </div>
-
-        <span v-if="isEnd">我也是有底线的~</span>
       </div>
+
+      <!--blogsbox end-->
+
+      <!--    <div class="sidebar">-->
+      <!--      &lt;!&ndash;标签云&ndash;&gt;-->
+      <!--      <TagCloud></TagCloud>-->
+
+      <!--      &lt;!&ndash;关注我们&ndash;&gt;-->
+      <!--&lt;!&ndash;      <FollowUs></FollowUs>&ndash;&gt;-->
+
+      <!--      &lt;!&ndash; 三级推荐 &ndash;&gt;-->
+      <!--&lt;!&ndash;      <ThirdRecommend></ThirdRecommend>&ndash;&gt;-->
+
+      <!--&lt;!&ndash;      &lt;!&ndash;四级推荐&ndash;&gt;&ndash;&gt;-->
+      <!--&lt;!&ndash;      <FourthRecommend></FourthRecommend>&ndash;&gt;-->
+
+      <!--      &lt;!&ndash;点击排行&ndash;&gt;-->
+      <!--&lt;!&ndash;      <HotBlog></HotBlog>&ndash;&gt;-->
+
+      <!--    </div>-->
     </div>
-    <!--blogsbox end-->
-
-    <!--    <div class="sidebar">-->
-    <!--      &lt;!&ndash;标签云&ndash;&gt;-->
-    <!--      <TagCloud></TagCloud>-->
-
-    <!--      &lt;!&ndash;关注我们&ndash;&gt;-->
-    <!--&lt;!&ndash;      <FollowUs></FollowUs>&ndash;&gt;-->
-
-    <!--      &lt;!&ndash; 三级推荐 &ndash;&gt;-->
-    <!--&lt;!&ndash;      <ThirdRecommend></ThirdRecommend>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;      &lt;!&ndash;四级推荐&ndash;&gt;&ndash;&gt;-->
-    <!--&lt;!&ndash;      <FourthRecommend></FourthRecommend>&ndash;&gt;-->
-
-    <!--      &lt;!&ndash;点击排行&ndash;&gt;-->
-    <!--&lt;!&ndash;      <HotBlog></HotBlog>&ndash;&gt;-->
-
-    <!--    </div>-->
+<!--    <div :visible.sync="dialogVisible">-->
+<!--      <router-link to="/blog">-->
+<!--        <a href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">发布爱</a>-->
+<!--      </router-link>-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -123,21 +152,12 @@ export default {
   },
   data () {
     return {
+      dialogVisible: false,
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
       secondData: [], // ；二级级推荐数据
-      newBlogData: [
-        {
-          title: 'test',
-          author: 'ptss',
-          labels: ['技术', '数据库'],
-          summary: '略略略',
-          clickCount: 100,
-          likeCount: 200,
-          time: '2020-12-2'
-        }
-      ], // 最新文章
+      newBlogData: [], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
       keyword: '',
@@ -268,32 +288,76 @@ export default {
           // }
           // that.loadingInstance.close();
           // eslint-disable-next-line handle-callback-err
-          for (let i = 0; i < 5; ++i) {
-            console.log('error!!!')
-            this.newBlogData.push({
-              title: 'test',
-              author: 'ptss',
-              labels: ['技术', '数据库'],
-              summary: '略略略',
-              clickCount: 100,
-              likeCount: 200,
-              time: '2020-12-2'
-            })
-          }
+          // for (let i = 0; i < 5; ++i) {
+          console.log('error!!!')
+          this.newBlogData.push(
+            // alert(),
+
+          )
+          // }
         })
         .catch(error => {
-          for (let i = 0; i < 5; ++i) {
-            console.log('error!!!')
-            this.newBlogData.push({
-              title: 'test',
-              author: 'ptss',
-              labels: ['技术', '数据库'],
-              summary: '略略略',
-              clickCount: 100,
-              likeCount: 200,
-              time: '2020-12-2'
-            })
-          }
+          // for (let i = 0; i < 5; ++i) {
+          //   console.log('error!!!')
+            this.newBlogData.push(
+            {
+              moment_id: '10',
+              name: 'Jackson',
+              content: '快乐健身，快乐你我！',
+              id: '8',
+              like_num: '0',
+              publish_time: '2021-6-17 03:51:43'
+            },
+            {
+              moment_id: '7',
+              name: '桑随远',
+              content: '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！',
+              id: '7',
+              like_num: '5',
+              publish_time: '2021-6-16 19:26:43'
+            },
+            {
+              moment_id: '8',
+              name: '桑随远',
+              content: '今晚的夕阳格外美丽~~',
+              id: '7',
+              like_num: '4',
+              publish_time: '2021-6-16 20:24:55'
+            },
+            {
+              moment_id: '9',
+              name: '桑随远',
+              content: '马上就要周末啦！太开心了！！',
+              id: '7',
+              like_num: '12',
+              publish_time: '2021-6-16 23:22:23'
+            },
+            {
+              moment_id: '4',
+              name: '天使艾米丽',
+              content: '亲爱的520快乐！我们以后一直走花路吧',
+              id: '5',
+              like_num: '5',
+              publish_time: '2021-6-15 00:00:00'
+            },
+            {
+              moment_id: '5',
+              name: '头上一颗椰',
+              content: '昨天跟npy一起去了海南三亚！真是太美了！希望以后还可以去更多地方一起玩~~',
+              id: '6',
+              like_num: '20',
+              publish_time: '2021-6-16 18:43:07'
+            },
+            {
+              moment_id: '6',
+              name: 'Jenny',
+              content: '今天是我们在一起的第100天了！祝我们100天纪念日快乐呀！嘻嘻',
+              id: '7',
+              like_num: '78',
+              publish_time: '2021-6-16 19:21:45'
+            }
+          )
+          // }
           that.loadingInstance.close()
         })
     },

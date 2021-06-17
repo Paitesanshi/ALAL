@@ -23,7 +23,6 @@
     <!--w2blogsbox begin-->
     <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.isSingle != false">
          <PhotoWall :imgs="this.urlData" ></PhotoWall>
-
     </div>
 
     <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">
@@ -150,13 +149,72 @@ export default {
   },
   data () {
     return {
-      urlData: [],
+      urlData: [
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_11.jpg', 'id': '1'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_1.jpg', 'id': '2'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_12.jpg', 'id': '3'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_5.jpg', 'id': '4'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_13.jpg', 'id': '5'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_3.jpg', 'id': '6'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_15.jpg', 'id': '7'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_6.jpg', 'id': '8'},
+        {'src': 'http://images.zastatic.com/app/seo/randomuser/2_20.jpg', 'id': '9'}
+      ],
       ids: [],
       loadingInstance: null, // loading对象
       VUE_MOGU_WEB: process.env.VUE_MOGU_WEB,
       firstData: [], // ；一级推荐数据
       secondData: [], // ；二级级推荐数据
-      newBlogData: [], // 最新文章
+      newBlogData: [
+        {
+          moment_id: '4',
+          name: '天使艾米丽',
+          content: '亲爱的520快乐！我们以后一直走花路吧',
+          id: '5',
+          like_num: '5',
+          publish_time: '2021-6-15 00:00:00'
+        },
+        {
+          moment_id: '5',
+          name: '头上一颗椰',
+          content: '昨天跟npy一起去了海南三亚！真是太美了！希望以后还可以去更多地方一起玩~~',
+          id: '6',
+          like_num: '20',
+          publish_time: '2021-6-16 18:43:07'
+        },
+        {
+          moment_id: '6',
+          name: 'Jenny',
+          content: '今天是我们在一起的第100天了！祝我们100天纪念日快乐呀！嘻嘻',
+          id: '7',
+          like_num: '78',
+          publish_time: '2021-6-16 19:21:45'
+        }
+        // {
+        //   moment_id: '7',
+        //   name: '桑随远',
+        //   content: '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！',
+        //   id: '7',
+        //   like_num: '5',
+        //   publish_time: '2021-6-16 19:26:43'
+        // },
+        // {
+        //   moment_id: '8',
+        //   name: '桑随远',
+        //   content: '今天是我们在一起的第100天了！祝我们100天纪念日快乐呀！嘻嘻',
+        //   id: '7',
+        //   like_num: '4',
+        //   publish_time: '2021-6-16 20:24:55'
+        // },
+        // {
+        //   moment_id: '9',
+        //   name: '桑随远',
+        //   content: '今天是我们在一起的第100天了！祝我们100天纪念日快乐呀！嘻嘻',
+        //   id: '7',
+        //   like_num: '12',
+        //   publish_time: '2021-6-16 23:22:23'
+        // }
+      ], // 最新文章
       hotBlogData: [], // 最热文章
       hotTagData: [], // 最新标签
       keyword: '',
@@ -288,17 +346,17 @@ export default {
           // eslint-disable-next-line handle-callback-err
         })
         .catch(error => {
-          for (let i = 0; i < 5; ++i) {
-            this.newBlogData.push({
-              title: 'test',
-              author: 'ptss',
-              labels: ['技术', '数据库'],
-              summary: '略略略',
-              clickCount: 100,
-              likeCount: 200,
-              time: '2020-12-2'
-            })
-          }
+          // for (let i = 0; i < 5; ++i) {
+          //   this.newBlogData.push({
+          //     title: 'test',
+          //     author: 'ptss',
+          //     labels: ['技术', '数据库'],
+          //     summary: '略略略',
+          //     clickCount: 100,
+          //     likeCount: 200,
+          //     time: '2020-12-2'
+          //   })
+          // }
           that.loadingInstance.close()
         })
     },

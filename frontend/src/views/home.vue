@@ -49,11 +49,11 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
-          <router-link to="/blog">
-            <a href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">发布爱</a>
-          </router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/blog">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">发布爱</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
 		<li>
           <router-link to="/chat">
             <a href="javascript:void(0);" :class="[saveTitle == '/chat' ? 'title' : '']">聊天</a>
@@ -65,20 +65,23 @@
           </router-link>
         </li>
 		<li>
-          <router-link to="/circle">
-            <a href="javascript:void(0);" :class="[saveTitle == '/circle' ? 'title' : '']">记录爱</a>
-          </router-link>
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--      <div>-->
+        <router-link to="/circle">
+          <a href="javascript:void(0);" :class="[saveTitle == '/circle' ? 'title' : '']">记录爱</a>
+        </router-link>
+<!--      </div>-->
         </li>
         <li>
           <router-link to="/userinfo">
             <a href="javascript:void(0);" :class="[saveTitle == '/userinfo' ? 'title' : '']">用户中心</a>
           </router-link>
         </li>
-        <li>
-          <router-link to="/admin">
-            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>
-          </router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/admin">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
 <!--        <li>-->
 <!--          <router-link to="/subject">-->
@@ -129,11 +132,10 @@
 
       <el-dropdown @command="handleCommand" class="userInfoAvatar">
         <span class="el-dropdown-link">
-          <img v-if="!isLogin" src="../../static/images/defaultAvatar.png">
-          <img v-if="isLogin&&userInfo.photoUrl!=undefined" :src="userInfo.photoUrl"
-               onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'">
-          <img v-if="isLogin&&userInfo.photoUrl==undefined"
-               src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif">
+<!--          <img v-if="!isLogin" src="../../static/images/defaultAvatar.png">-->
+<!--          <img v-if="isLogin&&userInfo.photoUrl!=undefined" :src="userInfo.photoUrl"-->
+<!--               onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'">-->
+          <img src="http://images.zastatic.com/app/seo/randomuser/2_9.jpg">
         </span>
 
         <el-dropdown-menu slot="dropdown">
@@ -1066,7 +1068,7 @@ export default {
 
     getToken: function () {
       let token = this.getUrlVars()['token']
-     
+
       // 判断url中是否含有token
       if (token != undefined) {
         // 设置token七天过期

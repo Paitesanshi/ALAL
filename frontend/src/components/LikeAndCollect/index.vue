@@ -1,42 +1,42 @@
 <template>
-  <div class="share">
+  <div style="margin-left: 200px">
     <p class="diggit" @click="praiseBlog(blogUid)">
       <a href="javascript:void(0);">很赞哦！</a>
       <span v-if="praiseCount!= 0">
         (<b id="diggnum">{{praiseCount}}</b>)
       </span>
     </p>
-    <p class="dasbox"  @click="collectToggle()">
-      <a href="javascript:void(0)"  class="collect" title="收藏">收藏</a>
-    </p>
-    <p class="reportbtn"  @click="reportToggle()">
-      <a href="javascript:void(0)"  class="report" title="举报">举报</a>
-    </p>
-    <div class="hide_box" v-if="showCollect"></div>
-    <div class="shang_box" v-if="showCollect">
-      <a class="shang_close" href="javascript:void(0)" @click="collectToggle()" title="关闭">关闭</a>
-      <el-form label-position="top" >
-        <el-form-item label="名称" prop="userName">
-          <el-input v-model="collectName" placeholder="收藏博客命名"></el-input>
-        </el-form-item>
-        <el-row class="btn">
-          <el-button class="agreeBtn" type="primary" @click="collectBlog(blogUid,collectName)" >确认</el-button>
-          <el-button class="cancelBtn" type="info" @click="collectToggle()" >取消</el-button>
-        </el-row>
-      </el-form>
-    </div>
-    <div class="shang_box" v-if="showReport">
-      <a class="shang_close" href="javascript:void(0)" @click="reportToggle()" title="关闭">关闭</a>
-      <el-form label-position="top" >
-        <el-form-item label="原因" prop="reportReason">
-          <el-input v-model="reportReason" placeholder="举报原因"></el-input>
-        </el-form-item>
-        <el-row class="btn">
-          <el-button class="agreeBtn" type="primary" @click="reportBlog(blogUid,reportReason)" >确认</el-button>
-          <el-button class="cancelBtn" type="info" @click="reportToggle()" >取消</el-button>
-        </el-row>
-      </el-form>
-    </div>
+<!--    <p class="dasbox"  @click="collectToggle()">-->
+<!--      <a href="javascript:void(0)"  class="collect" title="收藏">收藏</a>-->
+<!--    </p>-->
+<!--    <p class="reportbtn"  @click="reportToggle()">-->
+<!--      <a href="javascript:void(0)"  class="report" title="举报">举报</a>-->
+<!--    </p>-->
+<!--    <div class="hide_box" v-if="showCollect"></div>-->
+<!--    <div class="shang_box" v-if="showCollect">-->
+<!--      <a class="shang_close" href="javascript:void(0)" @click="collectToggle()" title="关闭">关闭</a>-->
+<!--      <el-form label-position="top" >-->
+<!--        <el-form-item label="名称" prop="userName">-->
+<!--          <el-input v-model="collectName" placeholder="收藏博客命名"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-row class="btn">-->
+<!--          <el-button class="agreeBtn" type="primary" @click="collectBlog(blogUid,collectName)" >确认</el-button>-->
+<!--          <el-button class="cancelBtn" type="info" @click="collectToggle()" >取消</el-button>-->
+<!--        </el-row>-->
+<!--      </el-form>-->
+<!--    </div>-->
+<!--    <div class="shang_box" v-if="showReport">-->
+<!--      <a class="shang_close" href="javascript:void(0)" @click="reportToggle()" title="关闭">关闭</a>-->
+<!--      <el-form label-position="top" >-->
+<!--        <el-form-item label="原因" prop="reportReason">-->
+<!--          <el-input v-model="reportReason" placeholder="举报原因"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-row class="btn">-->
+<!--          <el-button class="agreeBtn" type="primary" @click="reportBlog(blogUid,reportReason)" >确认</el-button>-->
+<!--          <el-button class="cancelBtn" type="info" @click="reportToggle()" >取消</el-button>-->
+<!--        </el-row>-->
+<!--      </el-form>-->
+<!--    </div>-->
   </div>
 </template>
 
