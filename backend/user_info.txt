@@ -1,1 +1,1 @@
-{"id": 18301001, "name": "cjz", "head_portrait": "1", "password": "123456", "email": "123456", "role": 1, "emotional_state": 1, "couple": null, "sex": "1", "birth": "1999-06-02", "job": "1", "city": "1", "ideal_type": "1", "question": "1"}
+{"id": 18301003, "name": "22222", "head_portrait": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif", "password": "22222", "email": "11@qq.ccom", "role": 0, "emotional_state": 0, "couple": "", "sex": "f", "birth": "", "job": "", "city": "", "ideal_type": "", "question": ""}
