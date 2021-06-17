@@ -1,0 +1,91 @@
+<template>
+  <div class="deliveryWrap">
+    <div v-if="!show" class="nofind">
+      <p>暂时没有消息记录哦</p>
+    </div>
+    <div v-show="show" v-for="(item, index) in list" :key="index"  @click="checkDetail(item.id)">
+      <el-card shadow="hover" class="deliverycard">
+        <div class="resumeBox">
+          <p>{{item.applicant}}</p>
+          <p>{{item.createdTime}}</p>
+        </div>
+      </el-card>
+    </div>
+  </div>
+</template>
+<style>
+.deliveryWrap {
+  height: 1000px;
+  overflow: scroll;
+}
+.deliveryWrap::-webkit-scrollbar {
+  display: none;
+}
+.resumeBox {
+  display: flex;
+  justify-content: space-between;
+}
+.deliverycard {
+  margin-bottom: 14px;
+  width: 100%;
+  height: 100px;
+  border-left: 5px solid #888;
+}
+.nofind p {
+  font-size: 18px;
+  color: #909399;
+}
+.nofind img {
+  width: 350px;
+  height: 280px;
+  margin: 28px 28px auto auto;
+}
+</style>
+
+<script>
+import { getFriendsRequestList} from '@/api/user'
+export default {
+  data () {
+    return {
+      list: [],
+      show: false
+    }
+  },
+  created () {
+    let that = this
+	  let params = new URLSearchParams()
+    console.log("userinfo is ")
+    console.log(this.$store.state.user.userInfo)
+    params.append('id', this.$store.state.user.userInfo.id)
+    getFriendsRequestList(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.list = response.data.list
+      } else {
+        that.show = false
+
+        // this.$notify({
+      //       title: '失败',
+      //       message: '还没有申请信息',
+      //       type: 'error',
+      //       offset: 100
+      //     })
+      }
+    }).catch(error => {
+      console.log(error)
+		  this.list = [
+        // {
+        //   id: 1,
+        //   applicant: '桑随远',
+        //   createdTime: '2021-6-17'
+        // }
+      ]
+    })
+  },
+  methods: {
+    checkDetail (uid) {
+      this.$router.push({path: '/questionsDisabled', query: {id: uid}})
+    }
+
+  }
+}
+</script>
