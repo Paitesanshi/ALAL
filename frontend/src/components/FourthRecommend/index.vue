@@ -17,47 +17,47 @@
 </template>
 
 <script>
-import { getBlogByLevel } from "../../api/index";
-import {getBlogByUid} from "../../api/blogContent";
+import { getBlogByLevel } from '../../api/index'
+import {getBlogByUid} from '../../api/blogContent'
 export default {
   name: 'FourthRecommend',
-    data() {
+  data () {
     	return {
-	      fourthData: [], //；四级推荐数据
+	      fourthData: [] // ；四级推荐数据
     	}
-    },
-    created() {
-      var fourthParams = new URLSearchParams();
-      fourthParams.append("currentPage", 0);
-      fourthParams.append("pageSize", 5);
-      fourthParams.append("level", 4);
-      fourthParams.append("useSort", 1);
-      getBlogByLevel(fourthParams).then(response => {
-        if(response.code == this.$ECode.SUCCESS) {
-          this.fourthData = response.data.records;
-        }
-      });
-    },
-    methods: {
-      //跳转到文章详情【或推广链接】
-      goToInfo(blog) {
-        if(blog.type == "0") {
-          let routeData = this.$router.resolve({
-            path: "/info",
-            query: {blogOid: blog.oid}
-          });
-          window.open(routeData.href, '_blank');
-        } else if(blog.type == "1") {
-          var params = new URLSearchParams();
-          params.append("uid", blog.uid);
-          getBlogByUid(params).then(response => {
-            // 记录一下用户点击日志
-          });
-          window.open(blog.outsideLink, '_blank');
-        }
-      },
-    },
-
+  },
+  created () {
+    var fourthParams = new URLSearchParams()
+    fourthParams.append('currentPage', 0)
+    fourthParams.append('pageSize', 5)
+    fourthParams.append('level', 4)
+    fourthParams.append('useSort', 1)
+    getBlogByLevel(fourthParams).then(response => {
+      if (response.code == this.$ECode.SUCCESS) {
+        this.fourthData = response.data.records
+      }
+    })
+  },
+  methods: {
+    // 跳转到文章详情【或推广链接】
+    goToInfo (blog) {
+      if (blog.type == '0') {
+        let routeData = this.$router.resolve({
+          path: '/info',
+          query: {blogOid: blog.oid}
+        })
+        window.open(routeData.href, '_blank')
+        // } else if(blog.type == "1") {
+        //   var params = new URLSearchParams();
+        //   params.append("uid", blog.uid);
+        //   getBlogByUid(params).then(response => {
+        //     // 记录一下用户点击日志
+        //   });
+        //   window.open(blog.outsideLink, '_blank');
+        // }
+      }
+    }
+  }
 }
 </script>
 

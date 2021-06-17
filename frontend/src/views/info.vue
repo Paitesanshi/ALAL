@@ -5,36 +5,26 @@
     </el-dialog>
     <h1 class="t_nav">
       <a href="/" class="n1">网站首页</a>
-      <a
-        href="javascript:void(0);"
-        v-if="blogData.blogSort"
-        @click="goToSortList(blogData.blogSort)"
-        class="n2"
-      >{{ blogData.blogSort ? blogData.blogSortName : "" }}</a>
     </h1>
     <div class="infosbox">
       <div class="newsview">
-        <h3 class="news_title" v-if="blogData.title">{{ blogData.title }}</h3>
-        <div class="bloginfo" v-if="blogData.labels">
+        <!-- <h3 class="news_title" v-if="blogData.title">{{ blogData.title }}</h3> -->
+        <div class="bloginfo">
           <ul>
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(blogData.author)">{{ blogData.name }}</a>
+              <a href="javascript:void(0);" @click="goToAuthor(blogData.id)">{{ blogData.author }}</a>
             </li>
-            <li class="lmname">
+            <!-- <li class="lmname">
               <span class="iconfont">&#xe603;</span>
               <a
                 href="javascript:void(0);"
                 @click="goToSortList(blogData.blogSort)"
               >{{ blogData.blogSort ? blogData.blogSortName : "" }}</a>
-            </li>
+            </li> -->
             <li class="createTime">
               <span class="iconfont">&#xe606;</span>
               {{ blogData.time }}
-            </li>
-            <li class="view">
-              <span class="iconfont">&#xe8c7;</span>
-              {{ blogData.clickCount }}
             </li>
             <li class="like">
               <span class="iconfont">&#xe663;</span>
@@ -42,7 +32,7 @@
             </li>
           </ul>
         </div>
-        <div class="tags">
+        <!-- <div class="tags">
           <a
             v-if="blogData.labels"
             v-for="item in blogData.labels"
@@ -51,31 +41,35 @@
             @click="goToList(item)"
             target="_blank"
           >{{ item }}</a>
-        </div>
-        <div v-if="blogData.need_credit !=0||this.$store.state.user.userInfo.reputation<=1">
+        </div> -->
+        <!-- <div v-if="blogData.need_credit !=0||this.$store.state.user.userInfo.reputation<=1">
           <img class="center" :src="lockImageUrl" alt="lock">
           <div class="center fit-content">
             <el-button type="primary" align="center" @click="payCredit">需要花费 {{blogData.need_credit}} 积分</el-button>
           </div>
-        </div>
-          <div
+        </div> -->
+          <!-- <div
             v-if="blogData.need_credit ==0"
-            class="news_con ck-content"
+            class="news_con"
             v-html="blogContent"
             v-highlight
             @click="imageChange"
           >{{ blogContent }}
-          </div>
+          </div> -->
+          <div class="news_con momentContent">{{blogData.content}}</div>
+		   <div>
+		<ImageList  style="margin:10px auto;" :imgs="this.urlData"></ImageList>
+  </div>
+
       </div>
 
       <!--点赞和收藏和举报-->
-      <LikeAndCollect v-if="openAdmiration === '1'" :blogUid="blogUid"
+      <LikeAndCollect :blogUid="this.blogData.moment_id" :user_id="this.blogData.id"
                       :praiseCount="blogData.likeCount"  @praise="incrPraise"></LikeAndCollect>
       <div class="news_pl" :style="openCommentCss">
         <h2 v-if="openComment === '1'">文章评论</h2>
         <ul v-if="openComment === '1'">
           <CommentBox
-            v-if="this.$store.state.user.userInfo.reputation>3"
             :userInfo="userInfo"
             :commentInfo="commentInfo"
             @submit-box="submitBox"
@@ -100,7 +94,7 @@
 
 <script>
 import {getWebConfig} from '../api/index'
-import {getBlogByUid, payCreditByUid} from '../api/blogContent'
+import {getBlogByUid, payCreditByUid,getBlogPicByUid} from '../api/blogContent'
 import CommentList from '../components/CommentList'
 import CommentBox from '../components/CommentBox'
 // vuex中有mapState方法，相当于我们能够使用它的getset方法
@@ -109,18 +103,19 @@ import ThirdRecommend from '../components/ThirdRecommend'
 import FourthRecommend from '../components/FourthRecommend'
 import TagCloud from '../components/TagCloud'
 import HotBlog from '../components/HotBlog'
-import FollowUs from '../components/FollowUs'
+// import FollowUs from '../components/FollowUs'
 import Link from '../components/Link'
 import {addComment, getCommentList} from '../api/comment'
 import {Loading} from 'element-ui'
 import Sticky from '@/components/Sticky'
 import SideCatalog from '@/components/VueSideCatalog'
 import LikeAndCollect from '../components/LikeAndCollect/index'
-
+import ImageList from '../components/ImageList'
 export default {
   name: 'info',
   data () {
     return {
+		urlData: [],
       // 目录列表数
       lockImageUrl: '../static/images/lock.png',
       catalogSum: 0,
@@ -189,53 +184,15 @@ export default {
     ThirdRecommend,
     TagCloud,
     HotBlog,
-    FollowUs,
+    // FollowUs,
     CommentList,
     CommentBox,
     SideCatalog,
     Link,
-    Sticky
+    Sticky,
+	ImageList
   },
   mounted () {
-    var that = this
-    var params = new URLSearchParams()
-    // if (this.blogUid) {
-    //   params.append('uid', this.blogUid)
-    // }
-    // if (this.blogOid) {
-    //   params.append('oid', this.blogOid)
-    // }
-    params.append('blog_id', this.blogUid)
-    getBlogByUid(params).then(response => {
-      if (response.data.code === this.$ECode.SUCCESS) {
-        this.blogData = response.data
-        console.log(this.blogData)
-        // this.blogUid = response.data.uid
-        // this.blogOid = response.data.oid\
-        this.getCommentDataList()
-      } else {
-
-      }
-      setTimeout(() => {
-        that.blogContent = response.data.content
-        that.loadingInstance.close()
-      }, 20)
-    }).catch(error => {
-      console.log(error)
-      this.blogData.labels = ['技术', '大数据']
-      this.blogData.blogSort = '技术'
-      this.blogContent = 'This is a test'
-      this.blogData.title = 'test'
-      this.blogData.author = 'ptss'
-      this.blogData.summary = '概括'
-      this.blogData.clickCount = 100
-      this.blogData.likeCount = 200
-      this.blogData.time = '2020-12-2'
-      this.blogData.need = 1
-      this.getCommentDataList()
-      that.loadingInstance.close()
-    })
-
     var after = 0
     var offset = 110
     // eslint-disable-next-line no-undef
@@ -282,7 +239,7 @@ export default {
           }
         }).catch(error => {
           console.log(error)
-          this.comments = [{creatTime: '2020-12-6', user: {nickName: 'ptss'}, content: '我怀疑你在ghs'}]
+          this.comments = [{creatTime: '2021-6-17', user: {nickName: '快乐小虎'}, content: '我也超喜欢这部电影的！'}]
         })
       }
     })
@@ -302,6 +259,78 @@ export default {
     })
     this.blogUid = this.$route.query.blogUid
     console.log(this.$route.query.blogUid)
+     var that = this
+    var params = new URLSearchParams()
+    params.append('moment_id', this.blogUid)
+    getBlogByUid(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.blogData = response.data
+        console.log(this.blogData)
+        // this.blogUid = response.data.uid
+        // this.blogOid = response.data.oid\
+       // this.getCommentDataList()
+         that.loadingInstance.close()
+      }
+    }).catch(error => {
+      console.log(error)
+      // this.blogData.labels = []
+      // this.blogData.blogSort = ''
+      // this.blogContent = '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！'
+      // this.blogData.title = ''
+      // this.blogData.author = 'ptss'
+      // this.blogData.summary = '概括'
+      // this.blogData.clickCount = 100
+      // this.blogData.likeCount = 200
+      // this.blogData.time = '2020-12-2'
+      // this.blogData.need = 0
+      // // this.blogData.credit=0
+      // this.getCommentDataList()
+      // that.loadingInstance.close()
+    })
+	// params = new URLSearchParams()
+  //   // if (this.blogUid) {
+  //   //   params.append('uid', this.blogUid)
+  //   // }
+  //   // if (this.blogOid) {
+  //   //   params.append('oid', this.blogOid)
+  //   // }
+  //   params.append('moment_id', this.blogUid)
+    getBlogPicByUid(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.urlData = response.data.urls
+        console.log(this.urlData)
+        // this.blogUid = response.data.uid
+        // this.blogOid = response.data.oid\
+        this.getCommentDataList()
+      } else {
+		that.urlData=[
+        {"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+      ]
+      }
+      setTimeout(() => {
+        that.blogContent = response.data.content
+        that.loadingInstance.close()
+      }, 20)
+    }).catch(error => {
+      console.log(error)
+      this.blogData.labels = []
+      this.blogData.blogSort = ''
+      this.blogContent = '今天又重温了一遍《傲慢与偏见》，再次被伊丽莎白与达西的爱情感动了，希望自己早点可以找到心仪的另一半啊！'
+      this.blogData.title = ''
+      this.blogData.name = '桑随远'
+      // this.blogData.summary = '概括'
+      this.blogData.clickCount = 56
+      this.blogData.likeCount = 5
+      this.blogData.time = '2020-12-2'
+      this.blogData.need = 1
+      this.getCommentDataList()
+	  that.urlData=[
+       	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"}
+      ]
+      that.loadingInstance.close()
+    })
     // var that = this
     // var params = new URLSearchParams()
     // // if (this.blogUid) {
@@ -347,6 +376,13 @@ export default {
   methods: {
     // 拿到vuex中的写的两个方法
     ...mapMutations(['setCommentList', 'setWebConfigData']),
+	//  showImg(index) {
+    //   this.$hevueImgPreview({
+    //     multiple: true,
+    //     nowImgIndex: index,
+    //     imgList: this.urlData
+    //   })
+    // },
     handleCurrentChange: function (val) {
       this.currentPage = val
       this.getCommentDataList()
@@ -389,7 +425,7 @@ export default {
       let params = {}
       params.blogUid = e.blogUid
       params.source = e.source
-      params.userUid = e.userUid
+      params.id = e.userUid
       params.content = e.content
       console.log(params)
       addComment(params).then(response => {
@@ -427,7 +463,7 @@ export default {
           this.total = response.data.total
         }
       }).catch(error => {
-        this.comments = [{creatTime: '2020-12-6', user: {nickName: 'ptss'}, content: '我怀疑你在ghs'}]
+        this.comments = [{creatTime: '2021-6-18', user: {nickName: '头上一颗椰'}, content: '我也超级喜欢这部电影的！'}]
       })
     },
     // 跳转到文章详情
@@ -547,7 +583,9 @@ export default {
   width: 3px;
   background: transparent;
 }
-
+.momentContent {
+  margin: 60px 10px 10px 10px;
+}
 .line-style--active {
   background: currentColor;
 }

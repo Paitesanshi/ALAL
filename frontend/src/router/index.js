@@ -23,7 +23,12 @@ export const constantRouterMap = [
 			{ path: '/blog', component: () => import('@/views/blog') },
 			{ path: '/chat', component: () => import('@/views/chat') },
 			{ path: '/admin', component: () => import('@/views/admin') },
-			{ path: '/questions', component: () => import('@/views/questions') }
+			{ path: '/circle', component: () => import('@/views/circle') },
+			{ path: '/userinfo', component: () => import('@/views/userinfo') },
+			{ path: '/questions', component: () => import('@/views/questions') },
+			{ path: '/questionsDisabled', component: () => import('@/views/questionsDisabled') },
+			{ path: '/click_userInfo', component: () => import('@/views/click_userInfo') },
+			{ path: '/answer_questions', component: () => import('@/views/answer_questions') }
 		]
 	},
 	{ path: '/404', component: () => import('@/views/404') },

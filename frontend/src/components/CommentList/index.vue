@@ -2,15 +2,15 @@
   <div>
     <div v-for="item in comments" :key="item.uid">
       <div class="commentList">
-        <span class="left p1">
-          <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" />
+        <span class="left p1" 	@click="goToUser(id)">
+          <img v-if="item.user" :src="item.user.head_portrait ? item.user.head_portrait:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" />
           <img v-else src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" />
-          <FollowBtn :uid="item.user.id"></FollowBtn>
+          <!-- <FollowBtn :uid="item.user.id"></FollowBtn> -->
         </span>
 
         <span class="right p1">
           <div class="rightTop" v-if="item.user">
-            <el-link class="userName" :underline="false">{{item.user.nickName}}</el-link>
+            <el-link class="userName" :underline="false">{{item.user.name}}</el-link>
 <!--            <el-tag style="height: 30px; margin-left:5px;" v-for="userTag in userTagDictList" :key="userTag.uid" v-if="item.user.userTag == userTag.dictValue && item.user.userTag != 0" :type="userTag.listClass">{{userTag.dictLabel}}</el-tag>-->
             <span class="timeAgo" v-if="item.createTime">{{timeAgo(item.createTime)}}</span>
             <span class="timeAgo" v-else>刚刚</span>
@@ -99,6 +99,10 @@ export default {
       //   }
       // })
     },
+    goToUser (uid) {
+      console.log('组件中methods方法')
+      this.$router.push({path: '/click_userInfo', query: {id: uid}})// 取参 this.$route.query.id
+    	},
     replyTo: function (item) {
       if (!this.validLogin()) {
         this.$notify.error({

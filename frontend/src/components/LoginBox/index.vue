@@ -38,10 +38,9 @@
           <el-input v-model="registerForm.userName" placeholder="用户名长度在5~20之间" :disabled="loginType.password"></el-input>
         </el-form-item>
 
-        <el-form-item label="昵称" prop="nickName">
+        <!-- <el-form-item label="昵称" prop="nickName">
           <el-input v-model="registerForm.nickName" placeholder="昵称长度在1~20之间" :disabled="loginType.password"></el-input>
-        </el-form-item>
-
+        </el-form-item> -->
         <el-form-item label="密码" prop="password">
           <el-input type="password" v-model="registerForm.password" placeholder="密码长度在5~20之间" :disabled="loginType.password"></el-input>
         </el-form-item>
@@ -49,7 +48,26 @@
         <el-form-item label="重复密码" prop="password2">
           <el-input type="password" v-model="registerForm.password2" placeholder="请再次输入密码" :disabled="loginType.password"></el-input>
         </el-form-item>
-
+        <el-form-item  label="性别">
+          <el-radio
+          v-model="registerForm.sex"
+          :label="1"
+        >男</el-radio>
+         <el-radio
+          v-model="registerForm.sex"
+          :label="0"
+        >女</el-radio>
+        </el-form-item>
+          <el-form-item label="情感状况">
+          <el-radio
+          v-model="registerForm.emotional_state"
+          :label="0"
+        >单身</el-radio>
+         <el-radio
+          v-model="registerForm.emotional_state"
+          :label="1"
+        >非单身</el-radio>
+        </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="registerForm.email" placeholder="请输入正确的邮箱" :disabled="loginType.password"></el-input>
         </el-form-item>
@@ -96,7 +114,9 @@ export default {
         userName: '',
         password: '',
         password2: '',
-        email: ''
+        email: '',
+        sex: 1,
+        emotional_state: 1,
       },
       // 登录类别
       loginType: {
@@ -112,11 +132,6 @@ export default {
           { min: 5, message: '用户名长度大于等于 5 个字符', trigger: 'blur' },
           { max: 20, message: '用户名长度不能大于 20 个字符', trigger: 'blur' }
         ],
-        nickName: [
-          {required: true, message: '请输入昵称', trigger: 'blur'},
-          { min: 1, message: '用户名长度大于等于 1 个字符', trigger: 'blur' },
-          { max: 20, message: '用户名长度不能大于 20 个字符', trigger: 'blur' }
-        ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 5, message: '密码长度需要大于等于 5 个字符', trigger: 'blur' },
@@ -129,8 +144,11 @@ export default {
           { min: 5, message: '用户名长度大于等于 5 个字符', trigger: 'blur' },
           { max: 20, message: '用户名长度不能大于 20 个字符', trigger: 'blur' }
         ],
-        nickName: [
-          {required: true, message: '请输入昵称', trigger: 'blur'}
+        sex: [
+          {required: true, message: '请选择性别', trigger: 'blur'}
+        ],
+        emotional_state: [
+          {required: true, message: '请选择情感状况', trigger: 'blur'}
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -151,7 +169,7 @@ export default {
   },
   components: {},
   methods: {
-    ...mapMutations(['setUserInfo', 'setLoginState']),
+    ...mapMutations(['setUserInfo', 'setLoginState', 'setSingleState']),
     startLogin: function () {
       console.log('---------------!!!!!!!!!!!')
       this.$refs.loginForm.validate((valid) => {
@@ -159,20 +177,26 @@ export default {
         if (!valid) {
           console.log('校验失败')
         } else {
+          let that = this
           var params = {}
           params.userName = this.loginForm.userName
           params.passWord = this.loginForm.password
           // params.isRememberMe = 1
-          console.log(params)
+          console.log(this.$store.state.user.isLogin)
           localLogin(params).then(response => {
             if (response.data.code === this.$ECode.SUCCESS) {
               // 跳转到首页
-              console.log("loginnnnnnnnnnnnnn")
-              // this.isLogin = true
-              // let userInfo = response.data.records
-              // this.setUserInfo(userInfo)
-              // this.setLoginState(this.isLogin)
-              // console.log(response.data.id)
+              this.isLogin = true
+              let userInfo = response.data.records
+              this.setUserInfo(userInfo)
+              this.setLoginState(this.isLogin)
+              if (this.$store.state.user.userInfo.emotional_state === 1) {
+                this.setSingleState(false)
+              } else {
+                this.setSingleState(true)
+              }
+              console.log('userinfo:', that.$store.state.user.userInfo)
+              console.log('login:', that.$store.state.user.isLogin)
               window.location.replace(this.vueMoguWebUrl + '/#/?token=' + response.data.id)
               window.location.reload()
             } else {
@@ -182,7 +206,7 @@ export default {
               })
             }
           }).catch(error => {
-            console.log(error+"6666666666666666")
+            console.log(error + '6666666666666666')
           })
         }
       })
@@ -194,7 +218,7 @@ export default {
         } else {
           let passWord = this.registerForm.password
           let passWord2 = this.registerForm.password2
-          if (passWord != passWord2) {
+          if (passWord !== passWord2) {
             this.$message({
               type: 'error',
               message: '两次密码不一致'
@@ -205,9 +229,11 @@ export default {
           params.userName = this.registerForm.userName
           params.passWord = this.registerForm.password
           params.email = this.registerForm.email
-          params.nickName = this.registerForm.nickName
+          params.sex = this.registerForm.sex
+          params.emotional_state = this.registerForm.emotional_state
+          console.log(params)
           localRegister(params).then(response => {
-            if (response.data.code == this.$ECode.SUCCESS) {
+            if (response.data.code === this.$ECode.SUCCESS) {
               this.$message({
                 type: 'success',
                 message: response.data.message

@@ -19,7 +19,7 @@
           <h3 class="blogtitle">
             <a
               href="javascript:void(0);"
-              @click="goToInfo(item.blogUid?item.blogUid:item.user_id)"
+              @click="goToInfo(item.blogUid?item.blogUid:item.id)"
               v-html="item.title"
             >{{item.title}}</a>
           </h3>
@@ -89,47 +89,47 @@
 
 <script>
 
-import ThirdRecommend from "../components/ThirdRecommend";
-import FourthRecommend from "../components/FourthRecommend";
-import TagCloud from "../components/TagCloud";
-import HotBlog from "../components/HotBlog";
-import FollowUs from "../components/FollowUs";
+import ThirdRecommend from '../components/ThirdRecommend'
+import FourthRecommend from '../components/FourthRecommend'
+import TagCloud from '../components/TagCloud'
+import HotBlog from '../components/HotBlog'
+import FollowUs from '../components/FollowUs'
 import {
   searchBlog,
   searchBlogByTag,
   searchBlogBySort,
   searchBlogByAuthor
-} from "../api/search";
+} from '../api/search'
 
 export default {
-  name: "list",
-  data() {
+  name: 'list',
+  data () {
     return {
       blogData: [],
-      keywords: "",
+      keywords: '',
       currentPage: 1,
       totalPages: 0,
       pageSize: 10,
-      total: 0, //总数量
-      tagUid: "",
-      searchBlogData: [], //搜索出来的文章
-      sortUid: "",
-      isEnd: false, //是否到底底部了
-      loading: false //内容是否正在加载
-    };
+      total: 0, // 总数量
+      tagUid: '',
+      searchBlogData: [], // 搜索出来的文章
+      sortUid: '',
+      isEnd: false, // 是否到底底部了
+      loading: false // 内容是否正在加载
+    }
   },
   components: {
     FourthRecommend,
     ThirdRecommend,
     TagCloud,
     HotBlog,
-    FollowUs,
+    FollowUs
   },
-  created() {
-    this.keywords = this.$route.query.keyword;
-    this.tagUid = this.$route.query.tagUid;
-    this.sortUid = this.$route.query.sortUid;
-    this.author = this.$route.query.author;
+  created () {
+    this.keywords = this.$route.query.keyword
+    this.tagUid = this.$route.query.tagUid
+    this.sortUid = this.$route.query.sortUid
+    this.author = this.$route.query.author
 
     if (
       this.keywords == undefined &&
@@ -137,12 +137,12 @@ export default {
       this.sortUid == undefined &&
       this.author == undefined
     ) {
-      return;
+      return
     }
 
-    this.search();
+    this.search()
   },
-  mounted() {
+  mounted () {
     // 注册scroll事件并监听
     // var that = this;
     // window.addEventListener("scroll", function() {
@@ -156,208 +156,203 @@ export default {
     // });
   },
   watch: {
-    $route(to, from) {
-      this.keywords = this.$route.query.keyword;
-      this.tagUid = this.$route.query.tagUid;
-      this.sortUid = this.$route.query.sortUid;
+    $route (to, from) {
+      this.keywords = this.$route.query.keyword
+      this.tagUid = this.$route.query.tagUid
+      this.sortUid = this.$route.query.sortUid
       this.searchBlogData = [] // 清空查询出来的博客
-      this.search();
+      this.search()
     }
   },
   methods: {
-    //跳转到文章详情
-    goToInfo(uid) {
+    // 跳转到文章详情
+    goToInfo (uid) {
       let routeData = this.$router.resolve({
-        path: "/info",
+        path: '/info',
         query: { blogUid: uid }
-      });
-      window.open(routeData.href, '_blank');
+      })
+      window.open(routeData.href, '_blank')
     },
-    //点击了分类
-    goToList(uid) {
+    // 点击了分类
+    goToList (uid) {
       let routeData = this.$router.resolve({
-        path: "/list",
+        path: '/list',
         query: { sortUid: uid }
-      });
-      window.open(routeData.href, '_blank');
+      })
+      window.open(routeData.href, '_blank')
     },
-    goToAuthor(author) {
+    goToAuthor (author) {
       let routeData = this.$router.resolve({
-        path: "/list",
+        path: '/list',
         query: {author: author}
-      });
-      window.open(routeData.href, '_blank');
+      })
+      window.open(routeData.href, '_blank')
     },
     // 加载内容
-    loadContent: function() {
-      var that = this;
-      that.currentPage = that.currentPage + 1;
-      that.search();
+    loadContent: function () {
+      var that = this
+      that.currentPage = that.currentPage + 1
+      that.search()
     },
-    search: function() {
-      var that = this;
+    search: function () {
+      var that = this
 
-      that.loading = true;
+      that.loading = true
 
       if (this.keywords != undefined) {
-        var params = new URLSearchParams();
-        params.append("currentPage", that.currentPage);
-        params.append("pageSize", that.pageSize);
-        params.append("keywords", that.keywords);
+        var params = new URLSearchParams()
+        params.append('currentPage', that.currentPage)
+        params.append('pageSize', that.pageSize)
+        params.append('keywords', that.keywords)
         searchBlog(params).then(response => {
           if (response.data.code == this.$ECode.SUCCESS) {
-            that.isEnd = false;
-            //获取总页数
-            that.totalPages = response.data.records.length;
-            that.total = response.data.size;
+            that.isEnd = false
+            // 获取总页数
+            that.totalPages = response.data.records.length
+            that.total = response.data.size
             // that.pageSize = response.data.pageSize;
             // that.currentPage = response.data.currentPage;
-            var blogData = response.data.records;
+            var blogData = response.data.records
 
             // 判断搜索的博客是否有内容
-            if(response.data.total <= 0) {
-              that.isEnd = true;
-              that.loading = false;
+            if (response.data.total <= 0) {
+              that.isEnd = true
+              that.loading = false
               this.blogData = []
-              return;
+              return
             }
 
-            //全部加载完毕
+            // 全部加载完毕
             if (blogData.length < that.pageSize) {
-              that.isEnd = true;
+              that.isEnd = true
             }
 
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
+            blogData = that.searchBlogData.concat(blogData)
+            that.searchBlogData = blogData
+            this.blogData = blogData
           } else {
-            that.isEnd = true;
+            that.isEnd = true
           }
-          that.loading = false;
-        });
+          that.loading = false
+        })
       } else if (this.tagUid != undefined) {
-        var params = new URLSearchParams();
+        var params = new URLSearchParams()
 
-        params.append("tagUid", that.tagUid);
-        params.append("currentPage", that.currentPage);
-        params.append("pageSize", that.pageSize);
+        params.append('tagUid', that.tagUid)
+        params.append('currentPage', that.currentPage)
+        params.append('pageSize', that.pageSize)
 
         searchBlogByTag(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
-            that.isEnd = false;
-            //获取总页数
-            that.totalPages = response.data.total;
+            that.isEnd = false
+            // 获取总页数
+            that.totalPages = response.data.total
 
-            var blogData = response.data.records;
-            that.total = response.data.total;
-            that.pageSize = response.data.size;
-            that.currentPage = response.data.current;
+            var blogData = response.data.records
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.current
 
-            //全部加载完毕
+            // 全部加载完毕
             if (blogData.length < that.pageSize) {
-              that.isEnd = true;
+              that.isEnd = true
             }
 
             // 设置分类名
             for (var i = 0; i < blogData.length; i++) {
-              blogData[i].blogSort = blogData[i].blogSort.sortName;
+              blogData[i].blogSort = blogData[i].blogSort.sortName
             }
 
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
-            that.loading = false;
-
+            blogData = that.searchBlogData.concat(blogData)
+            that.searchBlogData = blogData
+            this.blogData = blogData
+            that.loading = false
           } else {
-
-            that.isEnd = true;
-            that.loading = false;
+            that.isEnd = true
+            that.loading = false
           }
-        });
+        })
       } else if (this.sortUid != undefined) {
-        var params = new URLSearchParams();
+        var params = new URLSearchParams()
 
-        params.append("blogSortUid", that.sortUid);
-        params.append("currentPage", that.currentPage);
-        params.append("pageSize", that.pageSize);
+        params.append('blogSortUid', that.sortUid)
+        params.append('currentPage', that.currentPage)
+        params.append('pageSize', that.pageSize)
 
         searchBlogBySort(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
-            that.isEnd = false;
-            //获取总页数
-            that.totalPages = response.data.total;
+            that.isEnd = false
+            // 获取总页数
+            that.totalPages = response.data.total
 
-            var blogData = response.data.records;
-            that.total = response.data.total;
-            that.pageSize = response.data.size;
-            that.currentPage = response.data.current;
+            var blogData = response.data.records
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.current
 
-            //全部加载完毕
+            // 全部加载完毕
             if (blogData.length < that.pageSize) {
-              that.isEnd = true;
+              that.isEnd = true
             }
 
             for (var i = 0; i < blogData.length; i++) {
-              blogData[i].blogSort = blogData[i].blogSort.sortName;
+              blogData[i].blogSort = blogData[i].blogSort.sortName
             }
 
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
-            that.loading = false;
+            blogData = that.searchBlogData.concat(blogData)
+            that.searchBlogData = blogData
+            this.blogData = blogData
+            that.loading = false
           } else {
-
-
-            that.isEnd = true;
-            that.loading = false;
+            that.isEnd = true
+            that.loading = false
           }
-        });
+        })
       } else if (this.author != undefined) {
-        var params = new URLSearchParams();
-        params.append("author", that.author);
-        params.append("currentPage", that.currentPage);
-        params.append("pageSize", that.pageSize);
+        var params = new URLSearchParams()
+        params.append('author', that.author)
+        params.append('currentPage', that.currentPage)
+        params.append('pageSize', that.pageSize)
         searchBlogByAuthor(params).then(response => {
           if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
-            that.loading = false;
+            that.loading = false
 
-            that.isEnd = false;
+            that.isEnd = false
 
-            //获取总页数
-            that.totalPages = response.data.total;
+            // 获取总页数
+            that.totalPages = response.data.total
 
-            var blogData = response.data.records;
-            that.total = response.data.total;
-            that.pageSize = response.data.size;
-            that.currentPage = response.data.current;
+            var blogData = response.data.records
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.current
 
-            //全部加载完毕
+            // 全部加载完毕
             if (blogData.length < that.pageSize) {
-              that.isEnd = true;
+              that.isEnd = true
             }
 
             for (var i = 0; i < blogData.length; i++) {
               if (blogData[i].blogSort == undefined) {
-                blogData[i].blogSort = "未分类";
+                blogData[i].blogSort = '未分类'
               } else {
-                blogData[i].blogSort = blogData[i].blogSort.sortName;
+                blogData[i].blogSort = blogData[i].blogSort.sortName
               }
             }
 
-            blogData = that.searchBlogData.concat(blogData);
-            that.searchBlogData = blogData;
-            this.blogData = blogData;
-            that.loading = false;
+            blogData = that.searchBlogData.concat(blogData)
+            that.searchBlogData = blogData
+            this.blogData = blogData
+            that.loading = false
           } else {
-
-            that.isEnd = true;
-            that.loading = false;
+            that.isEnd = true
+            that.loading = false
           }
-        });
+        })
       }
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -509,4 +504,3 @@ export default {
   transform: translate(-45px, -45px) scale(0.45) translate(45px, 45px);
 }
 </style>
-

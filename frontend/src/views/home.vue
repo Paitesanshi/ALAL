@@ -37,11 +37,11 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
+        <!-- <li>
           <router-link to="/sort">
             <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">活动</a>
           </router-link>
-        </li>
+        </li> -->
 
 <!--        <li>-->
 <!--          <router-link to="/classify">-->
@@ -49,11 +49,11 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
-          <router-link to="/tag">
-            <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>
-          </router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/blog">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">发布爱</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
 		<li>
           <router-link to="/chat">
             <a href="javascript:void(0);" :class="[saveTitle == '/chat' ? 'title' : '']">聊天</a>
@@ -64,6 +64,24 @@
             <a href="javascript:void(0);" :class="[saveTitle == '/questions' ? 'title' : '']">问卷</a>
           </router-link>
         </li>
+		<li>
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--      <div>-->
+        <router-link to="/circle">
+          <a href="javascript:void(0);" :class="[saveTitle == '/circle' ? 'title' : '']">记录爱</a>
+        </router-link>
+<!--      </div>-->
+        </li>
+        <li>
+          <router-link to="/userinfo">
+            <a href="javascript:void(0);" :class="[saveTitle == '/userinfo' ? 'title' : '']">用户中心</a>
+          </router-link>
+        </li>
+       <li>
+         <router-link to="/admin">
+            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>
+          </router-link>
+        </li>
 
 <!--        <li>-->
 <!--          <router-link to="/subject">-->
@@ -71,27 +89,27 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-        <li>
-          <router-link to="/blog">
-            <a  v-if="this.$store.state.user.userInfo.reputation>2" href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">写博客</a>
-          </router-link>
-        </li>
-        <li v-if="userInfo.role==1&&isLogin==true">
-          <router-link to="/admin">
-            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>
-          </router-link>
-        </li>
+<!--        <li>-->
+<!--          <router-link to="/blog">-->
+<!--            <a  v-if="this.$store.state.user.userInfo.reputation>2" href="javascript:void(0);" :class="[saveTitle == '/blog' ? 'title' : '']">写博客</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
+<!--        <li v-if="userInfo.role==1&&isLogin==true">-->
+<!--          <router-link to="/admin">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/admin' ? 'title' : '']">管理</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
         <!--        <li>-->
         <!--          <router-link to="/time">-->
         <!--            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>-->
         <!--          </router-link>-->
         <!--        </li>-->
 
-        <li v-if="openComment=='1'">
-          <router-link to="/messageBoard">
-            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>
-          </router-link>
-        </li>
+<!--        <li v-if="openComment=='1'">-->
+<!--          <router-link to="/messageBoard">-->
+<!--            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
       </ul>
 
@@ -115,15 +133,15 @@
       <el-dropdown @command="handleCommand" class="userInfoAvatar">
         <span class="el-dropdown-link">
           <img v-if="!isLogin" src="../../static/images/defaultAvatar.png">
-          <img v-if="isLogin&&userInfo.photoUrl!=undefined" :src="userInfo.photoUrl"
+          <img v-if="isLogin&&userInfo.head_portrait!=undefined" :src="userInfo.head_portrait"
                onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'">
-          <img v-if="isLogin&&userInfo.photoUrl==undefined"
+          <img v-if="isLogin&&userInfo.head_portrait==undefined"
                src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif">
         </span>
 
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="login" v-show="!this.$store.state.user.isLogin">登录</el-dropdown-item>
-          <el-dropdown-item command="goUserInfo" v-show="isLogin">个人中心</el-dropdown-item>
+          <!-- <el-dropdown-item command="goUserInfo" v-show="isLogin">个人中心</el-dropdown-item> -->
           <el-dropdown-item command="logout" v-show="isLogin">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -661,6 +679,9 @@ export default {
       }
       after = scrollTop
     })
+    window.onbeforeunload = function (e) {
+      this.getToken()
+    }
   },
   watch: {
     $route (to, from) {
@@ -681,7 +702,7 @@ export default {
   },
   methods: {
     // 拿到vuex中的写的方法
-    ...mapMutations(['setUserInfo', 'setLoginState', 'setWebConfigData']),
+    ...mapMutations(['setUserInfo', 'setLoginState', 'setSingleState']),
     // 搜索
     search: function () {
       if (this.keyword === '' || this.keyword.trim() === '') {
@@ -878,7 +899,7 @@ export default {
       if (this.activeName === '0') {
         // 激活个人中心页面
         this.userInfo.photoUrl = resData
-       // this.userInfo.avatar = resData[0].uid
+        // this.userInfo.avatar = resData[0].uid
       } else if (this.activeName === '5') {
         let photoList = []
         photoList.push(resData[0].url)
@@ -892,7 +913,7 @@ export default {
           this.userInfo.photoUrl = null
           this.userInfo.avatar = ''
           this.icon = false
-          this.selectFileShow=false
+          this.selectFileShow = false
         }
           break
 
@@ -903,10 +924,10 @@ export default {
           break
       }
     },
-    close: function() {
+    close: function () {
       this.imagecropperShow = false
     },
-    change: function() {
+    change: function () {
       this.selectFileShow = !this.selectFileShow
     },
     submitForm: function (type) {
@@ -1048,6 +1069,7 @@ export default {
 
     getToken: function () {
       let token = this.getUrlVars()['token']
+
       // 判断url中是否含有token
       if (token != undefined) {
         // 设置token七天过期
@@ -1057,25 +1079,27 @@ export default {
         token = getCookie('token')
       }
       let that = this
-      console.log('token:------------' + token)
+       console.log("token is "+token)
       if (token != undefined) {
-        console.log('this issssssssssssssssssssssssss')
-        console.log(token)
         authVerify(token).then(response => {
           if (response.data.code == this.$ECode.SUCCESS) {
-            console.log('login end success!')
             this.isLogin = true
-            this.showLogin=false
-            let userInfo = response.data
+            this.showLogin = false
+            let userInfo = response.data.records
             this.userInfo = userInfo
             this.setUserInfo(userInfo)
             this.setLoginState(this.isLogin)
+            console.log(this.$store.state.user.userInfo)
+            if (this.$store.state.user.userInfo.emotional_state === 1) {
+              this.setSingleState(false)
+            } else {
+              this.setSingleState(true)
+            }
           } else {
             delCookie('token')
           }
         }).catch(error => {
-          this.userInfo.role = 1
-          this.userInfo.reputation = 5
+          console.log(error)
         })
       }
     },
@@ -1244,7 +1268,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import "../assets/css/emoji.css";
 
 .emoji-panel-btn:hover {

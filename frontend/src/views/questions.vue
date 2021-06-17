@@ -12,7 +12,7 @@
           <MyCheckBox :checkboxData="item.data" :checkboxName="index" @checkboxChange="checkboxChange"></MyCheckBox>
         </template>
         <template v-else-if="item.type === 'textarea'">
-          <MyTextArea :textareaName="index" style="margin-bottom: 38px;" @changeTextarea="changeTextarea"></MyTextArea>
+          <MyTextArea disabled :textareaName="index" style="margin-bottom: 38px;"  @changeTextarea="changeTextarea"></MyTextArea>
         </template>
       </div>
     </div>
@@ -24,6 +24,7 @@
 import MyRadio from '../components/MyRadio';
 import MyCheckBox from '../components/MyCheckBox';
 import MyTextArea from '../components/MyTextArea';
+import {editQuestion} from '../api/question'
 export default {
   name: 'questions',
   components: {
@@ -110,6 +111,47 @@ export default {
       }
       // console.log(data[0]);
       console.log(params);
+	  var that = this
+    let	params2 = {}
+    // if (this.blogUid) {
+    //   params.append('uid', this.blogUid)
+    // }
+    // if (this.blogOid) {
+    //   params.append('oid', this.blogOid)
+    // }
+    params2.id= this.$store.state.user.userInfo.id
+   params2.questionData=params
+    editQuestion(params2).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        this.blogData = response.data
+        this.$notify({
+            title: '成功',
+            message: '编辑问卷成功',
+            type: 'success',
+            offset: 100
+          })
+      } else {
+
+      }
+      setTimeout(() => {
+        that.blogContent = response.data.content
+        that.loadingInstance.close()
+      }, 20)
+    }).catch(error => {
+      console.log(error)
+      this.blogData.labels = ['技术', '大数据']
+      this.blogData.blogSort = '技术'
+      this.blogContent = 'This is a test'
+      this.blogData.title = 'test'
+      this.blogData.author = 'ptss'
+      this.blogData.summary = '概括'
+      this.blogData.clickCount = 100
+      this.blogData.likeCount = 200
+      this.blogData.time = '2020-12-2'
+      this.blogData.need = 1
+      this.getCommentDataList()
+      that.loadingInstance.close()
+    })
     }
   }
 }

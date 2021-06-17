@@ -56,10 +56,24 @@ export function deleteBatchBlog(params) {
 		data: params
 	})
 }
-export function uploadPhoto(data) {
+export function uploadPhoto(params) {
 	return request({
 		url: process.env.WEB_API + '/upload',
 		method: 'post',
-		data
+		data: params
+	})
+}
+export function uploadMomentPhotos(params) {
+	return request({
+		url: process.env.WEB_API + '/uploadMomentPhotos',
+		method: 'post',
+		data: params
+	})
+}
+export function getBlogListByID(params) {
+	return request({
+		url: process.env.WEB_API + '/getBlogListByID',
+		method: 'get',
+		params
 	})
 }

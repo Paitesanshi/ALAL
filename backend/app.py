@@ -1,11 +1,12 @@
 import datetime
 import json
 
-import requests
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, make_response
 import pymysql
 from flask_cors import CORS
+import os
 
+#大志修改2021.6.4
 app = Flask(__name__,
             static_folder="./dist/static",
             template_folder="./dist")
@@ -14,7 +15,7 @@ db = pymysql.connect(host='121.196.111.9',
                      port=3306,
                      user='root',
                      passwd='zxc110',
-                     db='alal'
+                     db='ALAL'
                      )
 db.autocommit(True)
 # 使用 cursor() 方法创建一个游标对象 cursor
@@ -22,16 +23,23 @@ cursor = db.cursor()
 cursor.execute("SELECT VERSION()")
 version = cursor.fetchone()
 
+#大志修改2021.6.4
 labels = {'1': "科技", '2': "新闻", '3': "美食", '4': "校园", '5': "更多"}
 user_info = {
-    'user_id': '',
+    'id': '',
     'name': '',
+    'head_portrait': '',
     'password': '',
     'email': '',
-    'credit': 0,
-    'role': 0,
-    'state': 0,
-    'reputation': 5
+    'role': '',
+    'emotional_state': '',
+    'couple': '',
+    'sex': '',
+    'birth': '',
+    'job': '',
+    'city': '',
+    'ideal_type': '',
+    'question': ''
 }
 
 # @app.route('/', defaults={'path': ''})
@@ -41,74 +49,73 @@ user_info = {
 #         return requests.get('http://localhost:8603/{}'.format(path)).text
 #     return render_template("index.html")
 
-
+#大志修改2021.6.4
 def updateUserInfo():
-    sql = 'SELECT name,password,email,credit,role,state,reputation FROM Blog_user WHERE user_id="%s"' % user_info[
-        'user_id']
+    sql = 'SELECT name,password,head_portrait,email,role,emotional_state,couple,sex,birth,job,city,ideal_type,question FROM user WHERE user_id="%s"' % user_info[
+        'id']
     cursor.execute(sql)
     row = cursor.fetchone()
     if row != None:
         user_info['name'] = row[0]
         user_info['password'] = row[1]
-        user_info['email'] = row[2]
-        user_info['credit'] = row[3]
+        user_info['head_portrait'] = row[2]
+        user_info['email'] = row[3]
         user_info['role'] = row[4]
-        user_info['reputation'] = row[6]
-        user_info['state'] = row[5]
-        file_object = open("user_info.txt", "w")
-        json.dump(user_info, file_object)
-        file_object.close()
+        user_info['emotional_state'] = row[5]
+        user_info['couple'] = row[6]
+        user_info['sex'] = row[7]
+        user_info['birth'] = row[8]
+        user_info['job'] = row[9]
+        user_info['city'] = row[10]
+        user_info['ideal_type'] = row[11]
+        user_info['question'] = row[12]
+        # file_object = open("user_info.txt", "w")
+        # json.dump(user_info, file_object)
+        # file_object.close()
+
 
 # 1.index
 
 
-@app.route('/index/getNewBlog', methods=['GET'])  # 指定接口访问的路径，支持什么请求方式get，post
-def getNewBlog():
-    currentPage = int(request.values.get("currentPage"))
-    pageSize = int(request.values.get("pageSize"))
-    data = {}
-    sql = "SELECT COUNT(*) FROM Blog WHERE state=0"
-    cursor.execute(sql)
-    total = cursor.fetchone()
-    data['total'] = total
-    data['currentPage'] = currentPage + 1
-    records = []
-    sql = "SELECT blog_id,Blog.user_id,publish_time,title,summary,content,approval_number,browse_number,need_credit,label,Blog.state,activity,name FROM Blog,Blog_user WHERE Blog_user.user_id=Blog.user_id AND Blog.state=0 ORDER BY publish_time DESC"
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    start = (currentPage - 1) * pageSize
-    end = currentPage * pageSize
-    i = 0
-    size = 0
-    while row:
-        if i >= start:
-            size += 1
-            record = {}
-            record['user_id'] = row[1]
-            record['blog_id'] = row[0]
-            record['name'] = row[12]
-            blog_labels = row[9].split(",")
-            blog_label_name = []
-            for blog_label in blog_labels:
-                blog_label_name.append(labels[blog_label])
-
-            record['labels'] = blog_label_name
-            record['summary'] = row[4][0:100]
-            record['clickCount'] = row[7]
-            record['likeCount'] = row[6]
-            record['time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
-            record['title'] = row[3]
-            records.append(record)
-            i += 1
-            if i >= end:
-                break
-        row = cursor.fetchone()
-
-    data['size'] = size
-    data['code'] = 'success'
-    data['records'] = records
-    return data
-
+# @app.route('/index/getNewBlog', methods=['GET'])  # 指定接口访问的路径，支持什么请求方式get，post
+# def getNewBlog():
+#     currentPage = int(request.values.get("currentPage"))
+#     pageSize = int(request.values.get("pageSize"))
+#     data = {}
+#     sql = "SELECT COUNT(*) FROM moment"
+#     cursor.execute(sql)
+#     total = cursor.fetchone()[0]
+#     data['total'] = total
+#     data['currentPage'] = currentPage + 1
+#     records = []
+#     sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
+#
+#     cursor.execute(sql)
+#     row = cursor.fetchone()
+#     start = (currentPage - 1) * pageSize
+#     end = currentPage * pageSize
+#     i = 0
+#     size = 0
+#     while row:
+#         if i >= start:
+#             size += 1
+#             record = {}
+#             record['moment_id'] = row[0]
+#             record['id'] = row[1]
+#             record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
+#             record['content'] = row[3]
+#             record['like_num'] = row[4]
+#          #   record['name'] = row[5]
+#             records.append(record)
+#             i += 1
+#             if i >= end:
+#                 break
+#         row = cursor.fetchone()
+#
+#     data['size'] = size
+#     data['code'] = 'success'
+#     data['records'] = records
+#     return data
 
 # 2.TagCloud;
 @app.route('/index/getHotTag', methods=['GET'])
@@ -123,73 +130,31 @@ def getHotTag():
     return data
 
 
-# 3.info
+
+#大志_更改完成
 
 @app.route('/api/getBlogByUid', methods=['GET'])
 def getBlogByUid():
-    blog_id = int(request.values.get("blog_id"))
-    sql = "SELECT blog_id,Blog.user_id,publish_time,title,summary,content,approval_number,browse_number,need_credit,label,Blog.state,activity,name FROM Blog,Blog_user WHERE Blog_user.user_id=Blog.user_id AND blog_id=" + \
-        str(blog_id)
+    blog_id=request.args.get("moment_id")
+    print("blog_id:"+blog_id)
+    sql = 'SELECT moment_id,moment.user_id,publish_time,content,picture,read_limit,like_num FROM moment where moment_id ="%s"' \
+          %str(blog_id)
     cursor.execute(sql)
     blog = cursor.fetchone()
-    print(blog_id)
+    user_id=blog[1]
+    sql = 'SELECT name FROM user where user_id="%s"' %blog[1]
+    cursor.execute(sql)
+    user_name = cursor.fetchone()
     result = {}
-    result['blogSort'] = blog[11]
-    result['title'] = blog[3]
-    result['author'] = blog[1]
-    result['name'] = blog[12]
-    sql = "SELECT name FROM Activity WHERE activity_id=%d" % (blog[11])
-    cursor.execute(sql)
-    sortname = cursor.fetchone()
-    result['blogSortName'] = sortname[0]
-
-    blog_labels = blog[9].split(",")
-    blog_label_name = []
-    for blog_label in blog_labels:
-        blog_label_name.append(labels[blog_label])
-    result['labels'] = blog_label_name
-    result['summary'] = blog[4]
-    result['clickCount'] = blog[7]
-    result['likeCount'] = blog[6]
+    result['author'] = user_name[0]
+    result['id']=user_id
     result['time'] = blog[2].strftime("%Y-%m-%d %H:%M:%S")
-    result['content'] = blog[5]
+    result['content'] = blog[3]
+    result['picture'] = blog[4]
+    result['read_limit'] = blog[5]
+    result['likeCount'] = blog[6]
+    result['moment_id']=blog_id
 
-    sql = 'SELECT * FROM History WHERE user_id="%s" AND blog_id=%d' % (
-        user_info['user_id'], blog_id)
-    cursor.execute(sql)
-    row = cursor.fetchall()
-    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    if len(row) == 0:
-        if user_info['reputation'] == 5:
-            result['need_credit'] = blog[8]
-        elif user_info['reputation'] == 4:
-            result['need_credit'] = blog[8] * 1.05
-        elif user_info['reputation'] == 3:
-            result['need_credit'] = blog[8] * 1.1
-        elif user_info['reputation'] == 2:
-            result['need_credit'] = blog[8] * 1.2
-        elif user_info['reputation'] == 1:
-            result['code'] = 'error'
-            result['message'] = '您信誉积分过低，无法查看'
-            return result
-
-        if result['need_credit'] == 0 and user_info['user_id'] is not '':
-            sql = 'INSERT INTO History VALUES("%s",%d,"%s")' % (
-                user_info['user_id'], blog_id, time)
-            cursor.execute(sql)
-            sql = 'UPDATE Blog SET browse_number=browse_number+1 WHERE blog_id=%d' % blog_id
-            cursor.execute(sql)
-            result['clickCount'] += 1
-
-    else:
-        result['need_credit'] = 0
-        sql = "UPDATE History SET time='%s' WHERE user_id='%s' AND blog_id='%d'" % (
-            time, user_info['user_id'], blog_id)
-        cursor.execute(sql)
-        sql = 'UPDATE Blog SET browse_number=browse_number+1 WHERE blog_id=%d' % blog_id
-        cursor.execute(sql)
-        result['clickCount'] += 1
-    updateUserInfo()
     result['code'] = 'success'
     return result
 
@@ -207,6 +172,7 @@ def getWebConfig():
 @app.route('/web/comment/payCreditByUid', methods=['GET'])
 def payCreditByUid():
     blog_id = int(request.values.get("blog_id"))
+    user_id=int(request.values.get("id"))
     data = {}
     credit = 0
     sql = 'CALL readBlog(%d,"%s",%s)' % (
@@ -228,25 +194,27 @@ def payCreditByUid():
     updateUserInfo()
     return data
 
-
+#大志_添加评论   已更改
 @app.route('/web/comment/add', methods=['POST'])
 def addComment():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
+    user_id=int(data_json.get("id"))
     blogUid = int(data_json.get("blogUid"))
-    userUid = data_json.get("userUid")
     content = data_json.get("content")
-    sql = 'SELECT MAX(comment_id) FROM Comment'
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    comment_id = 0
-    if row[0] == None:
-        comment_id = 1
-    else:
-        comment_id = int(row[0]) + 1
+
+    # sql = 'SELECT MAX(comment_id) FROM Comment'
+    # cursor.execute(sql)
+    #
+    # row = cursor.fetchone()
+    # comment_id = 0
+    # if row[0] == None:
+    #     comment_id = 1
+    # else:
+    #     comment_id = int(row[0]) + 1
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = 'INSERT INTO Comment(comment_id,user_id,blog_id,time,content) VALUES (%d,"%s",%d,"%s","%s")' % (
-        comment_id, user_info['user_id'], blogUid, time, content)
+    sql = 'INSERT INTO comment(moment_id,user_id,time,content) VALUES (%d,%d,"%s","%s")' % (
+         blogUid, user_id, time, content)
     cursor.execute(sql)
 
     data = {}
@@ -255,10 +223,12 @@ def addComment():
 
 
 # 6.home
+# 大志_更改数据库名称
 @app.route('/oauth/getFeedbackList', methods=['GET'])
 def getFeedbackList():
+    user_id = int(request.values.get("id"))
     data = {}
-    sql = 'SELECT content FROM Blog_message WHERE user_id="%s"' % user_info['user_id']
+    sql = 'SELECT content FROM message WHERE self_user_id="%s"' % user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     records = []
@@ -267,62 +237,41 @@ def getFeedbackList():
         row = cursor.fetchone()
     print(records)
     data['records'] = records
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 
 @app.route('/getUserinfo', methods=['GET'])
 def getUserInfo():
+    user_id = int(request.values.get("id"))
     data = {}
     data['user_info'] = user_info
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
 
 @app.route('/logout/logout', methods=['GET'])
 def logout():
-    global user_info
-    data = {}
-    # user_info['user_id'] = ''
-    #     # user_info['name'] = ''
-    #     # user_info['password'] = ''
-    #     # user_info['email'] = ''
-    #     # user_info['credit'] = ''
-    #     # user_info['role'] = 0
-    #     # user_info['reputation'] = 5
-    #     # user_info['state'] = 1
-    user_info = {
-        'user_id': '',
-        'name': '',
-        'password': '',
-        'email': '',
-        'credit': 0,
-        'role': 0,
-        'state': 0,
-        'reputation': 5
-    }
-    f = open('user_info.txt', 'w')
-    f.write(str(user_info))
-    print(user_info)
-    f.close()
+    data={}
     data['code'] = 'success'
     data['message'] = '退出成功'
     return data
 
-
-@app.route('/web/comment/getFollowListByUser')
+# 大志_ 更改成 查询好友列表
+@app.route('/web/comment/getFollowListByUser',methods=['GET'])
 def getFollowListByUser():
+    user_id = int(request.values.get("id"))
     data = {}
     records = []
-    sql = 'SELECT follower_id,time,name FROM Follow,Blog_user WHERE Follow.user_id=Blog_user.user_id AND Follow.user_id="%s" ORDER BY time DESC' % \
-          user_info['user_id']
+    sql = 'SELECT user_id2,name FROM friend,user WHERE user_id2=user.user_id AND user_id1="%s" ORDER BY time DESC' % \
+          user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     while row:
         record = {}
         record['follower_id'] = row[0]
         idd = row[0]
-        sql1 = " SELECT name from Blog_user WHERE user_id = %s" % idd
+        sql1 = " SELECT name from user WHERE user_id = %s" % idd
         cursor.execute(sql1)
         nname = cursor.fetchone()[0]
         record['createTime'] = row[1]
@@ -331,10 +280,10 @@ def getFollowListByUser():
         row = cursor.fetchone()
 
     data['records'] = records
-    data['code'] = 'success'
+    data['code'] = '200'
     return data
 
-
+# 大志_ 我觉得莫得收藏
 @app.route('/web/comment/getCollectListByUser')
 def getCollectListByUser():
     data = {}
@@ -355,7 +304,7 @@ def getCollectListByUser():
     data['code'] = 'success'
     return data
 
-
+# 大志_ 我觉得没历史
 @app.route('/web/comment/getHistoryListByUser', methods=['POST'])
 def getHistoryListByUser():
     data = {}
@@ -384,7 +333,7 @@ def getHistoryListByUser():
         data['code'] = 'success'
     return data
 
-
+# 大志_juede 没搜索
 @app.route('/search/sqlSearchBlog', methods=['GET'])
 def search():
     # currentPage = int(request.values.get("currentPage"))
@@ -392,9 +341,9 @@ def search():
     str = request.values.get("keywords")
     data = {}
     sql = 'SELECT COUNT(*) FROM Blog WHERE state=0 AND title LIKE %s '
-    params = ['%'+str+'%']
+    request = ['%' + str + '%']
     print(sql)
-    cursor.execute(sql, params)
+    cursor.execute(sql, request)
     total = cursor.fetchone()[0]
     print(total)
     data['total'] = total
@@ -402,7 +351,7 @@ def search():
     # print(data['currentPage'])
     records = []
     sql = 'SELECT * FROM Blog WHERE state=0 AND title LIKE %s  ORDER BY publish_time DESC'
-    cursor.execute(sql, params)
+    cursor.execute(sql, request)
     row = cursor.fetchone()
     # start = (currentPage - 1) * pageSize
     # end = currentPage * pageSize
@@ -434,6 +383,7 @@ def search():
     return data
 
 
+# 个人页查找所有moment 的 list
 @app.route('/web/comment/getListByUser', methods=['POST'])
 def getCommentListByUser():
     datastr = str(request.data, 'utf-8')
@@ -442,11 +392,11 @@ def getCommentListByUser():
     commentList = []
     replyList = []
     user_id = user_info['user_id']
-    sql = "select name from Blog_user where user_id=" + user_id
+    sql = 'select name from user where user_id="%d"' % user_id
     cursor.execute(sql)
     name = cursor.fetchone()[0]
     # 前面的name是我评论的文章的作者的姓名，后面的name是评论我的文章的用户姓名
-    sql = "SELECT Comment.comment_id,Comment.user_id,Comment.blog_id,Comment.time,Comment.content,Blog.user_id,Blog_user.name from Comment,Blog,Blog_user where Comment.blog_id=Blog.blog_id and Blog_user.user_id=Blog.user_id and Comment.user_id=" + user_id
+    sql = "SELECT comment.user_id,comment.moment_id,comment.time,comment.content,moment.user_id,user.name from comment,moment,user where comment.moment_id=moment.moment_id and user.user_id=moment.user_id and comment.user_id='%d'" % user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     end = 10
@@ -471,7 +421,7 @@ def getCommentListByUser():
             break
         row = cursor.fetchone()
 
-    sql = "SELECT Comment.comment_id,Comment.user_id,Comment.blog_id,Comment.time,Comment.content,Blog.user_id,Blog_user.name from Comment,Blog,Blog_user where Comment.blog_id=Blog.blog_id and Blog_user.user_id=Comment.user_id and Blog.user_id=" + user_id
+    sql = "SELECT comment.user_id,comment.moment_id,comment.time,comment.content,moment.user_id,user.name from comment,moment,user where comment.moment_id=moment.moment_id and user.user_id=comment.user_id and moment.user_id=" + user_id
     cursor.execute(sql)
     row = cursor.fetchone()
     end = 10
@@ -502,36 +452,40 @@ def getCommentListByUser():
     data['replyList'] = replyList
     return data
 
-
+# 大志_点赞
 @app.route('/api/praiseBlogByUid', methods=['GET'])
 def praiseBlogByUid():
     print("I am in praiseBlogByUid")
     id = int(request.values.get('uid'))
+    user_id = int(request.values.get('id'))
     # SQL语句点赞数+1
-    sql1 = "UPDATE Blog SET approval_number = approval_number+1 WHERE blog_id='%d'" % id
+    sql1 = "UPDATE moment SET like_num = like_num +1 WHERE moment_id='%d'" % id
     # SQL语句查询点赞数
-    sql2 = "SELECT approval_number FROM Blog WHERE blog_id='%d'" % id
-    sql3 = "INSERT INTO `blogs`.`Approval` (`user_id`, `blog_id`, `time`) VALUES ('%s', '%d', current_time);" % (
-        user_info["user_id"], id)
+    sql2 = "SELECT like_num FROM moment WHERE moment_id='%d'" % id
+    sql3 = "INSERT INTO approve (`user_id`, `moment_id`, `time`) VALUES ('%d', '%d', current_time);" % (
+        user_id, id)
 
     # 执行SQL语句
     flag = False
+    number=None
     try:
         cursor.execute(sql2)
         number = cursor.fetchall()
         cursor.execute(sql3)
         cursor.execute(sql1)
         flag = True
-    except:
+    except Exception as e:
+        print("error:",e)
         flag = False
     if flag == True:
-        return {"code": 'success', "number": number[0][0]+1}
+        return {"code": 'success', "number": number[0][0] + 1}
 
     return {"code": 'error', "number": number[0][0], "message": "您已经点过赞了！"}
 
+# 大志_获取点赞数
 
 def getPraise(id):
-    sql = "SELECT approval_number FROM Blog WHERE blog_id='%d'" % id
+    sql = "SELECT like_num FROM moment WHERE moment_id='%d'" % id
     try:
         # 执行SQL语句
         cursor.execute(sql)
@@ -541,7 +495,7 @@ def getPraise(id):
         db.rollback()
     return number
 
-
+# 大志_ 不需要改
 @app.route('/api/getBlogPraiseCountByUid', methods=['GET'])
 def getBlogPraiseCountByUid():
     print("I am in getBlogPraiseCountByUid")
@@ -549,7 +503,7 @@ def getBlogPraiseCountByUid():
     return getPraise(id)
 
 
-#  这里没写！
+#  大志_这没啥用
 @app.route('/api/addCollectBlog', methods=['GET'])
 def addCollectBlog():
     print("I am in addCollectBlog")
@@ -574,18 +528,17 @@ def addCollectBlog():
     return data
 
 
-#  这里没写！
-
+#  这没啥用_大志
 @app.route('/web/comment/getPraiseListByUser', methods=['POST'])
 def getPraiseList():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     currentPage = data_json.get("currentPage")
+    user_id = data_json.get("id")
     pageSize = data_json.get("pageSize")
     data = {}
     records = []
     data["records"] = records
-    user_id = user_info['user_id']
     sql = "select Approval.user_id,Approval.blog_id,Approval.time,Blog.title from Approval,Blog where Approval.blog_id=Blog.blog_id and Approval.user_id='" + user_id + "'"
     cursor.execute(sql)
     row = cursor.fetchone()
@@ -613,48 +566,159 @@ def getPraiseList():
     data['records'] = records
     return data
 
+#大志_用户登录验证
+@app.route('/oauth/verify/<token>')
+def authVerify(token):
 
-@app.route('/oauth/verify/<params>')
-def authVerify(params):
-    data = {}
-    # sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % params
-    # cursor.execute(sql)
-    # results = cursor.fetchall()
-    # for row in results:
-    #     user_info['user_id'] = row[0]
-    #     user_info['name'] = row[1]
-    #     user_info['password'] = row[2]
-    #     user_info['email'] = row[3]
-    #     user_info['credit'] = row[4]
-    #     user_info['role'] = row[5]
-    #     user_info['state'] = row[6]
-    #     user_info['reputation'] = row[7]
-    # data['id'] = user_info.get('user_id')
-    # if int(user_info['reputation']) == 0:
-    #     data['message'] = '你个烂人！'
-    #     data['code'] = 'error'
-    #     return data
-    # if (params == user_info["user_id"]):
-    global user_info
-    file = open("user_info.txt", 'r')
-    user_info = json.load(file)
-    print(user_info)
-    file.close()
-    print("用户登录正常")
-    data['uid'] = user_info['user_id']
-    data['nickName'] = user_info['name']
-    data['email'] = user_info['email']
-    data['credit'] = user_info['credit']
-    data['role'] = user_info['role']
-    data['reputation'] = user_info['reputation']
+    data={}
     data['code'] = 'success'
-    data['message'] = '恭喜登录成功!'
-    # else:
-    #     print("用户登录异常！")
-    #     data['code'] = 'error'
-    #     data['message']='上一个账号未退出'
-    return data
+    data['message'] = '登录成功'
+    try:
+        db.ping()
+    except:
+        db.connect()
+        print("disconect")
+    sql = "SELECT * FROM user WHERE user_id = '%s'" % token
+    results=None
+    try:
+        db.connect()
+        cursor=db.cursor()
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        db.connect()
+        cursor=db.cursor()
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    print(token,results)
+    user_infor={}
+    for row in results:
+        user_infor['id'] = row[0]
+        user_infor['name'] = row[1]
+        user_infor['head_portrait'] = row[2]
+        user_infor['password'] = row[3]
+        user_infor['email'] = row[4]
+        user_infor['role'] = row[5]
+        user_infor['emotional_state'] = row[6]
+        user_infor['couple'] = row[7]
+        user_infor['sex'] = row[8]
+        if row[9] == None:
+            user_infor['birth'] = ""
+        else:
+            user_infor['birth'] = row[9].strftime("%Y-%m-%d")
 
+        user_infor['job'] = row[10]
+        user_infor['city'] = row[11]
+        user_infor['ideal_type'] = row[12]
+        user_infor['question'] = row[13]
+    data['id'] = user_infor.get('id')
+    print("loginnn")
+    print(user_infor)
+    data['records'] = user_infor
+    return data
+@app.route('/index/getNewBlog', methods=['GET'])  # 指定接口访问的路径，支持什么请求方式get，post
+def getNewBlog():
+    currentPage = int(request.values.get("currentPage"))
+    pageSize = int(request.values.get("pageSize"))
+    total = 0
+    data = {}
+    result = []
+    sql = "SELECT COUNT(*) FROM moment"
+    # try:
+    #     db.ping(reconnect=True)
+    # except:
+    #     db.connect()
+    #     cursor = db.cursor()
+    try:
+        cursor = db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        total = cursor.fetchone()
+
+    except:
+        # 发生错误时回滚
+        try:
+            db.ping(reconnect=True)
+        except:
+            db.connect()
+
+        print('error----------')
+        db.rollback()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        total = cursor.fetchone()
+
+    data['total'] = total
+    data['currentPage'] = currentPage + 1
+    records = []
+    sql = "SELECT moment_id,user_id,publish_time,content,like_num FROM moment ORDER BY publish_time DESC"
+    try:
+        cursor = db.cursor()
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('------------error')
+        db.rollback()
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchall()
+    start = (currentPage - 1) * pageSize
+    end = currentPage * pageSize
+    i = 0
+    size = 0
+    for row in result:
+        if i >= start:
+            size += 1
+            record = {}
+            record['moment_id'] = row[0]
+            record['id'] = row[1]
+            nname = ""
+            sql1 = "SELECT name FROM user WHERE user_id ='%d'" % int(record['id'])
+            print(sql1)
+            try:
+                try:
+                    db.ping(reconnect=True)
+                except:
+                    db.connect()
+                    cursor = db.cursor()
+                # 执行SQL语句
+                cursor.execute(sql1)
+                # 向数据库提交
+                nname = cursor.fetchone()[0]
+            except:
+                # 发生错误
+                print('error')
+                try:
+                    db.ping(reconnect=True)
+                except:
+                    db.connect()
+                cursor = db.cursor()
+                db.rollback()
+                # 执行SQL语句
+                cursor.execute(sql1)
+                # 向数据库提交
+                nname = cursor.fetchone()[0]
+            record['name'] = nname
+            record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
+            record['content'] = row[3]
+            if len(record['content']) > 20:
+                record['content'] = record['content'][:20] + "..."
+            record['like_num'] = row[4]
+            #   record['name'] = row[5]
+            records.append(record)
+            i += 1
+            if i >= end:
+                break
+
+    data['size'] = size
+    data['code'] = 'success'
+    data['records'] = records
+    return data
 
 # 7.blog
 # @app.route('/tag/getTagList', methods=['GET'])
@@ -666,40 +730,112 @@ def authVerify(params):
 #     data['code'] = 'success'
 #     return data
 
-
+# 66改成返回动态查看状态选择
 @app.route('/blogSort/getList', methods=['GET'])
 def getBlogSortList():
     data = {}
     records = []
-    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = "SELECT activity_id,name,description FROM Activity WHERE start_time<='%s' AND end_time>='%s'" % (
-        time, time)
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    i = 0
-    while row:
-        i += 1
-        activity = {}
-        activity['uid'] = int(row[0])
-        activity['name'] = row[1]
-        records.append(activity)
-        row = cursor.fetchone()
+    activity = {}
+    activity['uid'] = 0
+    activity['name'] = "所有人均可见"
+    records.append(activity)
+    activity['uid'] = 1
+    activity['name'] = "仅好友可见"
+    records.append(activity)
+    activity['uid'] = 2
+    activity['name'] = "仅自己可见"
+    records.append(activity)
 
     data['records'] = records
-    if i == 0:
-        data['code'] = 'error'
-        data['message'] = '暂无活动'
+    data['code'] = 'success'
+    return data
+
+@app.route('/getBlogsByUid', methods=['GET'])
+def getBlogsByUid():
+    # datastr = str(request.data, 'utf-8')
+    # data_json = json.loads(datastr)
+    id = request.args.get("id")
+    data = {}
+    records = []
+    result = None
+    nname = ""
+    sql = "SELECT name FROM user WHERE user_id =%d " % int(id)
+    print(sql)
+    try:
+        # 执行SQL语句
+        cursor = db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        nname = cursor.fetchone()[0]
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        try:
+            db.ping(reconnect=True)
+        except:
+            db.connect()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        nname = cursor.fetchone()[0]
+        print("nname",nname)
+    print("-------------------------------------------", nname, "--------------------------------------------")
+
+    sql = 'SELECT moment_id,user_id,publish_time,content,like_num FROM moment WHERE user_id="%d" ORDER BY publish_time DESC' % int(
+        id)
+    print(sql)
+
+    try:
+        cursor = db.cursor()
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        try:
+            db.ping(reconnect=True)
+        except:
+            db.connect()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchall()
+    if len(result) == 0:
+        data['size'] = 0
+        data['records'] = records
     else:
-        data['code'] = 'success'
+        size = 0
+        for row in result:
+            size += 1
+            record = {}
+            record['moment_id'] = row[0]
+            record['id'] = row[1]
+            record['name'] = nname
+            record['publish_time'] = row[2].strftime("%Y-%m-%d %H:%M:%S")
+            record['content'] = row[3]
+            if len(record['content']) > 20:
+                record['content'] = record['content'][:20] + "..."
+            record['likeCount'] = row[4]
+            records.append(record)
+
+        data['size'] = size
+        data['records'] = records
+    data['code'] = 'success'
     return data
 
 
+
+# 大志_添加博客
 @app.route('/blog/add', methods=['POST'])
 def addBlog():
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     form = data_json
-    sql = "SELECT MAX(blog_id) FROM Blog"
+    print(form)
+    sql = "SELECT MAX(moment_id) FROM moment"
     cursor.execute(sql)
     max_id = cursor.fetchone()
     if max_id == None:
@@ -709,29 +845,21 @@ def addBlog():
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     label_num = form.get("tagUid")
     activityid = str(form.get("blogSortUid"))
-    sql = "INSERT INTO Blog VALUES (" + str(blog_id) + ",\"" + user_info['user_id'] + \
-          "\",\""+time+"\",\"" + form.get("title") + "\",\"" + form.get("summary") + "\",\"" + \
-          form.get("content") + "\",0,0," + form.get("need_credit") + \
-        ",\"" + label_num + "\",0," + activityid + ")"
-    cursor.execute(sql)
+    nnum = 0
+    sql1 = "INSERT INTO `ALAL`.`moment` (`moment_id`, `user_id`, `publish_time`, `content`, `picture`, `read_limit`, `like_num`) VALUES ('%d', '%d', '%s', '%s', '%s', '%d', '%d');" % (
+    blog_id, form.get("id"), time, form.get("content"), form.get("picture"), form.get("read_limit"), nnum)
+    cursor.execute(sql1)
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sql = 'INSERT INTO History VALUES ("%s",%d,"%s")' % (
-        user_info['user_id'], blog_id, time)
-    cursor.execute(sql)
-    sql = 'SELECT credit FROM Activity WHERE activity_id=%s' % activityid
-    cursor.execute(sql)
-    credit = int(cursor.fetchone()[0])
-    sql = 'UPDATE Blog_user SET credit=credit+%d WHERE user_id="%s"' % (
-        credit, user_info['user_id'])
-    cursor.execute(sql)
+
     updateUserInfo()
     data = {}
     data['code'] = 'success'
     data['message'] = '发布博客成功'
+    data['moment_id']=blog_id
     return data
 
 
-# 8.FollowBtn
+# 8.大志_获取关注者列表，没啥用了
 @app.route('/api/getFollowedByUid', methods=['GET'])
 def getFollowedByUid():
     uid = request.values.get("uid")
@@ -739,7 +867,7 @@ def getFollowedByUid():
     print(user_info)
     print(uid)
     sql = "SELECT * FROM Follow WHERE user_id=\"" + \
-        user_info['user_id'] + "\" AND follower_id='" + uid + "'"
+          user_info['user_id'] + "\" AND follower_id='" + uid + "'"
     cursor.execute(sql)
     row = cursor.fetchone()
     data = {}
@@ -751,7 +879,7 @@ def getFollowedByUid():
     print(data.get('liked'))
     return data
 
-
+# 大志_关注_应该没啥用
 @app.route('/api/FollowByUid', methods=['GET'])
 def followByUid():
     uid = request.values.get("uid")
@@ -762,18 +890,18 @@ def followByUid():
         return data
 
     sql = "SELECT * FROM Follow WHERE user_id= '" + \
-        user_info['user_id'] + "' AND follower_id= '" + uid + "'"
+          user_info['user_id'] + "' AND follower_id= '" + uid + "'"
     cursor.execute(sql)
     row = cursor.fetchone()
     if row == None:
         print(user_info['user_id'])
         time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         sql = "INSERT INTO Follow VALUES ('" + \
-            user_info['user_id'] + "','" + uid + "','"+time+"')"
+              user_info['user_id'] + "','" + uid + "','" + time + "')"
         cursor.execute(sql)
     else:
         sql = "DELETE FROM Follow WHERE user_id= '" + \
-            user_info['user_id'] + "' AND follower_id='" + uid + "'"
+              user_info['user_id'] + "' AND follower_id='" + uid + "'"
         cursor.execute(sql)
     data = {}
     data['code'] = 'success'
@@ -781,6 +909,7 @@ def followByUid():
 
 
 # 9.sort
+# 大志_查看活动的博客_应该没啥用
 @app.route('/sort/getSortList', methods=['GET'])
 def getSortList():
     data = {}
@@ -807,7 +936,7 @@ def getSortList():
         data['code'] = 'success'
     return data
 
-
+# 查看活动下的博客
 @app.route('/sort/getArticleBySort', methods=['GET'])
 def getArticleBySort():
     id = int(request.values.get("id"))
@@ -816,7 +945,7 @@ def getArticleBySort():
     sql = "SELECT Blog.user_id,publish_time,title,label,activity,name ,blog_id" \
           " FROM Blog,Activity " \
           " WHERE Blog.activity=Activity.activity_id AND activity=" + \
-        str(id) + " ORDER BY publish_time DESC"
+          str(id) + " ORDER BY publish_time DESC"
     cursor.execute(sql)
     row = cursor.fetchone()
     i = 0
@@ -853,6 +982,7 @@ def getArticleBySort():
 
 
 # 10.tag
+# 大志_获取tag列表_应该没啥用
 @app.route('/tag/getTagList', methods=['GET'])
 def getTagList():
     data = {'records': [
@@ -864,7 +994,7 @@ def getTagList():
     ], 'code': 'success'}
     return data
 
-
+# 大志_通过标签查博客_应该没啥用
 @app.route('/tag/getArticleByTagUid', methods=['GET'])
 def getArticleByTagUid():
     tagUid = request.values.get("tagUid")
@@ -906,7 +1036,7 @@ def getArticleByTagUid():
         data['code'] = 'success'
     return data
 
-
+# 没啥用_管理员处理举报
 # 11.admin
 @app.route('/admin/workReport', methods=['POST'])
 def workReport():
@@ -930,7 +1060,7 @@ def workReport():
     updateUserInfo()
     return data
 
-
+# dazhi_管理员获取举报列表_没啥用
 @app.route('/admin/getReportList')
 def getReportList():
     data = {}
@@ -955,7 +1085,7 @@ def getReportList():
     data['message'] = '操作成功'
     return data
 
-
+# 举报_按时间排序
 @app.route('/admin/getSortList')
 def getActivityList():
     data = {}
@@ -977,7 +1107,7 @@ def getActivityList():
     data['code'] = 'success'
     return data
 
-
+# 大志认为这没啥用_举报博客
 @app.route('/admin/blogSort/add', methods=['POST'])
 def addBlogSort():
     datastr = str(request.data, 'utf-8')
@@ -993,7 +1123,7 @@ def addBlogSort():
     user_id = user_info['user_id']
     sql = "select count(*) from Activity"
     cursor.execute(sql)
-    num = cursor.fetchone()[0]+1
+    num = cursor.fetchone()[0] + 1
     sql = 'INSERT INTO Activity (activity_id,user_id,name,start_time,end_time,credit,description) VALUES (%d,"%s","%s","%s","%s",%d,"%s")' % (
         num, user_info['user_id'], activityName, startTime, endTime, credit, description)
     print(sql)
@@ -1004,74 +1134,24 @@ def addBlogSort():
     return data
 
 
-@app.route('/login/login', methods=['POST'])
-def LocalLogin():
-    global user_info
-    print("I am in loginAndLogin")
-    datastr = str(request.data, 'utf-8')
-    data_json = json.loads(datastr)
-    username = data_json.get("userName")
-    password = data_json.get("passWord")
-    print(username)
-    print(password)
-    sql = "SELECT * FROM Blog_user WHERE user_id = '%s' AND password = '%s' " % (
-        username, password)
-    try:
-        # 执行SQL语句
-        cursor.execute(sql)
-        # 向数据库提交
-        results = cursor.fetchall()
-
-    except:
-        # 发生错误时回滚
-        print('error')
-        db.rollback()
-    data = {}
-    if len(results) == 0:
-        data['code'] = 'error'
-        data['message'] = '密码不正确'
-    else:
-        data['code'] = 'success'
-        data['message'] = '登录成功'
-        sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        for row in results:
-            user_info['user_id'] = row[0]
-            user_info['name'] = row[1]
-            user_info['password'] = row[2]
-            user_info['email'] = row[3]
-            user_info['credit'] = row[4]
-            user_info['role'] = row[5]
-            user_info['state'] = row[6]
-            user_info['reputation'] = row[7]
-        data['id'] = user_info.get('user_id')
-        if int(user_info['reputation']) == 0:
-            data['message'] = '你个烂人！'
-            data['code'] = 'error'
-    print("loginnn")
-    print(user_info)
-    data['records'] = user_info
-    file_object = open("user_info.txt", "w")
-    json.dump(user_info, file_object)
-    file_object.close()
-
-    return data
-
-
+# 大志_注册
 @app.route('/login/register', methods=['POST'])
 def localRegister():
-    global user_info
     print("I am in registerAndregister")
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
+    print(data_json)
     username = data_json.get("userName")
     password = data_json.get("passWord")
     email = data_json.get("email")
-    nickname = data_json.get("nickName")
+    se = data_json.get("sex")
+    sex='m'
+    if se==0:
+        sex='f'
+    emotional_state = data_json.get("emotional_state")
 
 
-    sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
+    sql = "SELECT * FROM user WHERE user_id = '%s'" % username
     try:
         # 执行SQL语句
         cursor.execute(sql)
@@ -1086,31 +1166,21 @@ def localRegister():
     if len(results) == 0:
         data['code'] = 'success'
         data['message'] = '注册成功'
-        sql = "INSERT INTO `blogs`.`Blog_user` (`user_id`, `name`, `password`, `email`, `credit`, `role`, `state`, `reputation`) VALUES ('%s', '%s', '%s', '%s', '100', '0', '1', '5');" % (
-            username, nickname, password, email)
+        sql = "INSERT INTO `user` ( `name`,`password`, `email`, `role`, `emotional_state`,`sex`) VALUES ('%s', '%s', '%s', 0, '%d','%s');" % (
+            username, password, email,emotional_state,sex)
+        print(sql)
         cursor.execute(sql)
-        sql = "SELECT * FROM Blog_user WHERE user_id = '%s'" % username
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        for row in results:
-            user_info['user_id'] = row[0]
-            user_info['name'] = row[1]
-            user_info['password'] = row[2]
-            user_info['email'] = row[3]
-            user_info['credit'] = row[4]
-            user_info['role'] = row[5]
-            user_info['state'] = row[6]
-            user_info['reputation'] = row[7]
+
     else:
         data['code'] = 'error'
         data['message'] = '注册失败,该账号已被注册'
 
-    sql = "SELECT * FROM Blog_user "
+    sql = "SELECT * FROM user "
     cursor.execute(sql)
     return data
 
 
-# 4.举报
+# 4.大志觉得没啥用_举报
 @app.route('/api/reportBlog', methods=['GET'])
 def ReportBlog():
     print("I AM IN ReportBlog!")
@@ -1132,37 +1202,111 @@ def ReportBlog():
     return data
 
 
-# 12 读取评论
+# 12 大志_读取评论
 @app.route('/web/comment/getList', methods=['POST'])
 def GetCommentList():
     print("I AM IN GetCommentList!")
     datastr = str(request.data, 'utf-8')
     data_json = json.loads(datastr)
     id = int(data_json.get('blogUid'))
+    data = {}
+    data['code'] = 'success'
     records = []
-    sql = "SELECT * FROM Comment WHERE blog_id='%d'" % id
+    sql = "SELECT * FROM comment WHERE moment_id=%d " % id
     #   try:
     # 执行SQL语句
-    cursor.execute(sql)
-    comment = cursor.fetchall()
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        comment = cursor.fetchall()
+    except:
+        print('error')
+        data['code'] = 'error'
+        db.rollback()
+    if len(comment)== 0 :
+        data['code'] = 'success'
+        data['records']= []
     for i in range(0, min(9, len(comment))):
         record = {}
         record['uid'] = int(i)
-        record['createTime'] = comment[i][3].strftime("%Y-%m-%d %H:%M:%S")
-        sql = "SELECT name FROM Blog_user WHERE user_id = '%s'" % comment[i][1]
+        record['createTime'] = comment[i][2]
+        sql = "SELECT name,head_portrait FROM user WHERE user_id = '%s'" % comment[i][1]
         cursor.execute(sql)
         nname = cursor.fetchall()
         name = nname[0][0]
+        head=nname[0][1]
         user = {}
         user['id'] = comment[i][1]
-        user['nickName'] = name
+        user['name'] = name
+        user['head_portrait']=head
         record['user'] = user
-        record['content'] = comment[i][4]
+        record['content'] = comment[i][3]
         records.append(record)
-    data = {}
-    data['code'] = 'success'
+
     data['records'] = records
     return data
+
+
+#大志_这里没改哦，应该加一个momentID
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        f = request.files['file']
+        base_path = os.path.abspath(os.path.dirname(__file__))
+        print(base_path)
+        dt = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        upload_path = os.path.join(base_path, 'static\\uploads\\') + "%s.jpg" % dt
+        print(upload_path)
+        f.save(upload_path)
+        data={}
+        data['code']='success'
+        data['uid']="%s.jpg" % dt
+        return data
+
+@app.route('/uploadMomentPhotos', methods=['POST'])
+def uploadMomentPhoto():
+    print("uploadmoment")
+    print(request.data)
+    datastr = str(request.data, 'utf-8')
+    print(datastr)
+    data_json = json.loads(datastr)
+    moment_id = data_json.get("moment_id")
+    pics = []
+    print(data_json)
+    print(data_json.get("picList"))
+    pics = data_json.get("picList")
+    uurl = ""
+    for pic in pics:
+        uurl = uurl + "," + pic
+    data = {}
+    sql = "Update moment SET picture ='%s' WHERE (moment_id=%d);" %(uurl,moment_id)
+    print(sql)
+    data ['code'] = 'success'
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code'] = 'error'
+    return data
+
+# show photo
+@app.route('/display/img/<string:filename>', methods=['GET'])
+def display_img(filename):
+    base_path = os.path.abspath(os.path.dirname(__file__))
+    if request.method == 'GET':
+        if filename is None:
+            pass
+        else:
+            image_data = open(
+                base_path + '/static/uploads/' + filename, "rb").read()
+            response = make_response(image_data)
+            response.headers['Content-Type'] = 'image/jpg'
+            return response
+    else:
+        pass
 
 
 @app.route('/index')
@@ -1173,10 +1317,516 @@ def index():
 @app.route('/')
 def welcome():
     return render_template("index.html")
+
+
 # @app.route('/')
 # def welcome():
 #     return render_template("Welcome.html")
 
 
+
+@app.route('/api/getBlogPicByUid', methods=['GET'])
+def getBlogPicByUid():
+    moment_id = request.args.get("moment_id")
+    print("picblog:" + moment_id)
+    data = {}
+    data['code'] = 'success'
+    sql = 'SELECT picture FROM moment WHERE moment_id="%s"' % moment_id
+    row = []
+    # try:
+    #     db.ping(reconnect=True)
+    # except:
+    #     db.connect()
+    #     cursor = db.cursor()
+
+    try:
+        cursor = db.cursor()
+        cursor.execute(sql)
+        row = cursor.fetchone()
+    except:
+        db.rollback()
+        try:
+            db.ping(reconnect=True)
+        except:
+            db.connect()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        row = cursor.fetchone()
+    data['urls'] = []
+    if len(row):
+        picture = row[0]
+        data['urls'] = picture.split(",")
+        data['urls']=data['urls'][1:]
+
+        for i in range(0,len(data['urls'])):
+            data['urls'][i] = "http://localhost:5000/display/img/" + data['urls'][i]
+            print(data['urls'][i])
+    return data
+@app.route('/index/getAvatarsByUserID', methods=['GET'])
+def getAvatarsByUserID():
+    id=int(request.values.get("id"))
+    print(id)
+    data = {}
+    data['code'] = 'success'
+    data['urls']=[]
+
+    sql='SELECT sex FROM user WHERE user_id=%d'%id
+    print(sql)
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    sex=row[0]
+    print(sex)
+    if sex=='f':
+        sql = 'SELECT user_id,head_portrait FROM user WHERE sex="m" and emotional_state=0 and user_id not in(SELECT user_id1 from friend where user_id2=%d) and user_id not in(SELECT user_id2 from friend where user_id1=%d)'%(id,id)
+        print(sql)
+    else:
+        sql = 'SELECT user_id,head_portrait FROM user WHERE sex="f" and emotional_state=0 and user_id not in(SELECT user_id1 from friend where user_id2=%d) and user_id not in(SELECT user_id2 from friend where user_id1=%d)'%(id,id)
+        print(sql)
+    try :
+       cursor.execute(sql)
+       results=cursor.fetchall()
+    except :
+        print("error")
+        db.rollback()
+
+    i=0
+    for row in results:
+        info={}
+        info['id']=row[0]
+        info['src']=row[1]
+        data['urls'].append(info)
+        i+=1
+        if i == 9:
+            break
+    print(data)
+    return data
+
+@app.route('/question/editQuestion', methods=['POST'])
+def editQuestion():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    user_id=data_json.get("id")
+    questions=json.dumps(data_json.get("questionData"))
+    print(questions)
+    sql = "UPDATE user SET question='%s' WHERE user_id='%d' " % (questions,user_id)
+    print(sql)
+    try :
+        cursor.execute(sql)
+    except :
+        print("error")
+        db.rollback()
+    data = {}
+    data['code'] = 'success'
+    return data
+
+# 大志_登录函数
+
+@app.route('/login/login', methods=['POST'])
+def LocalLogin():
+    print("I am in loginAndLogin")
+    
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    username = data_json.get("userName")
+    password = data_json.get("passWord")
+    print(username)
+    print(password)
+    sql = "SELECT * FROM user WHERE name = '%s' AND password = '%s' " % (
+        username, password)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    data = {}
+    user_info={}
+    if len(results) == 0:
+        data['code'] = 'error'
+        data['message'] = '密码不正确'
+    else:
+        data['code'] = 'success'
+        data['message'] = '登录成功'
+        sql = "SELECT user_id,name,password,email,role,emotional_state,sex FROM user WHERE name = '%s'" % username
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        for row in results:
+            user_info['id'] = row[0]
+            user_info['name'] = row[1]
+            user_info['password'] = row[2]
+            user_info['email'] = row[3]
+            user_info['role'] = row[4]
+            user_info['emotional_state'] = row[5]
+            user_info['sex'] = row[6]
+
+        data['id'] = user_info.get('id')
+    print("loginnn")
+    print(user_info)
+    data['records'] = user_info
+
+    return data
+
+@app.route('/user/editResume', methods=['POST'])
+def editInformation():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    print(data_json)
+    newUesrInfo = data_json.get("userInfo")
+    data = {}
+    user_info = newUesrInfo
+    # if user_info['avatar']!=None:
+    #     user_info['avatar']="http://localhost:5000/display/img/"+user_info['avatar']
+    if user_info['birthDate']=='':
+        sql = "UPDATE `ALAL`.`user` SET  `name` = '%s', `head_portrait` = '%s', `email` = '%s', `emotional_state` = %d,  `sex` = '%s', `job` = '%s', `city` = '%s', `ideal_type` = '%s' WHERE (`user_id` = '%d');" \
+              % (user_info['name'], user_info['avatar'], user_info['email'], user_info['emotional_state'],
+                 user_info['sex'],  user_info['job'], user_info['city'], user_info['idealType'],user_info['id'])
+    else:
+        sql ="UPDATE `ALAL`.`user` SET  `name` = '%s', `head_portrait` = '%s', `email` = '%s', `emotional_state` = %d,  `sex` = '%s', `birth` = '%s', `job` = '%s', `city` = '%s', `ideal_type` = '%s' WHERE (`user_id` = '%d');"\
+             %(user_info['name'],user_info['avatar'],user_info['email'],user_info['emotional_state'],user_info['sex'],user_info['birthDate'],user_info['job'],user_info['city'],user_info['idealType'],user_info['id'])
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        data['code'] = 'success'
+    except Exception as e:
+        # 发生错误时回滚
+        print('error',e)
+        db.rollback()
+        data['code'] = 'error'
+    return data
+
+@app.route('/user/getFriendsRequestList', methods=['GET'])
+def getFriendRequest():
+    # datastr = str(request.data, 'utf-8')
+    # data_json = json.loads(datastr)
+    # id = data_json.get("id")
+    id =request.args.get("id")
+    print("friendrequest "+id)
+    data = {}
+    data['code'] = 'success'
+    sql = "SELECT * FROM friend_apply WHERE (state=0 and respondent_id=%d)" %int(id)
+    print(sql)
+    results=None
+    try:
+        # 执行SQL语句
+        cursor=db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except Exception as e:
+        # 发生错误时回滚
+        print('error',e)
+        db.rollback()
+        db.connect()
+        cursor=db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    if len(results) == 0:
+        data['code'] = 'error'
+        data['message'] = 'no application'
+    else :
+        applications = []
+        for i in range(0,len(results)):
+            application = {}
+            application['application_id'] = results[i][0]
+            application['id'] = results[i][1]
+            application['createdTime'] = results[i][3].strftime("%Y-%m-%d %H:%M:%S")
+            sql1 = "SELECT name from user WHERE (user_id= %d)" % int(application['id'])
+            print(sql1)
+            uuser=None
+            try:
+                cursor=db.cursor()
+                # 执行SQL语句
+                cursor.execute(sql1)
+                # 向数据库提交
+                uuser = cursor.fetchone()
+            except Exception as e:
+                # 发生错误时回滚
+                print('error',e)
+                db.rollback()
+                db.connect()
+                cursor=db.cursor()
+                cursor.execute(sql1)
+                # 向数据库提交
+                uuser = cursor.fetchone()
+                print(uuser)
+            nname = uuser[0]
+            application['applicant']=nname
+            applications.append(application)
+        data['list'] = applications
+    return data
+
+@app.route('/user/editPassword', methods=['POST'])
+def editPassword():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    pwd = data_json.get("password")
+    data = {}
+    data['code'] = 'success'
+    sql = "UPDATE 'user' SET 'password'='%s' WHERE ('user_id'='%d');" % (pwd,id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+        data['code']='error'
+
+    return data
+
+@app.route('/submitResult', methods=['GET'])
+def submitResult():
+    id=request.args.get("id")
+    accept = request.args.get("accepted")
+    sql = "SELECT * from friend_apply WHERE (application_id=%d);"%int(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        apply = cursor.fetchone()
+    except Exception as e:
+        # 发生错误时回滚
+        print('error',e)
+        db.rollback()
+    if accept == True:
+        sql = "INSERT INTO `ALAL`.`friend`(`user_id1`, `user_id2`, `time`) VALUES('%d', '%d', '%s');"%(apply[1],apply[2],apply[3])
+        try:
+            # 执行SQL语句
+            cursor.execute(sql)
+        except Exception as e:
+            # 发生错误时回滚
+            print('error1',e)
+            db.rollback()
+        sql1 = "UPDATE friend_apply SET state=1 WHERE (application_id=%d);" % int(id)
+        try:
+            # 执行SQL语句
+            cursor.execute(sql1)
+        except Exception as e:
+            # 发生错误时回滚
+            print('error2',e)
+            db.rollback()
+    else :
+        sql1 = "UPDATE friend_apply SET state=2 WHERE (application_id=%d);" %int(id)
+        print(sql1)
+        try:
+            # 执行SQL语句
+            cursor.execute(sql1)
+        except Exception as e:
+            # 发生错误时回滚
+            print('error3',e)
+            db.rollback()
+    data = {}
+    data['code'] = 'success'
+    return data
+
+@app.route('/getBlogListByID', methods=['GET'])
+def getBlogListByID():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = data_json.get("id")
+    page = data_json.get("currentPage")
+    size = data_json.get("size")
+
+    sql = "SELECT * from 'moment' WHERE 'user_id'='%d'"%(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchall()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+    data = {}
+    data['code']='success'
+    if len(results) == 0:
+        data['code'] = 'success'
+        data['total'] = 0
+        data['size'] = size
+        data['currentPage'] = page
+        records = []
+        data['records'] = records
+    else :
+        data['code'] = 'success'
+        data['total'] = len(results)
+        data['size'] = size
+        data['currentPage'] = page
+        records = results
+        data['records'] = records
+    return data
+
+@app.route('/getQuestion', methods=['GET'])
+def getQuestion():
+    id=request.args.get("id")
+    sql = "SELECT question from user WHERE user_id=%d;"%int(id)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 向数据库提交
+        result = cursor.fetchone()
+    except:
+        # 发生错误时回滚
+        print('error')
+        db.rollback()
+
+    data = {}
+    if result[0]!=None:
+        data['questionData'] = json.loads(result[0])
+    else:
+        data['questionData']={'1':"姓名",'2':"年龄",'3':"爱好",'4':"城市",'5':"为什么添加好友"}
+
+    data['code']='success'
+    print(data)
+    return data
+
+@app.route('/submitQuestion', methods=['POST'])
+def submitQuestions():
+    datastr = str(request.data, 'utf-8')
+    data_json = json.loads(datastr)
+    id = int(data_json.get("id"))
+    respondent_id=int(data_json.get("application_id"))
+    time=datetime.datetime.now().strftime('%Y-%m-%d')
+    ans = data_json.get("questionData")
+    print(ans['1'])
+    qans = ans['1']+","+ans['2'] + "," + ans['3'] + "," + ans['4'] + "," + ans['5']
+    data = {}
+    data ['code'] = 'success'
+    sql = "INSERT INTO friend_apply(applicant_id,respondent_id,time,question_answer,state) VALUES(%d,%d,'%s','%s',0);"%(id,respondent_id,time,qans)
+    print(sql)
+    print(sql)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+    except  Exception as e:
+        # 发生错误时回滚
+        print('error',e)
+        db.rollback()
+        data['code']='error'
+    return data
+
+@app.route('/getQuestions', methods=['GET'])
+def getQuestions():
+    # datastr = str(request.data, 'utf-8')
+    # data_json = json.loads(datastr)
+    application_id = request.args.get("id")
+
+    sql = "SELECT question_answer,respondent_id from friend_apply WHERE application_id=%d;" % int(application_id)
+    data = {}
+    result=None
+    id=None
+    data['code'] = 'success'
+    print(sql)
+    try:
+        # 执行SQL语句
+        cursor=db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchone()
+        result=results[0].split(",")
+        id=results[1]
+    except Exception as e:
+        # 发生错误时回滚
+        print('error',e)
+        db.rollback()
+        db.connect()
+        cursor=db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        results = cursor.fetchone()
+        result = results[0].split(",")
+        id = results[1]
+        #data['code'] = 'error'
+
+    sql = "SELECT question from user WHERE user_id=%d;" % int(id)
+    print(sql)
+    q=None
+    try:
+        # 执行SQL语句
+        cursor=db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        question = cursor.fetchone()[0]
+        if question != None:
+            q = json.loads(question)
+    except Exception as e:
+        # 发生错误时回滚
+        print('error',e)
+        db.rollback()
+        db.connect()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        # 向数据库提交
+        question = cursor.fetchone()[0]
+        if question !=None:
+            q = json.loads(question)
+        #data['code'] = 'error'
+
+    questions=["姓名","年龄","爱好","城市","为什么加好友"]
+    qd=[]
+    for i in range(1,6):
+        qa = {}
+        qa['id']=i
+        if question!=None:
+            qa['title']=q[i-1]
+        else:
+            qa['title']=questions[i-1]
+        qa['data']=result[i-1]
+        qd.append(qa)
+
+    data['qusetionData'] = qd
+    return data
+
+@app.route('/user/getUserInfoByID', methods=['GET'])
+def getUserInfoByID():
+    user_id=request.args.get('id')
+    data={}
+    print(user_id)
+    sql = "SELECT * FROM user WHERE user_id = %d " % int(user_id)
+    results = None
+    try:
+        db.connect()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    except Exception as e:
+        print(e)
+        db.connect()
+        cursor = db.cursor()
+        cursor.execute(sql)
+        results = cursor.fetchall()
+
+    user_infor={}
+    for row in results :
+        user_infor['id'] = row[0]
+        user_infor['name'] = row[1]
+        user_infor['avatar'] = row[2]
+        user_infor['password'] = row[3]
+        user_infor['email'] = row[4]
+        user_infor['role'] = row[5]
+        user_infor['emotional_state'] = row[6]
+        user_infor['couple'] = row[7]
+        user_infor['sex'] = row[8]
+        if row[9] == None:
+            user_infor['birth'] = ""
+        else:
+            user_infor['birth'] = row[9].strftime("%Y-%m-%d")
+
+        user_infor['job'] = row[10]
+        user_infor['city'] = row[11]
+        user_infor['ideal_type'] = row[12]
+        user_infor['question'] = row[13]
+    data['id'] = user_infor.get('id')
+
+    print(user_infor)
+    data['records'] = user_infor
+    data['code']='success'
+    return data
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="5678")
+    app.run(host="127.0.0.1", port="5000")

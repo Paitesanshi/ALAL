@@ -1,1 +1,1 @@
-{"user_id": "12345", "name": "12345", "password": "12345", "email": "122344@qq.com", "credit": 100, "role": 0, "state": 1, "reputation": 5}
+{"id": 18301003, "name": "22222", "head_portrait": "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif", "password": "22222", "email": "11@qq.ccom", "role": 0, "emotional_state": 0, "couple": "", "sex": "f", "birth": "", "job": "", "city": "", "ideal_type": "", "question": ""}

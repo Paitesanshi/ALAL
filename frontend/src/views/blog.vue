@@ -5,18 +5,68 @@
       :title="title"
       :visible.sync="dialogFormVisible"
       :before-close="closeDialog"
-      fullscreen
     >
       <el-form ref="form" :model="form" :rules="rules">
         <el-row>
-          <el-col >
-            <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
-              <el-input v-model="form.title" auto-complete="off" @input="contentChange"/>
-            </el-form-item>
-            <el-form-item :label-width="formLabelWidth" label="简介">
-              <el-input v-model="form.summary" auto-complete="off" />
+        </el-row>
+
+        <el-row>
+          <el-col :span="6.5">
+            <el-form-item :label-width="formLabelWidth" label="选择可见范围" prop="blogSortUid">
+              <el-select
+                v-model="form.read_limit"
+                size="small"
+                placeholder="请选择"
+                style="width:150px"
+              >
+                <el-option
+                  v-for="item in blogSingleData"
+                  :key="item.uid"
+                  :label="item.name"
+                  :value="item.uid"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-form-item :label-width="formLabelWidth" label="内容" prop="content">
+          <!-- <ckeditor v-if="systemConfig.editorModel == '0'" ref="editor" v-model="form.content" :height="360"/>
+          <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/> -->
+          <el-input v-model="form.content" auto-complete="off" />
+        </el-form-item>
+
+        <el-form-item label="上传图片" prop="picture" style="width: 800px;">
+          <el-upload
+            action=""
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :http-request="uploadPicture"
+            :before-upload="beforeAvatarUpload"
+            :file-list="fileList"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item style="margin-left:300px">
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
+</template>
+<!-- <el-col >
+  <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
+    <el-input v-model="form.title" auto-complete="off" @input="contentChange"/>
+  </el-form-item>
+  <el-form-item :label-width="formLabelWidth" label="简介">
+    <el-input v-model="form.summary" auto-complete="off" />
+  </el-form-item>
+</el-col> -->
 
 <!--          <el-col :span="8">-->
 <!--            <el-form-item :label-width="formLabelWidth" label="标题图">-->
@@ -39,51 +89,38 @@
 <!--              </div>-->
 <!--            </el-form-item>-->
 <!--          </el-col>-->
-        </el-row>
+<!--                <el-option-->
+<!--                  v-if="this.$store.state.user.isSingle == false"-->
+<!--                  v-for="item in blogNotSingleData"-->
+<!--                  :key="item.uid"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.uid"-->
+<!--                />-->
 
-        <el-row>
-          <el-col :span="6.5">
-            <el-form-item :label-width="formLabelWidth" label="活动" prop="blogSortUid">
-              <el-select
-                v-model="form.blogSortUid"
-                size="small"
-                placeholder="请选择"
-                style="width:150px"
-              >
-                <el-option
-                  v-for="item in blogSortData"
-                  :key="item.uid"
-                  :label="item.name"
-                  :value="item.uid"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="6.5">
-            <el-form-item label="标签" label-width="80px">
-              <el-select
-                v-model="tagValue"
-                multiple
-                size="small"
-                placeholder="请选择"
-                style="width:210px"
-                filterable
-              >
-                <el-option
-                  v-for="item in tagData"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6.5">
-            <el-form-item label="所需积分" label-width="80px">
-              <el-input v-model="form.need_credit" auto-complete="off" @input="contentChange"/>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="标签" label-width="80px">-->
+<!--              <el-select-->
+<!--                v-model="tagValue"-->
+<!--                multiple-->
+<!--                size="small"-->
+<!--                placeholder="请选择"-->
+<!--                style="width:210px"-->
+<!--                filterable-->
+<!--              >-->
+<!--                <el-option-->
+<!--                  v-for="item in tagData"-->
+<!--                  :key="item.id"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.id"-->
+<!--                />-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="6.5">-->
+<!--            <el-form-item label="所需积分" label-width="80px">-->
+<!--              <el-input v-model="form.need_credit" auto-complete="off" @input="contentChange"/>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
 <!--          <el-col :span="6.5">-->
 <!--            <el-form-item :label-width="maxLineLabelWidth" label="推荐等级" prop="level">-->
 <!--              <el-select v-model="form.level" size="small" placeholder="请选择" style="width:210px">-->
@@ -96,7 +133,6 @@
 <!--              </el-select>-->
 <!--            </el-form-item>-->
 <!--          </el-col>-->
-        </el-row>
 
 <!--        <el-row>-->
 <!--          <el-col :span="6.5">-->
@@ -127,40 +163,12 @@
 <!--            </el-form-item>-->
 <!--          </el-col>-->
 <!--        </el-row>-->
+            <!-- <el-form-item :label-width="formLabelWidth" label="简介">
 
-        <el-form-item :label-width="formLabelWidth" label="内容" prop="content">
-          <ckeditor v-if="systemConfig.editorModel == '0'" ref="editor" v-model="form.content" :height="360"/>
-          <MarkdownEditor v-if="systemConfig.editorModel == '1'" ref="editor" :content="form.content" :height="465"/>
-        </el-form-item>
-
-     
-			<el-form-item label="上传图片" prop="picture" style="width: 800px;">
-               <el-upload
-			     action=""
-                 list-type="picture-card"
-                 :on-preview="handlePictureCardPreview"
-                 :on-remove="handleRemove"
-                 :http-request="uploadAvatar"
-                 :before-upload="beforeAvatarUpload"
-                 :file-list="fileList"
-               >
-                 <i class="el-icon-plus"></i>
-               </el-upload>
-               <el-dialog :visible.sync="dialogVisible">
-                 <img width="100%" :src="dialogImageUrl" alt="">
-               </el-dialog>
-            </el-form-item>
-		<el-form-item style="float: right; margin-right: 20px;">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-  </div>
-</template>
+            </el-form-item> -->
 
 <script>
-import { addBlog, editBlog,upload } from '@/api/blog'
+import { addBlog, editBlog, uploadPhoto, uploadMomentPhotos} from '@/api/blog'
 // import { getSystemConfig } from '@/api/systemConfig'
 import { getTagList } from '@/api/tag'
 import { getBlogSortList } from '@/api/blogSort'
@@ -188,17 +196,18 @@ export default {
   },
   data () {
     return {
-		          dialogImageUrl: '',
-          dialogVisible: false,
-          picList: [],
+		  dialogImageUrl: '',
+      dialogVisible: false,
+      picList: [],
     	fileList: [],
       uploadLoading: null, // 文件上传loading
       CKEditorData: null,
       tableData: [], // 博客数据
       tagData: [], // 标签数据
       tagValue: [], // 保存选中标签id(编辑时)
-      blogSortData: [{uid: 1, name: '技术'}, {uid: 2, name: '大数据'}],
-      title: '增加博客',
+      // blogNotSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}, {uid: 3, name: '仅自己与对象可见'}],
+      blogSingleData: [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己可见'}],
+      title: '发布动态',
       dialogFormVisible: true, // 控制弹出框
       subjectVisible: false, // 是否显示专题
       isFirstSubjectVisible: true, // 专题选择器是否首次显示【用于懒加载】
@@ -238,31 +247,33 @@ export default {
         author: '', // 作者
         clickCount: 0,
         articlesPart: '', // 文章出处
-        need_credit:''
+        need_credit: '',
+        id: '',
+        read_limit: ' '
       },
       rules: {
         title: [
           { required: true, message: '标题不能为空', trigger: 'blur' }
         ],
-        blogSortUid: [
-          { required: true, message: '分类不能为空', trigger: 'blur' }
-        ],
-        level: [
-          { required: true, message: '推荐等级不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '推荐等级只能为自然数' }
-        ],
-        isPublish: [
-          { required: true, message: '发布字段不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '发布字段只能为自然数' }
-        ],
-        isOriginal: [
-          { required: true, message: '原创字段不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '原创字段只能为自然数' }
-        ],
-        openComment: [
-          { required: true, message: '网站评论不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]\d*$/, message: '网站评论只能为自然数' }
-        ],
+        // blogSortUid: [
+        //   { required: true, message: '分类不能为空', trigger: 'blur' }
+        // ],
+        // level: [
+        //   { required: true, message: '推荐等级不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '推荐等级只能为自然数' }
+        // ],
+        // isPublish: [
+        //   { required: true, message: '发布字段不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '发布字段只能为自然数' }
+        // ],
+        // isOriginal: [
+        //   { required: true, message: '原创字段不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '原创字段只能为自然数' }
+        // ],
+        // openComment: [
+        //   { required: true, message: '网站评论不能为空', trigger: 'blur' },
+        //   { pattern: /^[0-9]\d*$/, message: '网站评论只能为自然数' }
+        // ],
         content: [
           { required: true, message: '内容不能为空', trigger: 'blur' }
         ],
@@ -275,7 +286,11 @@ export default {
   },
   created () {
     console.log('-----------------------------------------')
-    this.title = '增加博客'
+    this.title = '发布动态'
+    if (this.$store.state.user.isSingle == true) {
+      // alert()
+      this.blogSingleData = [{uid: 1, name: '所有人可见'}, {uid: 2, name: '仅自己与对象可见'}, {uid: 3, name: '仅自己可见'}]
+    }
     //  const that = this
     // // const tempForm = JSON.parse(getCookie('form'))
     //  const tempForm=null
@@ -359,57 +374,58 @@ export default {
     // this.blogList()
   },
   methods: {
-	  uploadAvatar(item) {
-          const formData = new FormData()
-          formData.append('file', item.file)
-          const uid = item.file.uid
-          createStorage(formData).then(res => {
-            this.picList.push({ key: uid, value: res.data.data.url })
-            this.emptyUpload()
-          }).catch(() => {
-            this.$message.error('上传失败，请重新上传')
-            this.emptyUpload()
-          })
-        },
-        beforeAvatarUpload(file) {
-          const isJPG = file.type === 'image/jpeg'
-          const isPng = file.type === 'image/png'
-          const isLt2M = file.size / 1024 / 1024 < 2
- 
-          if (!isJPG && !isPng) {
-            this.$message.error('上传图片只能是 JPG或png 格式!')
-          }
-          if (!isLt2M) {
-            this.$message.error('上传图片大小不能超过 2MB!')
-          }
-          return (isJPG || isPng) && isLt2M
-        },
-        handleRemove(file, fileList) {
-          for (const i in this.picList) {
-            if (this.picList[i].key === file.uid) {
-              this.picList.splice(i, 1)
-            }
-          }
-        },
-        handlePictureCardPreview(file) {
-          this.dialogImageUrl = file.url
-          this.dialogVisible = true
-        },
-        /**
+	  uploadPicture (item) {
+      const formData = new FormData()
+      formData.append('file', item.file)
+		  formData.append('avatar', true)
+      uploadPhoto(formData).then(res => {
+			  console.log(res)
+        this.picList.push(res.data.uid)
+        this.emptyUpload()
+      }).catch(() => {
+        this.$message.error('上传失败，请重新上传')
+        this.emptyUpload()
+      })
+    },
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isPng = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG && !isPng) {
+        this.$message.error('上传图片只能是 JPG或png 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return (isJPG || isPng) && isLt2M
+    },
+    handleRemove (file, fileList) {
+      for (const i in this.picList) {
+        if (this.picList[i].key === file.uid) {
+          this.picList.splice(i, 1)
+        }
+      }
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    /**
          * 清空上传组件
          */
-        emptyUpload() {
-          const mainImg = this.$refs.upload
-          if (mainImg) {
-            if (mainImg.length) {
-              mainImg.forEach(item => {
-                item.clearFiles()
-              })
-            } else {
-              this.$refs.upload.clearFiles()
-            }
-          }
-        },
+    emptyUpload () {
+      const mainImg = this.$refs.upload
+      if (mainImg) {
+        if (mainImg.length) {
+          mainImg.forEach(item => {
+            item.clearFiles()
+          })
+        } else {
+          this.$refs.upload.clearFiles()
+        }
+      }
+    },
     openLoading () {
       this.uploadLoading = Loading.service({
         lock: true,
@@ -527,10 +543,6 @@ export default {
       this.blogList()
     },
     submitForm: function () {
-      if (this.tagValue.length <= 0) {
-        this.$commonUtil.message.error('标签不能为空!')
-        return
-      }
       this.$refs.form.validate((valid) => {
         if (!valid) {
         } else {
@@ -548,16 +560,24 @@ export default {
               }
             })
           } else {
-		
+            let that = this
+            this.form.id = this.$store.state.user.userInfo.id
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
                 // 清空cookie中的内容
                 // delCookie('form')
                 // 清空触发器
+                let momentid = response.data.moment_id
+                let para = {}
+                para.moment_id = momentid
+                para.picList = that.picList
+                uploadMomentPhotos(para).then((res) => {
+                  console.log(res)
+                })
                 clearInterval(this.interval)
                 this.dialogFormVisible = false
-                location.href=this.vueMoguWebUrl + '/#/'
+                this.$router.push({ path: '/' })
               } else {
                 this.$commonUtil.message.error(response.message)
               }
