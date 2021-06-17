@@ -4,13 +4,13 @@
       <div class="num">{{ index + 1 }}</div>
       <div class="question-content">
         <div class="question-title">{{ item.title }}</div>
-        <template v-if="item.type === 'radio'">
+        <!-- <template v-if="item.type === 'radio'">
           <MyRadio :radioData="item.data" :radioName="index" @radioChange="radioChange"></MyRadio>
         </template>
         <template v-else-if="item.type === 'checkbox'">
           <MyCheckBox :checkboxData="item.data" :checkboxName="index" @checkboxChange="checkboxChange"></MyCheckBox>
-        </template>
-        <template v-else-if="item.type === 'textarea'">
+        </template> -->
+        <template >
           <MyTextArea disabled :textareaName="index" :value="item.data" style="margin-bottom: 38px;"  @changeTextarea="changeTextarea"></MyTextArea>
         </template>
       </div>
@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import MyRadio from '../components/MyRadio';
-import MyCheckBox from '../components/MyCheckBox';
-import MyTextArea from '../components/MyTextAreaDisabled';
-import {getQuestions} from '../api/question'
+import MyRadio from '../components/MyRadio'
+import MyCheckBox from '../components/MyCheckBox'
+import MyTextArea from '../components/MyTextAreaDisabled'
+import {getQuestions,submitResult} from '../api/question'
 export default {
   name: 'questionsDisabled',
   components: {
@@ -39,18 +39,18 @@ export default {
       questionData: []
     }
   },
-  created(){
-	var that = this
-	let	params = new URLSearchParams()
-      params.append('id', this.$route.query.id)
-      getQuestions(params).then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          that.questionData = response.data.data
-          console.log(this.questionData)
-        }
-      }).catch(error => {
-        console.log(error)
-       that.questionData= [
+  created () {
+    var that = this
+    let	params = new URLSearchParams()
+    params.append('id', this.$route.query.id)
+    getQuestions(params).then(response => {
+      if (response.data.code === this.$ECode.SUCCESS) {
+        that.questionData = response.data.qusetionData
+        console.log(this.questionData)
+      }
+    }).catch(error => {
+      console.log(error)
+      that.questionData = [
         {
           id: 1,
           title: '姓名',
@@ -80,33 +80,33 @@ export default {
           title: '为什么填',
           type: 'textarea',
           data: '4'
-        },
+        }
       ]
-        that.loadingInstance.close()
-      })
+      that.loadingInstance.close()
+    })
   },
   methods: {
-    radioChange(data, name) {
-      const question = this.questionData[name];
+    radioChange (data, name) {
+      const question = this.questionData[name]
       for (let item of question.data) {
-        item.status = data.value === item.value;
+        item.status = data.value === item.value
       }
     },
-    checkboxChange(data, name, isTextarea) {
-      const question = this.questionData[name];
-      const index = question.data.findIndex(item => item.value === data.value);
+    checkboxChange (data, name, isTextarea) {
+      const question = this.questionData[name]
+      const index = question.data.findIndex(item => item.value === data.value)
       if (isTextarea) {
-        question.data[index].status = true;
+        question.data[index].status = true
       } else {
-        question.data[index].status = !question.data[index].status;
+        question.data[index].status = !question.data[index].status
       }
     },
-    changeTextarea(data, name) {
-      const question = this.questionData[name];
-      question.data = data;
+    changeTextarea (data, name) {
+      const question = this.questionData[name]
+      question.data = data
     },
-    handleSubmit(info) {
-      console.log(info);
+    handleSubmit (info) {
+      console.log(info)
       let	params = new URLSearchParams()
       // if (this.blogUid) {
       //   params.append('uid', this.blogUid)
@@ -118,20 +118,21 @@ export default {
 	  params.append('accepted', info)
       submitResult(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-			this.$notify({
-				title: '成功',
-				message: '申请处理成功',
-				type: 'success',
-				offset: 100
-			})
-		} 
+          this.$notify({
+            title: '成功',
+            message: '申请处理成功',
+            type: 'success',
+            offset: 100
+          })
+        }
+        this.$router.push({path:'/userinfo'})
       }).catch(error => {
       	this.$notify.error({
-			title: '失败',
-			message: error,
-			type: 'error',
-			offset: 100
-		})
+          title: '失败',
+          message: error,
+          type: 'error',
+          offset: 100
+        })
       })
     }
   }

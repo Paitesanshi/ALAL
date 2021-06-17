@@ -4,7 +4,7 @@
       <el-tabs type="border-card" tabPosition="left" style="width:1000px;height: 100vh;margin: 60px auto auto auto;position: sticky;">
         <el-tab-pane>
           <span slot="label">个人信息</span>
-          <user :list="list" :photoUrl="list.avatar" class="user"></user>
+          <user :lists="list" :photoUrl="list.avatar" class="user"></user>
           <br>
           <setting :phone="list.phone"></setting>
         </el-tab-pane>
@@ -20,12 +20,12 @@
           <span slot="label">我的圈子</span>
           <moment></moment>
         </el-tab-pane>
-        
       </el-tabs>
     </div>
   </div>
+
 </template>
-<style>
+<style scoped>
 html * {
   padding: 0;
   margin: 0;
@@ -76,6 +76,16 @@ html * {
   line-height: 17px;
   text-align: center;
 }
+/* 遮罩层
+  .mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 500;
+  } */
 </style>
 
 <script>/* eslint-disable indent */
@@ -90,18 +100,16 @@ export default {
       activeIndex2: '1',
       btnText: '取消',
       list: {
-		  avatar: '',
-        nickName: '',
+        id:'',
+		    avatar: '',
+        name: '',
         sex: '',
-        address: '',
-        introduce: '',
-        endTime: '',
-        education: '',
-        school: '',
-        intentionCompany: '',
-        intentionJob: '',
-        photoUrl: '',
-        phone: ''
+        city: '',
+        emotional_state:'',
+        email:'',
+        birthDate:'',
+        idealType:'',
+        job:'',
       },
       photoUrl: '',
       head: {},
@@ -113,11 +121,11 @@ export default {
 		this.list.city = this.$store.state.user.userInfo.city
 	  this.list.name = this.$store.state.user.userInfo.name
 	  this.list.sex = this.$store.state.user.userInfo.sex
-		this.list.emotion = this.$store.state.user.userInfo.emotional_state
+		this.list.emotional_state = this.$store.state.user.userInfo.emotional_state
 		this.list.email = this.$store.state.user.userInfo.email
 		this.list.birthDate = this.$store.state.user.userInfo.birth
 	  this.list.idealType = this.$store.state.user.userInfo.idealType
-		this.list.avatar = this.$store.state.user.userInfo.avatar
+		this.list.avatar = this.$store.state.user.userInfo.head_portrait
     this.list.job = this.$store.state.user.userInfo.job
 			 // this.list.avatar="https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"
   },

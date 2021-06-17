@@ -11,9 +11,9 @@
     <div class="bottom">
       <el-button class="submit p2" type="primary"  @click="handleSubmit">发送评论</el-button>
       <el-button class="cancel p2" type="info" @click="handleCancle">取消评论</el-button>
-      <div class="emoji-panel-btn p2" @click="showEmojiPanel">
+      <!-- <div class="emoji-panel-btn p2" @click="showEmojiPanel">
         <img src="assets/img/face_logo.png" />
-      </div>
+      </div> -->
       <span class="allow p2">还能输入{{count}}个字符</span>
 
       <emoji-panel class="emojiPanel" @emojiClick="appendEmoji" v-if="isShowEmojiPanel"></emoji-panel>
@@ -93,14 +93,14 @@ export default {
 
       if (this.value == '') {
         this.$notify.error({
-          title: '警告',
+          title: '提示',
           message: '评论内容不能为空哦~',
           offset: 100
         })
         return
       }
 
-      let userUid = info.uid
+      let userUid = info.id
       let toUserUid = ''
       let toCommentUid = ''
       let blogUid = ''

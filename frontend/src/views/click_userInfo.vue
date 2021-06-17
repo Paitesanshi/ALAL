@@ -16,11 +16,11 @@
           <td>{{this.UserList.name}}</td>
           <tr>
           <td>情感状况：</td>
-          <td>{{this.UserList.emotion}}</td>
+          <td>{{this.UserList.emotional_state}}</td>
           </tr>
           <tr>
             <td>理想型：</td>
-            <td>{{this.UserList.ideal_type}}</td>
+            <td>{{this.UserList.idealType}}</td>
           </tr>
           <br>
           <button @click="goToAnswer">填写问卷</button>
@@ -44,7 +44,7 @@
         </tr>
         <tr>
           <td>职业：</td>
-          <td>{{this.UserList.career}}</td>
+          <td>{{this.UserList.job}}</td>
         </tr>
         <!--          <tr>-->
         <!--            <td>学校：</td>-->
@@ -58,17 +58,13 @@
     <div class="blogsbox">
       <div
         v-for="item in newBlogData"
-        :key="item.blog_id"
+        :key="item.moment_id"
         class="blogs"
+         @click="goToInfo(item)"
         data-scroll-reveal="enter bottom over 1s"
       >
-        <h3 class="blogtitle">
-          <a href="javascript:void(0);" @click="goToInfo(item)">{{
-              item.title
-            }}</a>
-        </h3>
 
-        <p class="blogtext">{{ item.summary }}</p>
+        <p class="blogtext">{{ item.content }}</p>
         <div class="bloginfo">
           <ul>
             <li class="author">
@@ -77,16 +73,8 @@
                   item.name
                 }}</a>
             </li>
-            <li class="lmname" v-if="item.labels">
-              <span class="iconfont">&#xe603;</span>
-              <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
-                  item.labels[0]
-                }}</a>
-            </li>
-            <li class="view">
-              <span class="iconfont">&#xe8c7;</span>
-              <span>{{ item.clickCount }}</span>
-            </li>
+           
+         
             <li class="like">
               <span class="iconfont">&#xe663;</span>
               {{ item.likeCount }}
@@ -130,7 +118,7 @@ import { Loading } from 'element-ui'
 import CameraCapture from '../components/CameraCapture'
 import Camera from '../components/Camera'
 import PhotoWall from '../components/PhotoWall'
-
+import { getNewBlog,getBlogsByUid } from '@/api/index'
 export default {
   props: ['list', 'imageUrl'],
   components: {
@@ -164,15 +152,16 @@ export default {
       loading: false, // 是否正在加载
       // 用户信息展示
       UserList: {
-		avatar:'',
-        city: '',
+	  id: '',
+		    avatar: '',
         name: '',
         sex: '',
-        emotion: '',
-        career: '',
+        city: '',
+        emotional_state: '',
         email: '',
         birthDate: '',
-        ideal_type: ''
+        idealType: '',
+        job: ''
       }
     }
   },
@@ -235,7 +224,7 @@ export default {
 	  params.append('id', this.$route.query.id)
       params.append('currentPage', this.currentPage)
       params.append('pageSize', this.pageSize)
-      getBlogListByID(params)
+      getBlogsByUid(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
             that.newBlogData = response.data.records
@@ -260,6 +249,29 @@ export default {
           that.loadingInstance.close()
         })
     },
+      goToInfo (moment) {
+      if (
+        this.$store.state.user.isLogin &&
+        this.$store.state.user.userInfo.reputation == 1
+      ) {
+        this.$notify.error({
+          title: '警告',
+          message: '宁信誉积分太低，宁不配',
+          offset: 100
+        })
+      } else {
+        // let routeData = this.$router.resolve({
+        //   path: '/info',
+        //   query: { blogUid: moment.moment_id }
+        // })
+        // console.log(moment.moment_id)
+        // window.open(routeData.href, '_blank')
+        this.$router.push({
+          path: '/info',
+          query: {blogUid: moment.moment_id}
+        })
+      }
+      },
 	getClickUserInfo () {
       var that = this
       var params = new URLSearchParams()
@@ -267,7 +279,7 @@ export default {
       getUserInfoByID(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
-            that.UserList=response.data.userInfo
+            that.UserList=response.data.records
           }
         })
         .catch(error => {

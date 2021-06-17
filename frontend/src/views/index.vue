@@ -21,12 +21,12 @@
 
     <div class="blank"></div>
     <!--w2blogsbox begin-->
-    <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.isSingle != false">
+    <div class="photosWall" style="margin:0px auto;height:600px;width:50%" v-if="this.$store.state.user.userInfo.emotional_state ===0">
          <PhotoWall :imgs="this.urlData" ></PhotoWall>
 
     </div>
 
-    <div class="blogsbox" v-if="this.$store.state.user.isSingle == false">
+    <div class="blogsbox" v-else>
       <div
         v-for="item in newBlogData"
         :key="item.moment_id"
@@ -170,10 +170,16 @@ export default {
   mounted () {
     // 注册scroll事件并监听
     this.loading = false
+    
   },
   created () {
-    this.newBlogList()
-    // this.getUserAvatars()
+    console.log("birth ",this.$store.state.user.userInfo.birth)
+    let id=this.$store.state.user.userInfo.id
+    if (id!=undefined&&this.$store.state.user.userInfo.emotional_state === 0){
+      this.getUserAvatars()
+    } else {
+      this.newBlogList()
+    }
   },
   methods: {
     // 跳转到文章详情【或推广链接】
@@ -221,20 +227,12 @@ export default {
       console.log('id is ' + this.$store.state.user.userInfo.id)
     	params.append('id', this.$store.state.user.userInfo.id)
       getAvatarsByUserID(params).then(response => {
+        console.log(response.data.code)
+        console.log( this.$ECode.SUCCESS)
+        console.log(response.data.code === this.$ECode.SUCCESS)
         if (response.data.code === this.$ECode.SUCCESS) {
-          for (var i = 0; i < len(response.data.ids); ++i) {
-            that.urlData.push({'src': 'http://121.196.111.9:5678/display/img/' + response.data.ids[i] + '-a.png', 'id': response.data.ids[i]})
-          }
-          console.log(that.urlData)
-          that.loadingInstance.close()
-        } else {
-          that.urlData = [
-            {'src': 'http://121.196.111.9:5678/display/img/test.png', 'id': '1'},
-            {'src': 'http://121.196.111.9:5678/display/img/test.png', 'id': '2'},
-            {'src': 'http://121.196.111.9:5678/display/img/test.png', 'id': '3'}
-          ]
-          that.ids = ['test']
-          that.loadingInstance.close()
+          this.urlData = response.data.urls
+
         }
       }).catch(error => {
         that.urlData = [
@@ -243,8 +241,7 @@ export default {
           {'src': 'https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc', 'id': '3'}
         ]
         that.ids = ['test']
-        console.log(this.urlData)
-        that.loadingInstance.close()
+        console.log(error)
       })
     },
     // 跳转到搜索详情页
@@ -273,8 +270,8 @@ export default {
       })
 
       var params = new URLSearchParams()
-      params.append('currentPage', this.currentPage)
-      params.append('pageSize', this.pageSize)
+      params.append('currentPage', 1)
+      params.append('pageSize', 15)
       getNewBlog(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {

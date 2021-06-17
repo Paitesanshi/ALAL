@@ -5,6 +5,7 @@
         v-for="item in newBlogData"
         :key="item.moment_id"
         class="blogs"
+           @click="goToInfo(item)"
         data-scroll-reveal="enter bottom over 1s"
       >
         <!-- <h3 class="blogtitle">
@@ -99,7 +100,7 @@ import TagCloud from '../TagCloud'
 import HotBlog from '../HotBlog'
 import FollowUs from '../FollowUs'
 import Link from '../Link'
-import { getBlogByLevel, getNewBlog,getBlogsByUid } from '../../api/index'
+import { getBlogByLevel, getNewBlog, getBlogsByUid } from '../../api/index'
 import { Loading } from 'element-ui'
 import CameraCapture from '../CameraCapture'
 import Camera from '../Camera'
@@ -154,7 +155,13 @@ export default {
   },
   created () {
     // 获取最新博客
-    this.newBlogList()
+    let that=this
+    setTimeout(
+      function () {
+        that.newBlogList()
+      }, 500
+    )
+
     // alert();
     // var params = new URLSearchParams()
     // params.append('pageName', 'INDEX')
@@ -163,7 +170,7 @@ export default {
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo (blog) {
+    goToInfo (moment) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
@@ -174,12 +181,10 @@ export default {
           offset: 100
         })
       } else {
-        let routeData = this.$router.resolve({
+        this.$router.push({
           path: '/info',
-          query: { blogUid: blog.blog_id }
+          query: {blogUid: moment.moment_id}
         })
-        console.log(blog.id)
-        window.open(routeData.href, '_blank')
       }
 
       // if (blog.type === '0') {
@@ -229,13 +234,13 @@ export default {
       getBlogsByUid(params)
         .then(response => {
           if (response.data.code === this.$ECode.SUCCESS) {
-            that.newBlogData = response.data.records;
-            that.total = response.data.total;
-            that.pageSize = response.data.size;
-            that.currentPage = response.data.currentPage;
-             that.loadingInstance.close()
+            that.newBlogData = response.data.records
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.currentPage
+            that.loadingInstance.close()
           }
-         
+
           // eslint-disable-next-line handle-callback-err
           // for (let i = 0; i < 5; ++i) {
           //   console.log('error!!!')

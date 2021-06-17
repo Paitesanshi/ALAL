@@ -7,13 +7,13 @@
       <div class="num">{{ index + 1 }}</div>
       <div class="question-content">
         <div class="question-title">{{ item.title }}</div>
-        <template v-if="item.type === 'radio'">
+        <!-- <template v-if="item.type === 'radio'">
           <MyRadio :radioData="item.data" :radioName="index" @radioChange="radioChange"></MyRadio>
         </template>
         <template v-else-if="item.type === 'checkbox'">
           <MyCheckBox :checkboxData="item.data" :checkboxName="index" @checkboxChange="checkboxChange"></MyCheckBox>
-        </template>
-        <template v-else-if="item.type === 'textarea'">
+        </template> -->
+        <template>
           <MyTextArea :textareaName="index" style="margin-bottom: 38px;" @changeTextarea="changeTextarea"></MyTextArea>
         </template>
       </div>
@@ -74,8 +74,11 @@ export default {
       params.append('id', this.$route.query.id)
       getQuestion(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
-          that.questionData = response.data.questionData
-          console.log(this.questionData)
+          console.log(response)
+          for(var i=0;i<5;++i){
+            that.questionData[i].title = response.data.questionData[i+1]
+          }
+          
         }
       }).catch(error => {
         console.log(error)
@@ -160,9 +163,10 @@ export default {
       // console.log(data[0]);
       console.log(params)
       var that = this
-      let	params2 = new URLSearchParams()
-      params2.append('id', this.$store.state.user.userInfo.uid)
-	  params2.append('questionData', params)
+      let	params2 ={}
+      params2.id= this.$store.state.user.userInfo.id
+      params2.application_id=this.$route.query.id
+	  params2.questionData= params
       submitQuestion(params2).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
           console.log(this.blogData)

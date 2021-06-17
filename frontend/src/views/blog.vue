@@ -563,6 +563,7 @@ export default {
           } else {
             let that = this
             this.form.id = this.$store.state.user.userInfo.id
+            alert(this.form.id)
             addBlog(this.form).then(response => {
               if (response.data.code === this.$ECode.SUCCESS) {
                 this.$commonUtil.message.success(response.message)
@@ -573,6 +574,7 @@ export default {
                 let para = {}
                 para.moment_id = momentid
                 para.picList = that.picList
+                alert(para.picList)
                 uploadMomentPhotos(para).then((res) => {
                   console.log(res)
                 })

@@ -1,6 +1,6 @@
 <template>
   <div class="grid" id="grid">
-	<photo-card v-for="pic in imgs" :key="pic" :img="pic.src" :id="pic.id" >
+	<photo-card v-for="pic in imgs" :key="pic.id" :img="pic.src" :id="pic.id" >
 	</photo-card>
   </div>
 </template>

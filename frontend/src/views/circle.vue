@@ -1,17 +1,18 @@
 <template>
-  <div>
+  <div style="margin:100px auto">
     <div class="blogsbox">
       <div
         v-for="item in newBlogData"
         :key="item.blog_id"
         class="blogs"
+        @click="goToInfo(item)"
         data-scroll-reveal="enter bottom over 1s"
       >
-        <h3 class="blogtitle">
+        <!-- <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{
             item.title
           }}</a>
-        </h3>
+        </h3> -->
 
         <!--        <span class="blogpic">-->
         <!--          <a href="javascript:void(0);" @click="goToInfo(item)" title>-->
@@ -19,7 +20,7 @@
         <!--          </a>-->
         <!--        </span>-->
 
-        <p class="blogtext">{{ item.summary }}</p>
+        <p class="blogtext">{{ item.content }}</p>
         <div class="bloginfo">
           <ul>
             <li class="author">
@@ -28,23 +29,13 @@
                 item.name
               }}</a>
             </li>
-            <li class="lmname" v-if="item.labels">
-              <span class="iconfont">&#xe603;</span>
-              <a href="javascript:void(0);" @click="goToList(item.labels[0])">{{
-                item.labels[0]
-              }}</a>
-            </li>
-            <li class="view">
-              <span class="iconfont">&#xe8c7;</span>
-              <span>{{ item.clickCount }}</span>
-            </li>
             <li class="like">
               <span class="iconfont">&#xe663;</span>
-              {{ item.likeCount }}
+              {{ item.like_num }}
             </li>
             <li class="createTime">
               <span class="iconfont">&#xe606;</span>
-              {{ item.time }}
+              {{ item.publish_time }}
             </li>
           </ul>
         </div>
@@ -153,28 +144,7 @@ export default {
     this.loading = false
   },
   created () {
-    console.log('hhhhhhhhhhhhh')
-    var secondParams = new URLSearchParams()
-    secondParams.append('level', 2)
-    // 是否排序
-    secondParams.append('useSort', 1)
-    getBlogByLevel(secondParams)
-      .then(response => {
-        if (response.data.code === this.$ECode.SUCCESS) {
-          this.secondData = response.data.records
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        for (let i = 0; i < 2; ++i) {
-          this.secondData.push({
-            title: 'Alibaba',
-            labels: '技术',
-            photoList: ['../../static/images/banner.png']
-          })
-        }
-      })
-    // 获取最新博客
+    
     this.newBlogList()
     // alert();
     // var params = new URLSearchParams()
@@ -184,7 +154,7 @@ export default {
   },
   methods: {
     // 跳转到文章详情【或推广链接】
-    goToInfo (blog) {
+     goToInfo (moment) {
       if (
         this.$store.state.user.isLogin &&
         this.$store.state.user.userInfo.reputation == 1
@@ -195,14 +165,17 @@ export default {
           offset: 100
         })
       } else {
-        let routeData = this.$router.resolve({
+        // let routeData = this.$router.resolve({
+        //   path: '/info',
+        //   query: { blogUid: moment.moment_id }
+        // })
+        // console.log(moment.moment_id)
+        // window.open(routeData.href, '_blank')
+        this.$router.push({
           path: '/info',
-          query: { blogUid: blog.blog_id }
+          query: {blogUid: moment.moment_id}
         })
-        console.log(blog.id)
-        window.open(routeData.href, '_blank')
       }
-
       // if (blog.type === '0') {
       //   let routeData = this.$router.resolve({
       //     path: '/info',
@@ -260,26 +233,14 @@ export default {
       params.append('pageSize', this.pageSize)
       getNewBlog(params)
         .then(response => {
-          // if (response.data.code === this.$ECode.SUCCESS) {
-          //   that.newBlogData = response.data.records;
-          //   that.total = response.data.total;
-          //   that.pageSize = response.data.size;
-          //   that.currentPage = response.data.currentPage;
-          // }
-          // that.loadingInstance.close();
-          // eslint-disable-next-line handle-callback-err
-          for (let i = 0; i < 5; ++i) {
-            console.log('error!!!')
-            this.newBlogData.push({
-              title: 'test',
-              author: 'ptss',
-              labels: ['技术', '数据库'],
-              summary: '略略略',
-              clickCount: 100,
-              likeCount: 200,
-              time: '2020-12-2'
-            })
+          if (response.data.code === this.$ECode.SUCCESS) {
+            that.newBlogData = response.data.records
+            console.log(that.newBlogData)
+            that.total = response.data.total
+            that.pageSize = response.data.size
+            that.currentPage = response.data.currentPage
           }
+          that.loadingInstance.close()
         })
         .catch(error => {
           for (let i = 0; i < 5; ++i) {
@@ -330,7 +291,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .el-loading-mask {
   z-index: 2002;
 }

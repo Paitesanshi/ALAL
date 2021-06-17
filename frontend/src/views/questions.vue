@@ -112,21 +112,18 @@ export default {
       // console.log(data[0]);
       console.log(params);
 	  var that = this
-    let	params2 = new URLSearchParams()
+    let	params2 = {}
     // if (this.blogUid) {
     //   params.append('uid', this.blogUid)
     // }
     // if (this.blogOid) {
     //   params.append('oid', this.blogOid)
     // }
-    params2.append('id', this.$store.state.user.userInfo.uid)
+    params2.id= this.$store.state.user.userInfo.id
+   params2.questionData=params
     editQuestion(params2).then(response => {
       if (response.data.code === this.$ECode.SUCCESS) {
         this.blogData = response.data
-        console.log(this.blogData)
-        // this.blogUid = response.data.uid
-        // this.blogOid = response.data.oid\
-        this.getCommentDataList()
       } else {
 
       }

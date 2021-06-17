@@ -2,14 +2,14 @@
 <div class="ImageList">
 
      <div class="covers" :style="{display:MinDisplay}">
-         <div class="cover" v-for="(img,index) in imgs" :key='img'><img :src="img.src" width="90%" class="min" @click="ZoomIn(index)" alt=""></div>
+         <div class="cover" v-for="(img,index) in imgs" :key='img'><img :src="img" width="90%" class="min" @click="ZoomIn(index)" alt=""></div>
        </div>
 
        <div class="max" :style="{display:display}">
-            <div @click="ZoomOut"  v-for="(img,index) in imgs" :key='img' :class="[index===ShowIndex?'active':'None']" ><img :src="img.src" width="100%"></div>
+            <div @click="ZoomOut"  v-for="(img,index) in imgs" :key='img' :class="[index===ShowIndex?'active':'None']" ><img :src="img" width="100%"></div>
           
             <div class="small">
-                <div :class="[{'smallActive':index===ShowIndex},'cover-small']" v-for="(img,index) in imgs" :key='img' @click="select(index)" ><img :src="img.src" width="90%"></div>
+                <div :class="[{'smallActive':index===ShowIndex},'cover-small']" v-for="(img,index) in imgs" :key='img' @click="select(index)" ><img :src="img" width="90%"></div>
             </div>
         </div>
     </div>

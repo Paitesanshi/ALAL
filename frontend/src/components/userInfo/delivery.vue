@@ -3,7 +3,7 @@
     <div v-if="!show" class="nofind">
       <p>暂时没有记录哦</p>
     </div>
-    <div v-show="show" v-for="(item, index) in list" :key="index"  @click="checkDetail(item.id)">
+    <div v-show="show" v-for="(item, index) in list" :key="index"  @click="checkDetail(item.application_id)">
       <el-card shadow="hover" class="deliverycard">
         <div class="resumeBox">
           <p>{{item.applicant}}</p>
@@ -52,34 +52,30 @@ export default {
     }
   },
   created () {
-    let that = this
-	  let params = new URLSearchParams()
-    console.log("userinfo is ")
-    console.log(this.$store.state.user.userInfo)
-    params.append('id', this.$store.state.user.userInfo.id)
-    getFriendsRequestList(params).then(response => {
-      if (response.data.code === this.$ECode.SUCCESS) {
-        this.list = response.data.list
-      } else {
-        that.show = false
-
-        // this.$notify({
-      //       title: '失败',
-      //       message: '还没有申请信息',
-      //       type: 'error',
-      //       offset: 100
-      //     })
-      }
-    }).catch(error => {
-      console.log(error)
-		  this.list = [
-        {
-          id: 1,
-          applicant: 'wl',
-          createdTime: '2021.05.13'
-        }
-      ]
-    })
+    let that=this
+    setTimeout(
+      function () {
+	      let params = new URLSearchParams()
+        params.append('id', that.$store.state.user.userInfo.id)
+        console.log("!!!!!!!!!!!!!!")
+        getFriendsRequestList(params).then(response => {
+          if (response.data.code === that.$ECode.SUCCESS) {
+            that.list = response.data.list
+          } else {
+            that.show = false
+          }
+        }).catch(error => {
+          console.log(error)
+		      that.list = [
+            {
+              id: 1,
+              applicant: 'wl',
+              createdTime: '2021.05.13'
+            }
+          ]
+        })
+      }, 300
+    )
   },
   methods: {
     checkDetail (uid) {

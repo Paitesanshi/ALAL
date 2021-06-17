@@ -1,12 +1,12 @@
 <template>
   <div class="share">
-    <p class="diggit" @click="praiseBlog(blogUid)">
+    <p class="diggit" @click="praiseBlog(blogUid,user_id)">
       <a href="javascript:void(0);">很赞哦！</a>
       <span v-if="praiseCount!= 0">
         (<b id="diggnum">{{praiseCount}}</b>)
       </span>
     </p>
-    <p class="dasbox"  @click="collectToggle()">
+    <!-- <p class="dasbox"  @click="collectToggle()">
       <a href="javascript:void(0)"  class="collect" title="收藏">收藏</a>
     </p>
     <p class="reportbtn"  @click="reportToggle()">
@@ -36,12 +36,11 @@
           <el-button class="cancelBtn" type="info" @click="reportToggle()" >取消</el-button>
         </el-row>
       </el-form>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import { getWebConfig } from '../../api/index'
 import {
   praiseBlogByUid, getBlogPraiseCountByUid, addCollectBlog, reportBlog
 } from '../../api/blogContent'
@@ -53,7 +52,8 @@ export default {
       type: Number,
       default: 0
     },
-    blogUid: ''
+    blogUid: '',
+    user_id:'',
   },
   data () {
     return {
@@ -91,11 +91,11 @@ export default {
         // 未登录，自动弹出登录框
         this.setLoginMessage(Math.random())
         return
-      }
+      } 
       this.showReport = !this.showReport
     },
     // 博客点赞
-    praiseBlog: function (uid) {
+    praiseBlog: function (uid,id) {
       // 判断用户是否登录
       let isLogin = this.$store.state.user.isLogin
       if (!isLogin) {
@@ -111,6 +111,7 @@ export default {
 
       var params = new URLSearchParams()
       params.append('uid', uid)
+       params.append('id', id)
       praiseBlogByUid(params).then(response => {
         if (response.data.code === this.$ECode.SUCCESS) {
           this.$notify({

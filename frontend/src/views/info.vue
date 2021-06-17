@@ -5,36 +5,26 @@
     </el-dialog>
     <h1 class="t_nav">
       <a href="/" class="n1">网站首页</a>
-      <a
-        href="javascript:void(0);"
-        v-if="blogData.blogSort"
-        @click="goToSortList(blogData.blogSort)"
-        class="n2"
-      >{{ blogData.blogSort ? blogData.blogSortName : "" }}</a>
     </h1>
     <div class="infosbox">
       <div class="newsview">
-        <h3 class="news_title" v-if="blogData.title">{{ blogData.title }}</h3>
-        <div class="bloginfo" v-if="blogData.labels">
+        <!-- <h3 class="news_title" v-if="blogData.title">{{ blogData.title }}</h3> -->
+        <div class="bloginfo">
           <ul>
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
-              <a href="javascript:void(0);" @click="goToAuthor(blogData.author)">{{ blogData.name }}</a>
+              <a href="javascript:void(0);" @click="goToAuthor(blogData.id)">{{ blogData.author }}</a>
             </li>
-            <li class="lmname">
+            <!-- <li class="lmname">
               <span class="iconfont">&#xe603;</span>
               <a
                 href="javascript:void(0);"
                 @click="goToSortList(blogData.blogSort)"
               >{{ blogData.blogSort ? blogData.blogSortName : "" }}</a>
-            </li>
+            </li> -->
             <li class="createTime">
               <span class="iconfont">&#xe606;</span>
               {{ blogData.time }}
-            </li>
-            <li class="view">
-              <span class="iconfont">&#xe8c7;</span>
-              {{ blogData.clickCount }}
             </li>
             <li class="like">
               <span class="iconfont">&#xe663;</span>
@@ -42,7 +32,7 @@
             </li>
           </ul>
         </div>
-        <div class="tags">
+        <!-- <div class="tags">
           <a
             v-if="blogData.labels"
             v-for="item in blogData.labels"
@@ -51,21 +41,22 @@
             @click="goToList(item)"
             target="_blank"
           >{{ item }}</a>
-        </div>
+        </div> -->
         <!-- <div v-if="blogData.need_credit !=0||this.$store.state.user.userInfo.reputation<=1">
           <img class="center" :src="lockImageUrl" alt="lock">
           <div class="center fit-content">
             <el-button type="primary" align="center" @click="payCredit">需要花费 {{blogData.need_credit}} 积分</el-button>
           </div>
         </div> -->
-          <div
+          <!-- <div
             v-if="blogData.need_credit ==0"
-            class="news_con ck-content"
+            class="news_con"
             v-html="blogContent"
             v-highlight
             @click="imageChange"
           >{{ blogContent }}
-          </div>
+          </div> -->
+          <div class="news_con momentContent">{{blogData.content}}</div>
 		   <div>
 		<ImageList  style="margin:10px auto;" :imgs="this.urlData"></ImageList>	
 		<!-- <img
@@ -80,13 +71,12 @@
       </div>
 
       <!--点赞和收藏和举报-->
-      <LikeAndCollect v-if="openAdmiration === '1'" :blogUid="blogUid"
+      <LikeAndCollect :blogUid="this.blogData.moment_id" :user_id="this.blogData.id"
                       :praiseCount="blogData.likeCount"  @praise="incrPraise"></LikeAndCollect>
       <div class="news_pl" :style="openCommentCss">
         <h2 v-if="openComment === '1'">文章评论</h2>
         <ul v-if="openComment === '1'">
           <CommentBox
-            v-if="this.$store.state.user.userInfo.reputation>3"
             :userInfo="userInfo"
             :commentInfo="commentInfo"
             @submit-box="submitBox"
@@ -120,7 +110,7 @@ import ThirdRecommend from '../components/ThirdRecommend'
 import FourthRecommend from '../components/FourthRecommend'
 import TagCloud from '../components/TagCloud'
 import HotBlog from '../components/HotBlog'
-import FollowUs from '../components/FollowUs'
+// import FollowUs from '../components/FollowUs'
 import Link from '../components/Link'
 import {addComment, getCommentList} from '../api/comment'
 import {Loading} from 'element-ui'
@@ -201,7 +191,7 @@ export default {
     ThirdRecommend,
     TagCloud,
     HotBlog,
-    FollowUs,
+    // FollowUs,
     CommentList,
     CommentBox,
     SideCatalog,
@@ -285,7 +275,7 @@ export default {
         console.log(this.blogData)
         // this.blogUid = response.data.uid
         // this.blogOid = response.data.oid\
-        this.getCommentDataList()
+       // this.getCommentDataList()
          that.loadingInstance.close()
       } 
     }).catch(error => {
@@ -320,7 +310,7 @@ export default {
         this.getCommentDataList()
       } else {
 		that.urlData=[
-        	{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
+        {"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
 				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
 				{"src":"https://i.picsum.photos/id/1016/3844/2563.jpg?hmac=WEryKFRvTdeae2aUrY-DHscSmZuyYI9jd_-p94stBvc"},
       ]
@@ -443,7 +433,7 @@ export default {
       let params = {}
       params.blogUid = e.blogUid
       params.source = e.source
-      params.userUid = e.userUid
+      params.id = e.userUid
       params.content = e.content
       console.log(params)
       addComment(params).then(response => {
@@ -601,7 +591,9 @@ export default {
   width: 3px;
   background: transparent;
 }
-
+.momentContent {
+  margin: 60px 10px 10px 10px;
+}
 .line-style--active {
   background: currentColor;
 }
